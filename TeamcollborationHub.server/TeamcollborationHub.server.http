@@ -1,0 +1,6 @@
+@TeamcollborationHub.server_HostAddress = http://localhost:5155
+
+GET {{TeamcollborationHub.server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

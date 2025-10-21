@@ -9,8 +9,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - sqlserverdatabase    
-  docker-demo-sqlserver:
+      - db   
+  db:
     container_name: teamcollaborationhubDB
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:

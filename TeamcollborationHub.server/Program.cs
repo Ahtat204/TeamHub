@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
+using TeamcollborationHub.server.Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ?? throw new InvalidOperationException("Connection string 'TeamcollborationHubContext' not found.")));
-
+builder.Services.AddKeyedScoped<IAuthenticationService, AuthenticationService>("AuthenticationService");
+builder.Services.AddSingleton<TDBContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,11 +22,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

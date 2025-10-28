@@ -13,6 +13,8 @@ public class ProjectTask
 
     [DataType(DataType.Date)]
     public DateTime DueDate { get; set; }
-    
+    public Project project { get; set; }
+    public int projectId { get; set; }
+
 
 }

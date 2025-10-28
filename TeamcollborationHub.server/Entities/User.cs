@@ -14,6 +14,8 @@ namespace TeamcollborationHub.server.Entities;
     public string Email { get; set; }=string.Empty;
     [Required]
     public string Password { get; set; }=string.Empty;
+    public Project project { get; set; }
+    public int projectId { get; set; }
 
 }
 

@@ -1,5 +1,5 @@
-namespace TeamcollaborationHub.server.UnitTest
-{
+namespace TeamcollaborationHub.server.;
+
     public class Tests
     {
         [SetUp]
@@ -13,4 +13,3 @@ namespace TeamcollaborationHub.server.UnitTest
             Assert.Pass();
         }
     }
-}

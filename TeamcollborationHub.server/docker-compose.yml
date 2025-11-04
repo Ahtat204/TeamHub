@@ -2,10 +2,11 @@
 
 services:
   api:
-    container_name: app
+    container_name: api
     image: webapi
     environment:
-      - SQLServerConnectionString:Server=(localdb)\\MSSQLLocalDB;Database=TeamCollaborationHubDB;Trusted_connection=true;TrustServerCertificate=true;
+      - SQLServerConnectionString:${SQLServerConnectionString}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8080:8080"
     depends_on:
@@ -18,3 +19,10 @@ services:
       - MSSQL_SA_PASSWORD=Password1*
     ports:
       - "1433:1433"
+  cache:
+   image: redis:6.2-alpine
+   container_name: redis
+   ports:
+     - "6379:6379"
+   volumes:
+   - redis-data:/data

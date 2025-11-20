@@ -5,7 +5,7 @@ services:
     container_name: api
     image: webapi
     environment:
-      - SQLServerConnectionString:${SQLServerConnectionString}
+      - SQLServerConnectionString:${ConnectionStrings__SQLServerConnectionString}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8080:8080"

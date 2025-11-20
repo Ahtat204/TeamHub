@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Services.Authentication;
+using TeamcollborationHub.server.Services.Security;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using dotenv.net;
 using System.Text;
+using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+using TeamcollborationHub.server.Services.Authentication.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 DotEnv.Load();
@@ -26,8 +28,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName=builder.Configuration.GetValue<string>("RedisInstanceName")??"DefaultInstance";
 });
 builder.Services.AddScoped<ICachingService,RedisCachingService>();
+builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddKeyedScoped<IAuthenticationService, AuthenticationService>("AuthenticationService");
-builder.Services.AddSingleton<TDBContext>();
+builder.Services.AddKeyedScoped<IJwtService, JwtService>("JwtService");
 builder.Services.AddAuthentication(opt => {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,8 +45,9 @@ builder.Services.AddAuthentication(opt => {
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
             ValidAudience = builder.Configuration["JwtConfig:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfi:Key"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]!))
         };
+        options.SaveToken = true;
     });
 builder.Services.AddAuthorization();
 var app = builder.Build();

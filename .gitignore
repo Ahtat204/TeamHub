@@ -36,7 +36,7 @@ bld/
 [Ll]ogs/
 
 TeamcollborationHub.server/.env
-
+TeamcollborationHub.server/Procedures/Procedures_list.txt
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot

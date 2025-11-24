@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Services.Security;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
@@ -9,6 +8,7 @@ using dotenv.net;
 using System.Text;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 DotEnv.Load();

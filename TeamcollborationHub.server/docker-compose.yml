@@ -7,10 +7,14 @@ services:
     environment:
       - SQLServerConnectionString:${ConnectionStrings__SQLServerConnectionString}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path:KestrelSSLCertficate.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password:${password}
     ports:
       - "8080:8080"
     depends_on:
       - db   
+    volumes:
+    - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
   db:
     container_name: teamcollaborationhubDB
     image: mcr.microsoft.com/mssql/server:2022-latest

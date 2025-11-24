@@ -12,6 +12,12 @@ namespace TeamcollborationHub.server.Entities;
     public ProjectStatus status { get; set; } = ProjectStatus.NotStarted;
     public ICollection<Comment> comments { get; set; } 
     public ICollection<ProjectTask>? Tasks { get; set; } 
+    [DataType(DataType.Date)]
+    public DateTime CreatedDateTime { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime? LastModifiedDateTime { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime? EndDateTime { get; set; }
 
 }
 

@@ -3,11 +3,10 @@ using TeamcollborationHub.server.Entities.Dto;
 
 namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
-    public interface IAuthenticationService
-    {
-    public AuthenticationResponse? AuthenticateUser(UserRequestDto user);
-    public User? createUser();
-    public User? updateUser(User user);
-    public User? deleteUser(int id);
+public interface IAuthenticationService
+{
+    public Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto user);
+    public Task<User?> CreateUser(CreateUserDto? user);
+    public Task<User?> UpdateUser(User user);
+    public Task<User?> DeleteUser(int id);
 }
-

@@ -3,16 +3,20 @@
 services:
   api:
     container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: webapi
     environment:
-      - SQLServerConnectionString:${ConnectionStrings__SQLServerConnectionString}
+      - SQLServerConnectionString=${ConnectionStrings__SQLServerConnectionString}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path:KestrelSSLCertficate.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password:${password}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/KestrelSSLCertficate.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${password}
     ports:
       - "8080:8080"
     depends_on:
       - db   
+      - cache
     volumes:
     - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
   db:
@@ -23,6 +27,8 @@ services:
       - MSSQL_SA_PASSWORD=Password1*
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/lib/mssql/data
   cache:
    image: redis:6.2-alpine
    container_name: redis
@@ -30,3 +36,7 @@ services:
      - "6379:6379"
    volumes:
    - redis-data:/data
+volumes:
+  redis-data:
+  sqlserver_data:
+    

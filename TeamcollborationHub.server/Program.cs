@@ -6,6 +6,7 @@ using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using dotenv.net;
 using System.Text;
+using TeamcollborationHub.server.Repositories;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
@@ -21,20 +22,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ?? throw new InvalidOperationException("Connection string 'TeamcollborationHubContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
+                         throw new InvalidOperationException(
+                             "Connection string 'TeamcollborationHubContext' not found.")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration=builder.Configuration.GetConnectionString("RedisConnectionString");
-    options.InstanceName=builder.Configuration.GetValue<string>("RedisInstanceName")??"DefaultInstance";
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
+    options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? "DefaultInstance";
 });
-builder.Services.AddScoped<ICachingService,RedisCachingService>();
+builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
-builder.Services.AddKeyedScoped<IAuthenticationService, AuthenticationService>("AuthenticationService");
-builder.Services.AddKeyedScoped<IJwtService, JwtService>("JwtService");
-builder.Services.AddAuthentication(opt => {
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<AuthenticationRepository>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddAuthentication(opt =>
+    {
+        opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -58,6 +63,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

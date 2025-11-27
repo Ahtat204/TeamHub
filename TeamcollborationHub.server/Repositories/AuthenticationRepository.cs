@@ -1,4 +1,6 @@
-﻿using TeamcollborationHub.server.Configuration;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Repositories;
@@ -24,10 +26,10 @@ public class AuthenticationRepository
     /// </summary>
     /// <param name="user">a user Object to be inserted in database</param>
     /// <returns>return the created user , good for testing </returns>
-    public User CreateUser(User user)
+    public async Task<User> CreateUser(User user)
     {
         _context.Add(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return user;
     }
     /// <summary>
@@ -35,24 +37,24 @@ public class AuthenticationRepository
     /// </summary>
     /// <param name="email">the email of the targeted <code>User</code>></param>
     /// <returns>rturns the user assosiated with the email if found</returns>
-    public User? GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email)
     {
-        return _context.Users.SingleOrDefault(u => u.Email == email);
+        return await _context.Users.SingleOrDefaultAsync(u=>u.Email==email);
     }
     /// <summary>
     /// for fast lookup , a method for searching by an id
     /// </summary>
     /// <param name="id">the unique identifier of the <code>User</code>></param>
     /// <returns>returns the user if found</returns>
-    public User? GetUserById(int id)
+    public  async Task<User?> GetUserById(int id)
     {
-        return _context.Find<User>(id);
+        return await _context.FindAsync<User>(id);
     }
     /// <summary>
     /// method returns all the users in the database
     /// </summary>
     /// <returns></returns>
-    public IQueryable<User> GetAllUsers()
+    public  IQueryable<User> GetAllUsers()
     {
         return _context.Set<User>();
     }
@@ -61,14 +63,12 @@ public class AuthenticationRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public User deleteUser(int id)
+    public async Task<User> deleteUser(int id)
     {
-        var user = _context.Find<User>(id);
-        if (user != null)
-        {
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
+        var user =await  _context.FindAsync<User>(id);
+        if (user == null) return user!;
+        _context.Users.Remove(user);
+        _context.SaveChanges();
         return user!;
     }
     /// <summary>
@@ -76,10 +76,10 @@ public class AuthenticationRepository
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public User UpdateUser(User user)
+    public async Task<User> UpdateUser(User user)
     {
         _context.Users.Update(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return user;
     }
 }

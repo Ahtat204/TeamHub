@@ -1,5 +1,7 @@
 ﻿namespace TeamcollborationHub.server.Entities;
-
+/// <summary>
+/// 
+/// </summary>
 public class Comment
 {
     public int Id { get; set; }

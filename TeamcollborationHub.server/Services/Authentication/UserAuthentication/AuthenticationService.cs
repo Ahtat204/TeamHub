@@ -16,14 +16,15 @@ public class AuthenticationService(
 {
     public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
     {
-        var User = await authenticationRepository.GetUserByEmail(UserRequest.Email);
+        var email=UserRequest.Email.Trim().ToLower();
+        var User = await authenticationRepository.GetUserByEmail(email);
         if (User is null) throw new NotFoundException<User>();
         var verified = passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
         if (!verified) throw new NotFoundException<User>("due to incorrect password");
         var accesstoken = jwtservice.GenerateTokenResponse(User, out var tokenExpiryDate) ??
                           throw new Exception("Invalid credentials password");
         return new(
-            email: UserRequest.Email, AccessToken: accesstoken, ExpiryDate: tokenExpiryDate);
+            email: email, AccessToken: accesstoken, ExpiryDate: tokenExpiryDate);
     }
 
     public async Task<User?> CreateUser(CreateUserDto? user)

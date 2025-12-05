@@ -6,7 +6,7 @@ using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using dotenv.net;
 using System.Text;
-using TeamcollborationHub.server.Repositories;
+using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
@@ -33,7 +33,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<AuthenticationRepository>();
+builder.Services.AddScoped<IUserRepository,AuthenticationRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {

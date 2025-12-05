@@ -10,16 +10,15 @@
 *.rsuser
 *.suo
 *.user
-*.env
 *.userosscache
 *.sln.docstates
-*.secrets
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-*.txt
+
 # Mono auto generated files
 mono_crash.*
-*.bat
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -184,7 +183,8 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
-*.secrets
+
+TeamcollborationHub.server
 # Click-Once directory
 publish/
 
@@ -456,7 +456,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
+TeamcollborationHub.server/appsettings.json
+TeamcollborationHub.server/appsettings.Development.json
 # content below from: https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
 # Windows thumbnail cache files
 Thumbs.db

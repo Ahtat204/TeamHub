@@ -4,3 +4,16 @@ GET {{TeamcollborationHub.server_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+GET localhost:8080/api/users
+###
+POST localhost:8080/login
+
+Content-Type: application/json
+
+{
+  "email": "lahcen28ahtat@gmail.com",
+  "password": "123ahtat"
+}
+
+
+

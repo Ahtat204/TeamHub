@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamcollborationHub.server.Configuration;
 
@@ -11,9 +12,11 @@ using TeamcollborationHub.server.Configuration;
 namespace TeamcollborationHub.server.Migrations
 {
     [DbContext(typeof(TDBContext))]
-    partial class TDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251205170840_Delete-ProjectId")]
+    partial class DeleteProjectId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,11 +171,9 @@ namespace TeamcollborationHub.server.Migrations
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>
                 {
-                    b.HasOne("TeamcollborationHub.server.Entities.Project", "project")
+                    b.HasOne("TeamcollborationHub.server.Entities.Project", null)
                         .WithMany("contributor")
                         .HasForeignKey("ProjectId");
-
-                    b.Navigation("project");
                 });
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.Project", b =>

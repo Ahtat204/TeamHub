@@ -1,9 +1,5 @@
 ﻿using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
-
-
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
 
@@ -19,21 +15,23 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
     }
 
-    [HttpGet("/login")]
+    [HttpPost("/login")]
     public async Task<ActionResult<User>> Login([FromBody] UserRequestDto userCridentials)
     {
         if(userCridentials is null)  return BadRequest("Invalid user data"); 
         var response = await _authenticationService.AuthenticateUser(userCridentials);
         if(response is null) return BadRequest("Invalid user data"); 
-
         return Ok(response);
 
     }
 
 
     [HttpPost("/signup")]
-    public async Task<ActionResult<User>> SignUp([FromBody] User user)
+    public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto user)
     {
-        return Ok();///TODO: implement signup logic
+        if(user is null) return BadRequest("Invalid user data");
+        var result = await _authenticationService.CreateUser(user);
+        if(result is null) return BadRequest("Invalid user data");
+        return Ok(result);
     }
 }

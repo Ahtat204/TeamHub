@@ -12,7 +12,7 @@ using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
-DotEnv.Load();
+// DotEnv.Load();
 // Add services to the container.
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
                          throw new InvalidOperationException(
-                             "Connection string 'TeamcollborationHubContext' not found.")));
+                             "Connection string 'SQLServerConnectionString' not found.")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");

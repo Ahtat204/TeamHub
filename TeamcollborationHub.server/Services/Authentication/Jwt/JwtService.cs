@@ -21,19 +21,18 @@ public class JwtService: IJwtService
     public  string? GenerateTokenResponse(User user,out int expiryDate)
     {
 
-        var issuer = configuration["Jwt:Issuer"];
-        var audience = configuration["Jwt:Audience"];
-        var key = configuration["Jwt:Key"];
-        var tokenValidityInMinutes = configuration["Jwt:DurationInMinutes"];
+        var issuer = configuration["JwtConfig:Issuer"];
+        var audience = configuration["JwtConfig:Audience"];
+        var key = configuration["JwtConfig:Key"];
+        var tokenValidityInMinutes = configuration["JwtConfig:DurationInMinutes"];
         var tokenExpiryDate = DateTime.UtcNow.AddMinutes(double.Parse(tokenValidityInMinutes ?? "60"));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
+            Subject = new ClaimsIdentity([
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.Name)
-            }),
+            ]),
             Expires = tokenExpiryDate,
             Issuer = issuer,
             Audience = audience,

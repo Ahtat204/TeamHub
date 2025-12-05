@@ -17,7 +17,7 @@ public class TDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Project>().HasMany(p => p.contributor).WithOne(u => u.project).HasForeignKey(u => u.projectId);
+        modelBuilder.Entity<Project>().HasMany(p => p.contributor).WithOne(u => u.project).HasForeignKey(u => u.ProjectId);
         modelBuilder.Entity<Project>().HasMany(p => p.Tasks).WithOne(t => t.project).HasForeignKey(t => t.projectId);
         modelBuilder.Entity<Project>().HasMany(p => p.comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
         modelBuilder.Entity<Project>().Property(o=>o.status).HasConversion<string>();

@@ -8,7 +8,7 @@ namespace TeamcollborationHub.server.Entities.Dto;
 /// <param name="Email"></param>
 /// <param name="Password"></param>
 public record  UserRequestDto(
-    string Email,
+   [EmailAddress] [Required] string Email,
     string Password
 );
 

@@ -10,25 +10,24 @@ using TeamcollborationHub.server.Repositories;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
+using Microsoft.AspNetCore.Authentication.Google;
+using TeamcollborationHub.server.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
-// DotEnv.Load();
-// Add services to the container.
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
-                         throw new InvalidOperationException(
-                             "Connection string 'SQLServerConnectionString' not found.")));
+                         throw new ValueNotFoundException(
+                             "Connection string 'SQLServerConnectionString'")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
-    options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? "DefaultInstance";
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString")??throw new ValueNotFoundException("RedisConnectionString");
+    options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? throw new ValueNotFoundException("RedisInstanceName");
 });
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
@@ -48,12 +47,17 @@ builder.Services.AddAuthentication(opt =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-            ValidAudience = builder.Configuration["JwtConfig:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]!))
+            ValidIssuer = builder.Configuration["JwtConfig:Issuer"] ?? throw new ValueNotFoundException("Issuer"),
+            ValidAudience = builder.Configuration["JwtConfig:Audience"]?? throw new ValueNotFoundException("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"] ?? throw new ValueNotFoundException("Issuer")))
         };
         options.SaveToken = true;
-    });
+    }).
+    AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+    }); ;
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

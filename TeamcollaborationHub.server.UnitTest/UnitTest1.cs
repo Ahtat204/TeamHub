@@ -1,4 +1,4 @@
-namespace TeamcollaborationHub.server.;
+namespace TeamcollaborationHub.server.UnitTest;
 
     public class Tests
     {

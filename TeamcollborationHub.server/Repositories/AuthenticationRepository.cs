@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using TeamcollborationHub.server.Configuration;
+﻿using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Repositories;
@@ -39,7 +37,7 @@ public class AuthenticationRepository
     /// <returns>rturns the user assosiated with the email if found</returns>
     public User? GetUserByEmail(string email)
     {
-        return _context.Users.SingleOrDefault(u=>u.Email==email);
+        return _context.Users.SingleOrDefault(u => u.Email == email);
     }
     /// <summary>
     /// for fast lookup , a method for searching by an id
@@ -48,13 +46,13 @@ public class AuthenticationRepository
     /// <returns>returns the user if found</returns>
     public User? GetUserById(int id)
     {
-        return  _context.Find<User>(id);
+        return _context.Find<User>(id);
     }
     /// <summary>
     /// method returns all the users in the database
     /// </summary>
     /// <returns></returns>
-    public  IQueryable<User> GetAllUsers()
+    public IQueryable<User> GetAllUsers()
     {
         return _context.Set<User>();
     }
@@ -69,7 +67,7 @@ public class AuthenticationRepository
         if (user != null)
         {
             _context.Users.Remove(user);
-             _context.SaveChanges();
+            _context.SaveChanges();
         }
         return user!;
     }

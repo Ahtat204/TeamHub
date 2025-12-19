@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace TeamCollaborationHub.server.IntegrationTest.RedisIntegrationTest;
 
-[CollectionDefinition("Redis Collection")]
-public class RedisTests:IAsyncLifetime
+[Collection("Redis Collection")]
+public class RedisTests : IAsyncLifetime, IClassFixture<RedisFixture>
 {
     private readonly RedisFixture _redisFixture;
     private readonly IDatabase _database;
@@ -13,7 +12,7 @@ public class RedisTests:IAsyncLifetime
         _redisFixture = redisFixture;
         _database = _redisFixture.Connection.GetDatabase();
     }
-    
+
     public async Task InitializeAsync()
     {
         await _database.ExecuteAsync("FLUSHALL");
@@ -34,5 +33,5 @@ public class RedisTests:IAsyncLifetime
         var exists = await _database.KeyExistsAsync("test-key");
         Assert.False(exists);
     }
- 
+
 }

@@ -6,6 +6,6 @@ namespace TeamcollborationHub.server.Services.Caching
     {
         Project? GetProjectFromCache(int projectId);
 
-        void SetProjectInCache(string key,Project project);
+        void SetProjectInCache(string key, Project project);
     }
 }

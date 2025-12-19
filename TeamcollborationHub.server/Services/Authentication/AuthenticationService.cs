@@ -1,5 +1,5 @@
 ﻿namespace TeamcollborationHub.server.Services.Authentication;
 
-public class AuthenticationService: IAuthenticationService
+public class AuthenticationService : IAuthenticationService
 {
 }

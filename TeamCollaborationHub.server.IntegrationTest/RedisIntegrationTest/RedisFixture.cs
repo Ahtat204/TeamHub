@@ -1,23 +1,17 @@
-﻿using System;
-using System.Threading.Tasks;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using Testcontainers.Redis;
-using Xunit;
 
 
 namespace TeamCollaborationHub.server.IntegrationTest.RedisIntegrationTest;
 
 public class RedisFixture : IAsyncLifetime
 {
-    public RedisContainer RedisContainer { get; }
-    public IConnectionMultiplexer Connection { get; private set; }
-    public RedisFixture()
-    {
-       
-        RedisContainer = new RedisBuilder()
-            .WithImage("redis:6.2-alpine")
-            .Build();
-    }
+    public RedisContainer RedisContainer { get; } = new RedisBuilder()
+        .WithImage("redis:6.2-alpine")
+        .Build();
+
+    public IConnectionMultiplexer? Connection { get; private set; }
+
     public async Task InitializeAsync()
     {
         await RedisContainer.StartAsync();
@@ -25,7 +19,7 @@ public class RedisFixture : IAsyncLifetime
     }
     public async Task DisposeAsync()
     {
-        await Connection.CloseAsync();
+        await Connection?.CloseAsync()!;
         await RedisContainer.DisposeAsync();
     }
 }

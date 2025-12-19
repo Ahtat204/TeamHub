@@ -8,7 +8,7 @@ namespace TeamcollborationHub.server.Services.Caching
     {
         public Project? GetProjectFromCache(int projectId)
         {
-            var data=distributedCache?.GetString(projectId.ToString());
+            var data = distributedCache?.GetString(projectId.ToString());
             return data == null ? null : JsonSerializer.Deserialize<Project>(data)!;
         }
         public void SetProjectInCache(string key, Project project)
@@ -18,7 +18,7 @@ namespace TeamcollborationHub.server.Services.Caching
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
                 SlidingExpiration = TimeSpan.FromMinutes(2)
             };
-            distributedCache?.SetString(key,JsonSerializer.Serialize(project),options); 
+            distributedCache?.SetString(key, JsonSerializer.Serialize(project), options);
         }
         public void EvictProjectFromCache(string key)
         {

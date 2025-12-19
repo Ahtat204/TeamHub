@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Caching.Distributed;
 using TeamcollborationHub.server.Entities;
 
-namespace TeamcollborationHub.server.Services.Caching
-{
+namespace TeamcollborationHub.server.Services.Caching;
+
     public class RedisCachingService(IDistributedCache? distributedCache) : ICachingService
     {
         public Project? GetProjectFromCache(int projectId)
@@ -25,4 +25,4 @@ namespace TeamcollborationHub.server.Services.Caching
             distributedCache?.Remove(key);
         }
     }
-}
+

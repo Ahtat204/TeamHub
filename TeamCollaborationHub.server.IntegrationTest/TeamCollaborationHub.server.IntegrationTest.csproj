@@ -22,4 +22,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TeamcollborationHub.server\TeamcollborationHub.server.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace TeamCollaborationHub.server.IntegrationTest.RedisIntegrationTest;
 
-[Collection("Redis Collection")]
+[CollectionDefinition("Redis Collection")]
 public class RedisCollection : ICollectionFixture<RedisFixture>
 {
 

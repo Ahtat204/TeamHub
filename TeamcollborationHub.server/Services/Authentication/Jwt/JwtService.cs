@@ -20,7 +20,6 @@ public class JwtService: IJwtService
 
     public  string? GenerateTokenResponse(User user,out int expiryDate)
     {
-
         var issuer = configuration["JwtConfig:Issuer"];
         var audience = configuration["JwtConfig:Audience"];
         var key = configuration["JwtConfig:Key"];

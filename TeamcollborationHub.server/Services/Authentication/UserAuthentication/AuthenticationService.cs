@@ -11,20 +11,17 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 public class AuthenticationService(
     IConfiguration configuration,
     IPasswordHashingService passwordHashingService,
-    AuthenticationRepository authenticationRepository,
-    IJwtService jwtservice) : IAuthenticationService
+    AuthenticationRepository authenticationRepository
+   ) : IAuthenticationService
 {
-    public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
+    public async Task<User?> AuthenticateUser(UserRequestDto UserRequest)
     {
         var email=UserRequest.Email.Trim().ToLower();
         var User = await authenticationRepository.GetUserByEmail(email);
         if (User is null) throw new NotFoundException<User>();
         var verified = passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
         if (!verified) throw new NotFoundException<User>("due to incorrect password");
-        var accesstoken = jwtservice.GenerateTokenResponse(User, out var tokenExpiryDate) ??
-                          throw new Exception("Invalid credentials password");
-        return new(
-            email: email, AccessToken: accesstoken, ExpiryDate: tokenExpiryDate);
+        return User;
     }
 
     public async Task<User?> CreateUser(CreateUserDto? user)

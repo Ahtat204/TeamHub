@@ -7,9 +7,6 @@ namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthe
 public class AuthenticationServiceTest
 {
 
-    [Test]
-    public void METHOD()
-    {
         
-    }
+    
 }

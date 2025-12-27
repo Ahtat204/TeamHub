@@ -12,12 +12,14 @@ public record  UserRequestDto(
     string Password
 );
 
-public record AuthenticationResponse(
+public record AuthenticationResponseDto(
     string email,
-    string AccessToken,
+    string? AccessToken,
     int ExpiryDate
 );
 
+
+public sealed record RegisterUserDto(string Email, string token);
 /// <summary>
 /// 
 /// </summary>

@@ -2,36 +2,31 @@
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Services.Authentication.Jwt;
 
 namespace TeamcollborationHub.server.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController(IAuthenticationService authenticationService, IJwtService jwtservice) : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
-
-    public AuthenticationController(IAuthenticationService authenticationService)
-    {
-        _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-    }
+    private readonly IAuthenticationService _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
     [HttpPost("/login")]
-    public async Task<ActionResult<User>> Login([FromBody] UserRequestDto userCridentials)
+    public async Task<ActionResult<AuthenticationResponseDto>> Login([FromBody] UserRequestDto? userCridentials)
     {
         if(userCridentials is null)  return BadRequest("Invalid user data"); 
-        var response = await _authenticationService.AuthenticateUser(userCridentials);
-        if(response is null) return BadRequest("Invalid user data"); 
-        return Ok(response);
-
+        var result = await _authenticationService.AuthenticateUser(userCridentials);
+        if(result is null) return BadRequest("Invalid user data"); 
+        var token=jwtservice.GenerateTokenResponse(result,out var date);
+        return Ok(new AuthenticationResponseDto(result.Email, token, date));
+        
     }
-
-
     [HttpPost("/signup")]
-    public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto user)
+    public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
     {
         if(user is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.CreateUser(user);
         if(result is null) return BadRequest("Invalid user data");
-        return Ok(result);
+        return Ok(new RegisterUserDto(result.Email, result.Name));
     }
 }

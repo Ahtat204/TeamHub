@@ -17,4 +17,5 @@ public class User
     [Required] public string Password { get; set; } = string.Empty;
     public int? ProjectId = null;
     public Project? project = null;
+    
 }

@@ -64,6 +64,10 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "host": "0.0.0.0",
+            "port": 2000
+          },
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {

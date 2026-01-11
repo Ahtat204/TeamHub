@@ -1,60 +1,22 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from "@angular/common";
+import {MatCardModule} from "@angular/material/card";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon"
+import {MatFormFieldModule} from "@angular/material/form-field"
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule, MatCardModule, MatInputModule, MatButtonModule, MatIconModule, MatFormFieldModule],
   templateUrl: './user-login.html',
   styleUrl: './user-login.css'
 })
 export class LoginComponent {
-
-  isLoginView: boolean = true;
-
-  userRegisterObj: any = {
-    userName:'',
-    password: '',
-    emailId:''
-  }
-
-  userLogin: any = {
-    userName:'',
-    password: '',
-  }
-
-  router =  inject(Router);
-
-  onRegister() {
-    debugger;
-    const isLocalData = localStorage.getItem("angular18Local");
-    if(isLocalData != null) {
-      const localArray =  JSON.parse(isLocalData);
-      localArray.push(this.userRegisterObj);
-      localStorage.setItem("angular18Local",JSON.stringify(localArray))
-    } else {
-      const localArray = [];
-      localArray.push(this.userRegisterObj);
-      localStorage.setItem("angular18Local",JSON.stringify(localArray))
-    }
-    alert("Registration Success");
-  }
-
-  onLogin() {
-    debugger;
-    const isLocalData = localStorage.getItem("angular18Local");
-    if(isLocalData != null) {
-      const users = JSON.parse(isLocalData);
-
-      const isUserFound =  users.find((m:any)=> m.userName == this.userLogin.userName && m.password == this.userLogin.password);
-      if(isUserFound != undefined) {
-        this.router.navigateByUrl('dashboard')
-      } else {
-        alert("User name or password is Wrong")
-      }
-    } else {
-      alert("No User Found")
-    }
-  }
+user={
+  email:"",
+  password:""
+}
 }

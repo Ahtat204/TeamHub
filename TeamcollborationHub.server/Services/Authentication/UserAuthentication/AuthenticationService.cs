@@ -11,12 +11,12 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IPasswordHashingService _passwordHashingService;
-    private readonly IUserRepository _authenticationRepository;
+    private readonly IAuthenticationRepository _authenticationRepository;
     private readonly IJwtService _jwtservice;
 
     public AuthenticationService(IConfiguration configuration,
         IPasswordHashingService passwordHashingService,
-        AuthenticationRepository authenticationRepository,
+        IAuthenticationRepository authenticationRepository,
         IJwtService jwtservice)
     {
         _passwordHashingService = passwordHashingService;
@@ -24,13 +24,13 @@ public class AuthenticationService : IAuthenticationService
         _jwtservice = jwtservice;
     }
 
-    public AuthenticationService(PasswordHashing passwordHashing,AuthenticationRepository authenticationRepository)
+    public AuthenticationService(PasswordHashing passwordHashing,IAuthenticationRepository authenticationRepository)
     {
         _authenticationRepository = authenticationRepository;
         _passwordHashingService = passwordHashing;
     }
 
-    public AuthenticationService(IPasswordHashingService passwordHashing, IUserRepository authenticationRepository, IJwtService jwtservice)
+    public AuthenticationService(IPasswordHashingService passwordHashing, IAuthenticationRepository authenticationRepository, IJwtService jwtservice)
     {
         passwordHashing = passwordHashing;
         _authenticationRepository = authenticationRepository;

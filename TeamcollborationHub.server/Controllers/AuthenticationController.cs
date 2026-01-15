@@ -18,8 +18,6 @@ public class AuthenticationController(IAuthenticationService authenticationServi
         return Ok(response);
 
     }
-
-
     [HttpPost("/signup")]
     public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto? user)
     {

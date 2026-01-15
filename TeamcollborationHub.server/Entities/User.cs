@@ -8,13 +8,18 @@ namespace TeamcollborationHub.server.Entities;
 /// </summary>
 public class User
 {
-    [Key] public int Id { get; set; }
-    [Column("name")] public string Name { get; set; } = string.Empty;
+    [Key] public int Id { get; init; }
+    [Column("name")] 
+    [StringLength(50)]
+    public string Name { get; set; } = string.Empty;
 
     [Required]
+    [StringLength(20)]
     [EmailAddress(ErrorMessage = "Invalid email format.")]
     public string Email { get; set; } = string.Empty;
-    [Required] public string Password { get; set; } = string.Empty;
+    [Required]
+    [StringLength(50)]
+    public string Password { get; set; } = string.Empty;
     public int? ProjectId = null;
     public Project? project = null;
 }

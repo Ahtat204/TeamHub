@@ -6,17 +6,11 @@ using TeamcollborationHub.server.Entities;
 namespace TeamcollborationHub.server.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
-
-    public AuthenticationController(IAuthenticationService authenticationService)
-    {
-        _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-    }
-
+    private readonly IAuthenticationService _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
     [HttpPost("/login")]
-    public async Task<ActionResult<User>> Login([FromBody] UserRequestDto userCridentials)
+    public async Task<ActionResult<User>> Login([FromBody] UserRequestDto? userCridentials)
     {
         if(userCridentials is null)  return BadRequest("Invalid user data"); 
         var response = await _authenticationService.AuthenticateUser(userCridentials);
@@ -27,7 +21,7 @@ public class AuthenticationController : ControllerBase
 
 
     [HttpPost("/signup")]
-    public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto user)
+    public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto? user)
     {
         if(user is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.CreateUser(user);

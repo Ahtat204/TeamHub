@@ -33,7 +33,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IUserRepository,AuthenticationRepository>();
+builder.Services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {

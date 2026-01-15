@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
@@ -7,7 +6,7 @@ namespace TeamcollborationHub.server.Repositories.UserRepository;
 /// <summary>
 /// class Responsible for handling authentication-related database operations on the User Entity
 /// </summary>
-public class AuthenticationRepository:IUserRepository
+public class AuthenticationRepository:IAuthenticationRepository
 {
     /// <summary>
     /// an instance of TDBContext to interact with the database
@@ -41,7 +40,7 @@ public class AuthenticationRepository:IUserRepository
     /// an asynchronous method for searching a user by email in the database
     /// </summary>
     /// <param name="email">the email of the targeted <code>User</code>></param>
-    /// <returns>rturns the user assosiated with the email if found</returns>
+    /// <returns>returns the user associated with the email if found</returns>
     public async Task<User?> GetUserByEmail(string email)
     {
         return await _context.Users.SingleOrDefaultAsync(u=>u.Email==email);
@@ -73,8 +72,8 @@ public class AuthenticationRepository:IUserRepository
         var user =await  _context.FindAsync<User>(id);
         if (user == null) return user!;
         _context.Users.Remove(user);
-        _context.SaveChanges();
-        return user!;
+        await _context.SaveChangesAsync();
+        return user;
     }
     /// <summary>
     /// 

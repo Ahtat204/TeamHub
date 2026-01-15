@@ -2,7 +2,7 @@
 
 namespace TeamcollborationHub.server.Repositories.UserRepository;
 
-public interface IUserRepository
+public interface IAuthenticationRepository
 {
     public Task<User> CreateUser(User user);
     public Task<User?> GetUserByEmail(string email);
@@ -10,4 +10,5 @@ public interface IUserRepository
     public IQueryable<User> GetAllUsers();
     public Task<User> deleteUser(int id);
     public Task<User> UpdateUser(User user);
+
 }

@@ -11,29 +11,29 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IPasswordHashingService _passwordHashingService;
-    private readonly IAuthenticationRepository _authenticationRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtservice;
 
     public AuthenticationService(IConfiguration configuration,
         IPasswordHashingService passwordHashingService,
-        IAuthenticationRepository authenticationRepository,
+        IUserRepository userRepository,
         IJwtService jwtservice)
     {
         _passwordHashingService = passwordHashingService;
-        _authenticationRepository = authenticationRepository;
+        _userRepository = userRepository;
         _jwtservice = jwtservice;
     }
 
-    public AuthenticationService(PasswordHashing passwordHashing,IAuthenticationRepository authenticationRepository)
+    public AuthenticationService(PasswordHashing passwordHashing,IUserRepository userRepository)
     {
-        _authenticationRepository = authenticationRepository;
+        _userRepository = userRepository;
         _passwordHashingService = passwordHashing;
     }
 
-    public AuthenticationService(IPasswordHashingService passwordHashing, IAuthenticationRepository authenticationRepository, IJwtService jwtservice)
+    public AuthenticationService(IPasswordHashingService passwordHashing, IUserRepository userRepository, IJwtService jwtservice)
     {
         passwordHashing = passwordHashing;
-        _authenticationRepository = authenticationRepository;
+        _userRepository = userRepository;
         _jwtservice = jwtservice;
     }
 
@@ -49,7 +49,7 @@ public class AuthenticationService : IAuthenticationService
     public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
     {
         var email=UserRequest.Email.Trim().ToLower();
-        var User = await _authenticationRepository.GetUserByEmail(email);
+        var User = await _userRepository.GetUserByEmail(email);
         if (User is null) throw new NotFoundException<User>();
         var verified = _passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
         if (!verified) throw new NotFoundException<User>("due to incorrect password");
@@ -62,7 +62,7 @@ public class AuthenticationService : IAuthenticationService
     public async Task<User?> CreateUser(CreateUserDto? user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var emailexist = await _authenticationRepository.GetUserByEmail(user.Email);
+        var emailexist = await _userRepository.GetUserByEmail(user.Email);
         if (emailexist is not null) throw new Exception("this email already exist");
         var hashedPassword = _passwordHashingService.Hash(user.Password);
         var SavedUser = new User
@@ -71,22 +71,22 @@ public class AuthenticationService : IAuthenticationService
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        return await _authenticationRepository.CreateUser(SavedUser);
+        return await _userRepository.CreateUser(SavedUser);
     }
 
     public async Task<User?> UpdateUser(User user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var checkuser = await _authenticationRepository.GetUserByEmail(user.Email);
+        var checkuser = await _userRepository.GetUserByEmail(user.Email);
         if (checkuser is null) throw new NotFoundException<User>("because email does not exist");
         checkuser.Email = user.Email.Trim().ToLower();
         checkuser.Password =checkuser.Password==user.Password?user.Password:_passwordHashingService.Hash(user.Password);
         checkuser.Name = user.Name.Trim();
-        return await _authenticationRepository.UpdateUser(checkuser);
+        return await _userRepository.UpdateUser(checkuser);
     }
 
     public async Task<User?> DeleteUser(int id)
     {
-        return await _authenticationRepository.deleteUser(id);
+        return await _userRepository.deleteUser(id);
     }
 }

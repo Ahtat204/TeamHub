@@ -1,4 +1,5 @@
-﻿using TeamcollborationHub.server.Entities;
+﻿using System.Runtime.InteropServices.JavaScript;
+using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 
 
@@ -8,33 +9,16 @@ public interface IProjectRepository
 {
     public Task<Project?> GetProjectById(int id);
     public IQueryable<Project> GetAllProjects();
-    public Task<Project?> GetProjectByName(string name);
-    public Task<Project> UpdateProject(Project project);
-    
-}
-
-public interface IProjectContributorRepository
-{
+    public Task<Project> UpdateProject(int id,Project project);
     public Task<User?> AddContributorToProject(int projectId, int userId);
     public Task RemoveContributorFromProject(int projectId, int userId);
-    public IQueryable<User?> GetAllContributorsInProject(int projectId);
-    
-}
-
-public interface IProjectCommentRepository
-{
-    IQueryable<Comment?> GetAllProjectComments(int projectId);
-}
-
-public interface IProjectStatusRepository
-{
-    ProjectStatus GetProjectStatus(int projectId);
-    public IQueryable<Project?> GetAllProjectWithStatus(ProjectStatus status);
-}
-
-public interface IProjectTaskRepository
-{
-    public IQueryable<ProjectTask> GetAllProjectTasks(int projectId);
+    public int AddProjectTask(ProjectTask projectTaskId);
+    public int RemoveProjectTask(int projectTaskId);
+    public int SetProjectStartDate(int projectId, DateTime startDate);
+    public int SetProjectEndDate(int projectId, DateTime endDate);
+    public int SetProjectStatus(int projectId, ProjectStatus status);
+    public IQueryable<Project>? SearchProjects(string searchTerm);
+    public IQueryable<ProjectTask> GetProjectTasks(int projectId);
     
     
 }

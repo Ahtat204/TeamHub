@@ -6,7 +6,7 @@ namespace TeamcollborationHub.server.Repositories.UserRepository;
 /// <summary>
 /// class Responsible for handling authentication-related database operations on the User Entity
 /// </summary>
-public class AuthenticationRepository:IAuthenticationRepository
+public class UserRepository:IUserRepository
 {
     /// <summary>
     /// an instance of TDBContext to interact with the database
@@ -16,12 +16,12 @@ public class AuthenticationRepository:IAuthenticationRepository
     /// a Constructor that injects an instance of TDBContext
     /// </summary>
     /// <param name="context"></param>
-    public AuthenticationRepository(TDBContext context)
+    public UserRepository(TDBContext context)
     {
         _context = context;
     }
 
-    public AuthenticationRepository()
+    public UserRepository()
     {
         
     }

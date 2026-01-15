@@ -14,7 +14,7 @@ public class AuthenticationServiceTest
 {
  
     private Mock<IPasswordHashingService> _passwordHashingMock;
-    private Mock<IAuthenticationRepository> _authRepoMock;
+    private Mock<IUserRepository> _authRepoMock;
     private Mock<IJwtService> _jwtServiceMock;
     private AuthenticationService _authService;
 
@@ -22,7 +22,7 @@ public class AuthenticationServiceTest
     public void Setup()
     {
         _passwordHashingMock = new Mock<IPasswordHashingService>();
-        _authRepoMock = new Mock<IAuthenticationRepository>();
+        _authRepoMock = new Mock<IUserRepository>();
         _jwtServiceMock = new Mock<IJwtService>();
 
         _authService = new AuthenticationService(

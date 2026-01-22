@@ -37,19 +37,27 @@ public class ProjectRepository(TDBContext dbContext) : IProjectRepository
         throw new NotImplementedException();
     }
 
-    public Task<User?> AddContributorToProject(int projectId, int userId)
+    public User? AddContributorToProject(int projectId, int userId)
     {
-        throw new NotImplementedException();
+        var result =  _dbContext.Users.FirstOrDefault(u => u.Id == userId);
+        if (result is null) return null;
+        _dbContext.Users.Add(result);
+        _dbContext.SaveChanges();
+        return result;
     }
 
-    public Task RemoveContributorFromProject(int projectId, int userId)
+    public  void RemoveContributorFromProject(int projectId, int userId) 
     {
-        throw new NotImplementedException();
+        var result= _dbContext.Users.FirstOrDefault(u => u.Id == userId && u.ProjectId == projectId);
+        if (result is null) return;
+        _dbContext.Users.Remove(result);
+        dbContext.SaveChanges();
     }
     
-    public int AddProjectTask(ProjectTask projectTaskId)
+    public void AddProjectTask(int id,ProjectTask projectTaskId)
     {
-        throw new NotImplementedException();
+       var result= _dbContext.Projects.FirstOrDefault(pr => pr.Id == id);
+       result?.Tasks?.Add(projectTaskId);
     }
     public int RemoveProjectTask(int projectTaskId) => _dbContext.Projects.Where(pr=>pr.Id==projectTaskId).ExecuteDelete();
     public int SetProjectStartDate(int projectId, DateTime startDate)=>_dbContext.Projects.Where(p=>p.Id==projectId).ExecuteUpdate(u=>u.SetProperty(pr=>pr.EndDateTime, startDate));

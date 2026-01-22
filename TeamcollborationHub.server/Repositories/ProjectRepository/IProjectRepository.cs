@@ -10,9 +10,9 @@ public interface IProjectRepository
     public Task<Project?> GetProjectById(int id);
     public IQueryable<Project> GetAllProjects();
     public Task<Project> UpdateProject(int id,Project project);
-    public Task<User?> AddContributorToProject(int projectId, int userId);
-    public Task RemoveContributorFromProject(int projectId, int userId);
-    public int AddProjectTask(ProjectTask projectTaskId);
+    public User? AddContributorToProject(int projectId, int userId);
+    public void RemoveContributorFromProject(int projectId, int userId);
+    public void AddProjectTask(int id,ProjectTask projectTaskId);
     public int RemoveProjectTask(int projectTaskId);
     public int SetProjectStartDate(int projectId, DateTime startDate);
     public int SetProjectEndDate(int projectId, DateTime endDate);

@@ -6,6 +6,7 @@ namespace TeamcollborationHub.server.Entities;
 /// <summary>
 /// 
 /// </summary>
+[Table("Task")]
 public class User
 {
     [Key] public int Id { get; init; }

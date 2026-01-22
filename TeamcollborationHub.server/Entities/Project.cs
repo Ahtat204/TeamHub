@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TeamcollborationHub.server.Enums;
 
 namespace TeamcollborationHub.server.Entities;
@@ -6,6 +7,7 @@ namespace TeamcollborationHub.server.Entities;
 /// <summary>
 /// 
 /// </summary>
+[Table("Project")]
 public class Project
 {
     [Key] public int Id { get; set; }

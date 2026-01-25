@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
@@ -14,9 +14,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
+    options.UseSqlServer(builder.Configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
-                             "Connection string 'SQLServerConnectionString' not found.")));
+                             "Connection string 'sqlserverconnectionstring' not found.")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
@@ -25,7 +25,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {

@@ -13,7 +13,7 @@ public class AuthenticationServiceTest
 {
     private readonly AuthenticationService _authenticationService;
     private readonly Mock<IPasswordHashingService> _passwordHashingService;
-    private readonly Mock<IAuthenticationRepository> _authenticationRepository;
+    private readonly Mock<IUserRepository> _authenticationRepository;
     private readonly UserRequestDto _userRequestDto;
     private readonly User _newUser;
     private readonly CreateUserDto _newUserDto;
@@ -21,7 +21,7 @@ public class AuthenticationServiceTest
     public AuthenticationServiceTest()
     {
         _passwordHashingService = new Mock<IPasswordHashingService>();
-        _authenticationRepository = new Mock<IAuthenticationRepository>();
+        _authenticationRepository = new Mock<IUserRepository>();
         _authenticationService =
             new AuthenticationService(_passwordHashingService.Object, _authenticationRepository.Object);
         _userRequestDto = new UserRequestDto("lahcen28ahtat@gmail", "pass3453");

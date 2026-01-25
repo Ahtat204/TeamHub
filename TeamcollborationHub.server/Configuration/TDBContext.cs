@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Configuration;
 
-public class TDBContext : DbContext
+public sealed class TDBContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
@@ -12,6 +14,18 @@ public class TDBContext : DbContext
 
     public TDBContext(DbContextOptions<TDBContext> options) : base(options)
     {
+        try
+        {
+            if (Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databasecreator)
+            {
+                if(!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
+                if(!databasecreator.HasTables()) databasecreator.CreateTables(); 
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
     }
 
     public TDBContext()

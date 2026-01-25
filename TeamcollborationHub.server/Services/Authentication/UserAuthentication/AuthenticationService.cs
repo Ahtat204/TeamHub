@@ -8,7 +8,7 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
 public class AuthenticationService(
     IPasswordHashingService passwordHashingService,
-    IAuthenticationRepository authenticationRepository
+    IUserRepository authenticationRepository
    ) : IAuthenticationService
 {
     public async Task<User?> AuthenticateUser(UserRequestDto userRequest)

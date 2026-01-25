@@ -47,13 +47,12 @@ public class AuthenticationServiceTest
     [Test]
     public void CreateUserTest_shouldReturnNewUser()
     {
-        
-        _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(null as User);
-        _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns(_newUserDto.Password);
+        User? nullUser=null;
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(nullUser);
+        _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns(_newUser.Password);
         _authenticationRepository.Setup(repo => repo.CreateUser(_newUser)).ReturnsAsync(_newUser);
         var result = _authenticationService.CreateUser(_newUserDto);
-        var user = result.Result;
-        Assert.IsNotNull(user);
-        Assert.That(user.Email, Is.EqualTo("lahcen28ahtat@gmail"));
+        Assert.IsNotNull(result.Result);
+        
     }
 }

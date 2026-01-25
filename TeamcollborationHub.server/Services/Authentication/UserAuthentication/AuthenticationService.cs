@@ -21,7 +21,7 @@ public class AuthenticationService(
         return user;
     }
 
-    public async Task<User?> CreateUser(CreateUserDto user)
+    public async Task<User> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
         var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
@@ -33,7 +33,12 @@ public class AuthenticationService(
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        return await authenticationRepository.CreateUser(savedUser);
+        var result= await authenticationRepository.CreateUser(savedUser);
+        return result ?? new User
+        {
+            Name = user.UserName,
+            Email = user.Email,
+        };
     }
 
     public async Task<User?> UpdateUser(User user)

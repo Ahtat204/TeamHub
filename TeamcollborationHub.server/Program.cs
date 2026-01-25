@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using System.Text;
+using TeamcollborationHub.server.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
@@ -10,17 +11,18 @@ using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("sqlserverconnectionstring") ??
+    options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
                              "Connection string 'sqlserverconnectionstring' not found.")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
-    options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? "DefaultInstance";
+    options.Configuration = configuration.GetConnectionString("RedisConnectionString");
+    options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
@@ -42,9 +44,9 @@ builder.Services.AddAuthentication(opt =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-            ValidAudience = builder.Configuration["JwtConfig:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]!))
+            ValidIssuer =  LoadValues.LoadValue("JwtConfig:Issuer",configuration) ,
+            ValidAudience = LoadValues.LoadValue("JwtConfig:Audience", configuration),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("JwtConfig:KEY", configuration) ?? string.Empty)),
         };
         options.SaveToken = true;
     });

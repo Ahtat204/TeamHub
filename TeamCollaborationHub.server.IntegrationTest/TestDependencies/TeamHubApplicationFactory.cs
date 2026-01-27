@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
+
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using Testcontainers.MsSql;
@@ -26,8 +26,15 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
             builder.ConfigureTestServices(services =>
             {
                 services.AddScoped<IUserRepository, UserRepository>();
+                
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TDBContext>));
+                if (descriptor is not null) { services.Remove(descriptor); }
                 services.AddDbContext<TDBContext>(options => { options.UseSqlServer(_sqlServerContainer.GetConnectionString()); });
             });
+            builder.UseEnvironment("Production");
+            
+            
+
         }
         public async Task InitializeAsync()
         {

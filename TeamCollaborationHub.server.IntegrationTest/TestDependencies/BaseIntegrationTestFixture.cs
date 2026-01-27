@@ -1,19 +1,36 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TeamcollborationHub.server.Configuration;
 
 
 namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
 
-public class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicationFactory<Program, TDBContext>>
+public abstract class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicationFactory<Program, TDBContext>>
 {
-   public readonly TeamHubApplicationFactory<Program, TDBContext> AppFactory;
-   public readonly TDBContext TdbContext;
+   private readonly TeamHubApplicationFactory<Program, TDBContext> AppFactory;
+   protected readonly IServiceScope scope;
+   protected readonly HttpClient HttpClient;
+   private readonly ILogger<BaseIntegrationTestFixture> _logger;
+   
 
-   public BaseIntegrationTestFixture(TeamHubApplicationFactory<Program, TDBContext> appFactory)
+   protected BaseIntegrationTestFixture(TeamHubApplicationFactory<Program, TDBContext> appFactory)
    {
       AppFactory =appFactory ?? throw new System.ArgumentNullException(nameof(appFactory));
-      var scope = AppFactory.Services.CreateScope();
-      TdbContext = scope.ServiceProvider.GetRequiredService<TDBContext>();
+      scope = AppFactory.Services.CreateScope();
+      HttpClient = appFactory.CreateClient();
+      var context=scope.ServiceProvider.GetRequiredService<TDBContext>();
+      var part = scope.ServiceProvider.GetRequiredService<ApplicationPartManager>();
+      var feature = new ControllerFeature();
+      part.PopulateFeature(feature);
+      _logger = scope.ServiceProvider.GetRequiredService<ILogger<BaseIntegrationTestFixture>>();
+      foreach (var controller in feature.Controllers)
+      {
+         _logger.LogInformation($"Registering controller {controller.Name}");
+      }
+      context.Database.EnsureCreated();
+      
    }
 }

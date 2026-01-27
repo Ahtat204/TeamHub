@@ -7,9 +7,5 @@ namespace TeamcollaborationHub.server.UnitTest.Services.Caching;
 public class RedisCachingServiceTest
 {
 
-    [Test]
-    public void METHOD()
-    {
-        
-    }
+
 }

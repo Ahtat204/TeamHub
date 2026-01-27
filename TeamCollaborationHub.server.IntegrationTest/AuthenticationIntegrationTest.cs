@@ -91,5 +91,27 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         Assert.Equal(HttpStatusCode.OK, registerResponseMessage.StatusCode);
     }
 
+    [Fact]
+    public async Task LoginUserTest()
+    {
+        using var httpClient = _applicationFactory.CreateClient();
+        CreateUserDto? userRegistrationRequest=new CreateUserDto("lahcen28@gmail.com", "123password","lahcen22");
+        string registerJson=JsonSerializer.Serialize(userRegistrationRequest);
+        var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
+        {
+            Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
+        };
+        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
+        var UserRequest=new UserRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
+        string json=JsonSerializer.Serialize(UserRequest);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        var response = await httpClient.SendAsync(postRequest);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(response.Content.ToString());
+        Assert.NotEmpty(response.Content.ToString());
+    }
     #endregion
 }

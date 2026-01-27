@@ -10,15 +10,16 @@
 *.rsuser
 *.suo
 *.user
+*.env
 *.userosscache
 *.sln.docstates
-
+*.secrets
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
+*.txt
 # Mono auto generated files
 mono_crash.*
-
+*.bat
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

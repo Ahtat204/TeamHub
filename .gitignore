@@ -36,6 +36,8 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+TeamcollborationHub.server/.env
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -182,7 +184,7 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
-
+*.secrets
 # Click-Once directory
 publish/
 

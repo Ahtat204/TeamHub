@@ -1,16 +1,14 @@
-namespace TeamcollaborationHub.server.UnitTest
-{
-    public class Tests
-    {
-        [SetUp]
-        public void Setup()
-        {
-        }
+namespace TeamcollaborationHub.server.UnitTest;
 
-        [Test]
-        public void Test1()
-        {
-            Assert.Pass();
-        }
+public class Tests
+{
+    [SetUp]
+    public void Setup()
+    {
+    }
+
+    [Test]
+    public void Test1()
+    {
     }
 }

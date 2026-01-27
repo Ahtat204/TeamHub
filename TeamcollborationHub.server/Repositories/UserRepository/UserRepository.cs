@@ -83,6 +83,14 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<User> deleteUser(string email)
+    {
+        var result =await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        _context.Users.Remove(result);
+        await _context.SaveChangesAsync();
+        return result;
+    }
+
     /// <summary>
     /// 
     /// </summary>

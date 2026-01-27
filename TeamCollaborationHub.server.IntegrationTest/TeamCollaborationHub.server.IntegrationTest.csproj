@@ -4,10 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+
+ <Target Name="CopyDepsJson" AfterTargets="Build">
+    <Copy SourceFiles="$(SolutionDir)TeamcollborationHub.server\bin\Debug\net8.0\TeamcollborationHub.server.deps.json" DestinationFolder="$(OutDir)" />
+ </Target>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />

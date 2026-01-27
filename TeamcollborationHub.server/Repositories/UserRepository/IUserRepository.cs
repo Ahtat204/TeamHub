@@ -9,6 +9,7 @@ public interface IUserRepository
     public Task<User?> GetUserById(int id);
     public IQueryable<User> GetAllUsers();
     public Task<User> deleteUser(int id);
+    public Task<User> deleteUser(string email);
     public Task<User> UpdateUser(User user);
 
 }

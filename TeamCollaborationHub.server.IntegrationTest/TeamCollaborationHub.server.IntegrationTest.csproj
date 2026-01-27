@@ -7,11 +7,6 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
- <Target Name="CopyDepsJson" AfterTargets="Build">
-    <Copy SourceFiles="$(SolutionDir)TeamcollborationHub.server\bin\Debug\net8.0\TeamcollborationHub.server.deps.json" DestinationFolder="$(OutDir)" />
- </Target>
-
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.18" />

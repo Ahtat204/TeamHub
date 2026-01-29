@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamcollborationHub.server.Configuration;
 
@@ -11,9 +12,11 @@ using TeamcollborationHub.server.Configuration;
 namespace TeamcollborationHub.server.Migrations
 {
     [DbContext(typeof(TDBContext))]
-    partial class TDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251205143106_UserUpdated")]
+    partial class UserUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,7 +134,7 @@ namespace TeamcollborationHub.server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("projectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -139,7 +142,7 @@ namespace TeamcollborationHub.server.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("projectId");
 
                     b.ToTable("Users");
                 });
@@ -170,7 +173,9 @@ namespace TeamcollborationHub.server.Migrations
                 {
                     b.HasOne("TeamcollborationHub.server.Entities.Project", "project")
                         .WithMany("contributor")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("projectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("project");
                 });

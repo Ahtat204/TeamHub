@@ -1,28 +1,44 @@
-﻿version: '3.8'
+﻿services:
 
-services:
+  db:
+    container_name: sql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    hostname: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=sa
+      - MSSQL_SA_PASSWORD=Password1
+    volumes:
+      - sqlserver_data:/var/lib/mssql/data
   api:
     container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: webapi
     environment:
-      - SQLServerConnectionString:${SQLServerConnectionString}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - DB_HOST=db
+      - DB_NAME=TeamCollaborationHubDB
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - ISSUER=${ISSUER}
+      - AUDIENCE=${AUDIENCE}
+      - DURATIONINMINUTES=${DURATIONINMINUTES}
     ports:
       - "8080:8080"
     depends_on:
-      - db   
-  db:
-    container_name: teamcollaborationhubDB
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Password1*
-    ports:
-      - "1433:1433"
+      - db
+      - cache
+    volumes:
+      - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
   cache:
    image: redis:6.2-alpine
    container_name: redis
-   ports:
-     - "6379:6379"
    volumes:
    - redis-data:/data
+volumes:
+  redis-data:
+  sqlserver_data:
+    

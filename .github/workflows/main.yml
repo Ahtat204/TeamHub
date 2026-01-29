@@ -8,6 +8,10 @@ on:
 
 env:
   DOTNET_VERSION: "8.0"
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+
 
 jobs:
   build-and-deploy:
@@ -25,7 +29,12 @@ jobs:
         run: dotnet restore
 
       - name: Build Project
-        run: dotnet build --configuration Release --no-restore
+        run:  |
+          export CLIENT_ID=${{ secrets.CLIENT_ID }}
+          export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+          export KEY=$${{ secrets.KEY }}
+          export ASPNETCORE_ENVIRONMENT=Production
+          dotnet build --configuration Release --no-restore
 
       - name: Run Tests 🧪
         run: dotnet test  --verbosity normal

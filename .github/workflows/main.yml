@@ -32,6 +32,7 @@ jobs:
         run:  |
           export CLIENT_ID=${{ secrets.CLIENT_ID }}
           export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+          export KEY=$${{ secrets.KEY }}
           export ASPNETCORE_ENVIRONMENT=Production
           dotnet build --configuration Release --no-restore
 

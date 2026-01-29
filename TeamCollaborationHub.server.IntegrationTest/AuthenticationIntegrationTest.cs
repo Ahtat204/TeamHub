@@ -59,7 +59,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     public async Task LoginTest() // successfully passed
     {
         using var httpClient = _applicationFactory.CreateClient();
-        UserRequestDto? request = new ("lahcen28@gmail.com", "123password");
+        UserRequestDto? request = new ("lahcen30@gmail.com", "password123");
         string json=JsonSerializer.Serialize(request);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {
@@ -77,7 +77,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     public async Task RegisterUserTest()
     {
         using var httpClient = _applicationFactory.CreateClient();
-        CreateUserDto? userRegistrationRequest=new CreateUserDto("lahcen28@gmail.com", "123password","lahcen22");
+        CreateUserDto? userRegistrationRequest=new CreateUserDto("lahcen25@gmail.com", "123assword","lahcen22");
         string registerJson=JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {

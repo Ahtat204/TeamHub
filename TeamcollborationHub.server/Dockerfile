@@ -12,7 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY "TeamcollborationHub.server.csproj" "./"
+COPY TeamcollborationHub.server.csproj ./
 RUN dotnet restore "TeamcollborationHub.server.csproj"
 COPY . .
 WORKDIR "/src"

@@ -25,9 +25,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Authentication\OAuth\Google OAuth\" />
-    <Folder Include="Services\Authentication\OAuth\Github OAuth\" />
-  </ItemGroup>
-
 </Project>

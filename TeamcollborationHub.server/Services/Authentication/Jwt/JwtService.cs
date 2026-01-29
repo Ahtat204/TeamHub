@@ -2,21 +2,14 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
+
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 
-public class JwtService: IJwtService
+public class JwtService(IConfiguration configuration) : IJwtService
 {
-    private readonly TDBContext _tDBContext;
-    private readonly IConfiguration configuration;
-    public JwtService(TDBContext tDBContext, IConfiguration _configuration)
-    {
-        _tDBContext = tDBContext;
-        configuration = _configuration;
-    }
+   
 
     public  string? GenerateTokenResponse(User user,out int expiryDate)
     {

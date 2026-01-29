@@ -2,20 +2,15 @@
 using Microsoft.Extensions.Caching.Distributed;
 using TeamcollborationHub.server.Entities;
 
-namespace TeamcollborationHub.server.Services.Caching
-{
-    public class RedisCachingService : ICachingService
-    {
-        private readonly IDistributedCache? _distributedCache;
+namespace TeamcollborationHub.server.Services.Caching;
 
-        public RedisCachingService(IDistributedCache? distributedCache)=> _distributedCache = distributedCache;
+    public class RedisCachingService(IDistributedCache? distributedCache) : ICachingService
+    {
         public Project? GetProjectFromCache(int projectId)
         {
-            var data=_distributedCache?.GetString(projectId.ToString());
-            if(data == null) return default;
-            return JsonSerializer.Deserialize<Project>(data)!;
+            var data = distributedCache?.GetString(projectId.ToString());
+            return data == null ? null : JsonSerializer.Deserialize<Project>(data)!;
         }
-
         public void SetProjectInCache(string key, Project project)
         {
             var options = new DistributedCacheEntryOptions()
@@ -23,7 +18,11 @@ namespace TeamcollborationHub.server.Services.Caching
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
                 SlidingExpiration = TimeSpan.FromMinutes(2)
             };
-            _distributedCache?.SetString(key,JsonSerializer.Serialize(project),options); 
+            distributedCache?.SetString(key, JsonSerializer.Serialize(project), options);
+        }
+        public void EvictProjectFromCache(string key)
+        {
+            distributedCache?.Remove(key);
         }
     }
-}
+

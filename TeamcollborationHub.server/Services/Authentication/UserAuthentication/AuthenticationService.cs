@@ -1,45 +1,44 @@
-﻿using Microsoft.AspNetCore.Connections.Features;
-using TeamcollborationHub.server.Entities;
+﻿using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Exceptions;
-using TeamcollborationHub.server.Repositories;
+using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Security;
-using TeamcollborationHub.server.Services.Authentication.Jwt;
 
 namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
 public class AuthenticationService(
-    IConfiguration configuration,
     IPasswordHashingService passwordHashingService,
-    AuthenticationRepository authenticationRepository,
-    IJwtService jwtservice) : IAuthenticationService
+    IUserRepository authenticationRepository
+   ) : IAuthenticationService
 {
-    public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
+    public async Task<User?> AuthenticateUser(UserRequestDto userRequest)
     {
-        var email=UserRequest.Email.Trim().ToLower();
-        var User = await authenticationRepository.GetUserByEmail(email);
-        if (User is null) throw new NotFoundException<User>();
-        var verified = passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
+        var email=userRequest.Email.Trim().ToLower();
+        var user = await authenticationRepository.GetUserByEmail(email);
+        if (user is null) throw new NotFoundException<User>();
+        var verified = passwordHashingService.VerifyPassword(userRequest.Password, user.Password);
         if (!verified) throw new NotFoundException<User>("due to incorrect password");
-        var accesstoken = jwtservice.GenerateTokenResponse(User, out var tokenExpiryDate) ??
-                          throw new Exception("Invalid credentials password");
-        return new(
-            email: email, AccessToken: accesstoken, ExpiryDate: tokenExpiryDate);
+        return user;
     }
 
-    public async Task<User?> CreateUser(CreateUserDto? user)
+    public async Task<User> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
         var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
         if (emailexist is not null) throw new Exception("this email already exist");
         var hashedPassword = passwordHashingService.Hash(user.Password);
-        var SavedUser = new User
+        var savedUser = new User
         {
             Email = user.Email.Trim().ToLower(),
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        return await authenticationRepository.CreateUser(SavedUser);
+        var result= await authenticationRepository.CreateUser(savedUser);
+        return result ?? new User
+        {
+            Name = user.UserName,
+            Email = user.Email,
+        };
     }
 
     public async Task<User?> UpdateUser(User user)

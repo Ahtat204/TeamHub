@@ -12,12 +12,14 @@ public record  UserRequestDto(
     string Password
 );
 
-public record AuthenticationResponse(
+public record AuthenticationResponseDto(
     string email,
-    string AccessToken,
+    string? AccessToken,
     int ExpiryDate
 );
 
+
+public sealed record RegisterUserDto(string Email, string token);
 /// <summary>
 /// 
 /// </summary>
@@ -25,9 +27,8 @@ public record AuthenticationResponse(
 /// <param name="Password"></param>
 /// <param name="UserName"></param>
 public record  CreateUserDto(
-    [EmailAddress] [Required] string Email,
+    [EmailAddress,Required]  string Email,
     string Password,
-    [StringLength(20, MinimumLength = 4)]
-    [RegularExpression(@"^[a-zA-Z0-9_]+$",
-        ErrorMessage = "Username can contain only letters, numbers, and underscores")]
+    [StringLength(20, MinimumLength = 4),RegularExpression(@"^[a-zA-Z0-9_]+$",
+         ErrorMessage = "Username can contain only letters, numbers, and underscores")]
     string UserName);

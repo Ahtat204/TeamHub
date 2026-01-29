@@ -1,15 +1,12 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using TeamCollaborationHub.server.IntegrationTest.TestDependencies;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Entities.Dto;
-using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using  System.Text.Json;
 
 namespace TeamCollaborationHub.server.IntegrationTest;
 

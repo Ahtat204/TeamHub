@@ -10,6 +10,8 @@ using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
+using Microsoft.AspNetCore.Authentication.Google;
+using TeamcollborationHub.server.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -52,7 +54,12 @@ builder.Services.AddAuthentication(opt =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("JwtConfig:KEY", configuration) ?? string.Empty)),
         };
         options.SaveToken = true;
-    });
+    }).
+    AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+    }); ;
 builder.Services.AddAuthorization();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

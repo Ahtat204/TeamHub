@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
 
@@ -11,15 +12,29 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         logger.LogError(exception, "Error:{Message}",exception.Message);
         if (exception is NotFoundException<User>)
         {
-            var problem = new ProblemDetails
-            {
-                Status = StatusCodes.Status404NotFound,
-                Title = "the user does not exist",
-            };
-            httpContext.Response.StatusCode = problem.Status.Value;
-            httpContext.Response.ContentType = "application/problem+json";
-            await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
-            return true;
+        
+        }
+
+        switch (exception)
+        {
+            case ValueNotFoundException :
+                var issue = new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "value was not found",
+                };
+                await Console.Error.WriteLineAsync(issue.Status+issue.Title+issue.Detail);
+                return true;
+            case NotFoundException<User>:
+                var problem = new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "the user does not exist",
+                };
+                httpContext.Response.StatusCode = problem.Status.Value;
+                httpContext.Response.ContentType = "application/problem+json";
+                await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
+                return true;
         }
      
         return true;

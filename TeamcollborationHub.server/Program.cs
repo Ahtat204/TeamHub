@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using System.Text;
+using dotenv.net;
 using TeamcollborationHub.server.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
@@ -10,11 +11,13 @@ using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
-using Microsoft.AspNetCore.Authentication.Google;
-using TeamcollborationHub.server.Exceptions;
 
+
+DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
+var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env";} ).AddUserSecrets<Program>().Build();
+string clientId = configuration["OAuth:Google:ClientId"] ?? "not found";
+Console.WriteLine(clientId);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
@@ -34,6 +37,7 @@ builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+
 builder.Services.AddAuthentication(opt =>
     {
         opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,16 +53,16 @@ builder.Services.AddAuthentication(opt =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer =  LoadValues.LoadValue("JwtConfig:Issuer",configuration) ,
-            ValidAudience = LoadValues.LoadValue("JwtConfig:Audience", configuration),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("JwtConfig:KEY", configuration) ?? string.Empty)),
+            ValidIssuer =  LoadValues.LoadValue("ISSUER",configuration) ?? configuration["JwtConfig:Issuer"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidateIssuer)),
+            ValidAudience = LoadValues.LoadValue("AUDIENCE", configuration) ?? configuration["JwtConfig:Audience"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidAudience)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("KEY", configuration) ?? configuration["JwtConfig:KEY"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.IssuerSigningKey)))),
         };
         options.SaveToken = true;
     }).
     AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientId));
-        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+        googleOptions.ClientId = LoadValues.LoadEnv("CLIENT_ID") ?? configuration["OAuth:Google:ClientId"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+        googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET",configuration) ?? configuration["OAuth:Google:ClientSecret"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
     }); ;
 builder.Services.AddAuthorization();
 var app = builder.Build();

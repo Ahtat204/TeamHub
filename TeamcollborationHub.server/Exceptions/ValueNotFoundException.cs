@@ -3,7 +3,7 @@
 public class ValueNotFoundException : Exception
 {
    private readonly string secretName;
-    public ValueNotFoundException( string secretName) : base(secretName+"was not found")
+    public ValueNotFoundException( string secretName) : base(secretName+" \t was not found")
     {
         this.secretName = secretName;
     }

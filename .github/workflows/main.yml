@@ -9,6 +9,8 @@ on:
 env:
   DOTNET_VERSION: "8.0"
 
+
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -22,7 +24,11 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: |
+          export  CLIENT_ID=${{ secrets.CLIENT_ID }}
+          export  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          export ASPNETCORE_ENVIRONMENT=Production
+          dotnet restore
 
       - name: Build Project
         run: dotnet build --configuration Release --no-restore

@@ -31,7 +31,7 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
                 if (descriptor is not null) { services.Remove(descriptor); }
                 services.AddDbContext<TDBContext>(options => { options.UseSqlServer(_sqlServerContainer.GetConnectionString()); });
             });
-            builder.UseEnvironment("Production");
+            builder.UseEnvironment("Development");
             
             
 

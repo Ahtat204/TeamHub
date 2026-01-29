@@ -21,6 +21,11 @@
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - DB_HOST=db
       - DB_NAME=TeamCollaborationHubDB
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - ISSUER=${ISSUER}
+      - AUDIENCE=${AUDIENCE}
+      - DURATIONINMINUTES=${DURATIONINMINUTES}
     ports:
       - "8080:8080"
     depends_on:

@@ -8,6 +8,8 @@ on:
 
 env:
   DOTNET_VERSION: "8.0"
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
 
 
@@ -25,8 +27,8 @@ jobs:
 
       - name: Restore Dependencies
         run: |
-          export  CLIENT_ID= ${{ secrets.CLIENT_ID }}
-          export  CLIENT_SECRET= ${{ secrets.CLIENT_SECRET }}
+          export  CLIENT_ID=${{ secrets.CLIENT_ID }}
+          export  CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
           export ASPNETCORE_ENVIRONMENT=Production
           dotnet restore
 

@@ -5,15 +5,17 @@
   <mat-card-content>
     <form class="login-input">
       <mat-form-field>
-
-        <input class="input-field" matInput placeholder="Enter your Email" name="email" required>
+        <input  matInput class="input-field" placeholder="Enter your Email" name="email" required>
         <mat-icon matSuffix>email</mat-icon>
       </mat-form-field>
       <mat-form-field>
         <input class="" matInput placeholder="Enter your password" type="password" name="password" required>
         <mat-icon matSuffix>password</mat-icon>
       </mat-form-field>
-      <button type="submit" mat-raised-button color="primary" >Submit</button>
+     <div class="bottom-form">
+         <span class="register-tag">Don't have an account?  <a href="/register">register</a></span>
+         <button  type="submit"  mat-raised-button  color="primary" class="submit-btn">Submit</button>
+     </div>
     </form>
   </mat-card-content>
 </mat-card>

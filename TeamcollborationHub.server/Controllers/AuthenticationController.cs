@@ -152,6 +152,5 @@ public class AuthenticationController(
         var accessToken=jwtService.GenerateTokenResponse(user, out var date);
         var result=await jwtService.SaveRefreshToken(newRefreshToken);
         return Ok(new RefreshAccessDto(accessToken,newRefreshToken.Token));
-
     }
 }

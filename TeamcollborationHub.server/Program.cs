@@ -17,8 +17,7 @@ using TeamcollborationHub.server.Services.Security;
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env";} ).AddUserSecrets<Program>().Build();
-string clientId = configuration["OAuth:Google:ClientId"] ?? "not found";
-Console.WriteLine(clientId);
+#region DependencyInjection
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
@@ -33,13 +32,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = configuration.GetConnectionString("RedisConnectionString");
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
+
 builder.Services.AddScoped<ICachingService<Project,string>, RedisCachingService>();
 builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-
 builder.Services.AddAuthentication(opt =>
     {
         opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,16 +66,19 @@ builder.Services.AddAuthentication(opt =>
         googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET",configuration) ?? configuration["OAuth:Google:ClientSecret"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
     }); ;
 builder.Services.AddAuthorization();
+#endregion
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+#region Middlewares
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+#endregion
 app.Run();
 public partial class Program { } // added to solve Can't find <'TeamcollaborationHub\TeamCollaborationHub.server.IntegrationTest\bin\Debug\net8.0\testhost.deps.json'> problem 

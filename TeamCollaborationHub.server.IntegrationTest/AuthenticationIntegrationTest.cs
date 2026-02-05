@@ -72,26 +72,32 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
             Expires = DateTime.UtcNow.AddDays(7),
             Token = _jwtService.GenerateRefreshToken(),
         };
-        var save=await _jwtService.SaveRefreshToken(refreshToken);
-        var validToken=await _jwtService.ValidateRefreshToken(refreshToken.Token);
-        var userToknen=await _jwtService.GetUserByRefreshToken(refreshToken.Id);
+        var save = await _jwtService.SaveRefreshToken(refreshToken);
+        var validToken = await _jwtService.ValidateRefreshToken(refreshToken.Token);
+        var userToknen = await _jwtService.GetUserByRefreshToken(refreshToken.Id);
+
         #region nullCheck
+
         Assert.NotNull(user);
         Assert.NotNull(getUserResponse);
         Assert.NotNull(save);
         Assert.NotNull(validToken);
         Assert.NotNull(userToknen);
+
         #endregion
+
         #region EqualityCheck
+
         Assert.Equal(user.Id, userToknen.Id);
-        Assert.Equal(refreshToken.Token,save);
+        Assert.Equal(refreshToken.Token, save);
         Assert.Equal(refreshToken.UserId, userToknen.Id);
         Assert.Equal(getUserResponse.Id, userToknen.Id);
         Assert.Equal(validToken.UserId, userToknen.Id);
-        Assert.Equal(validToken.Token,refreshToken.Token);
-        
+        Assert.Equal(validToken.Token, refreshToken.Token);
+
         #endregion
     }
+
     #endregion
 
     #region AuthenticationEndpointsTests
@@ -155,6 +161,33 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RefreshTokenTest()
     {
+        using var httpClient = _applicationFactory.CreateClient();
+        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
+        string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
+        var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
+        {
+            Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
+        };
+        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
+        var UserRequest = new LoginRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
+        string json = JsonSerializer.Serialize(UserRequest);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+
+        var response = await httpClient.SendAsync(postRequest);
+        response.EnsureSuccessStatusCode();
+        string jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<LoginResponseDto>(jsonString, options);
+        RefreshToken? refreshToken = new RefreshToken()
+        {
+            Token = result.RefreshToken.Token,
+            Id = Guid.TryParse(result.RefreshToken.Id, out Guid token) ? token : Guid.Empty,
+        };
+        
+        Assert.NotNull(result);
     }
 
     #endregion

@@ -34,6 +34,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
 builder.Services.AddScoped<ICachingService<Project,string>, RedisCachingService>();
+builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();

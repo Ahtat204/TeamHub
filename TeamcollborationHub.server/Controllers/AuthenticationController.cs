@@ -33,7 +33,7 @@ public class AuthenticationController(
             UserId = result.Id,
             Id = Guid.NewGuid(),
         };
-        refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
+       // refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
         await jwtService.SaveRefreshToken(refreshToken);
         return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken,refreshToken.Id.ToString())));
     }

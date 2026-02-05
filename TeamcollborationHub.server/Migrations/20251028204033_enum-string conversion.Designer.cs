@@ -11,7 +11,7 @@ using TeamcollborationHub.server.Configuration;
 
 namespace TeamcollborationHub.server.Migrations
 {
-    [DbContext(typeof(TDBContext))]
+    [DbContext(typeof(TdbContext))]
     [Migration("20251028204033_enum-string conversion")]
     partial class enumstringconversion
     {

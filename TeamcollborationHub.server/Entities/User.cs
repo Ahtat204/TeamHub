@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TeamcollborationHub.server.Enums;
 
 namespace TeamcollborationHub.server.Entities;
 
@@ -14,5 +15,6 @@ public class User
     [Required] public string Password { get; set; } = string.Empty;
     public int? ProjectId = null;
     public Project? project = null;
+    [Required] public UserRole Role { get; init; }
     
 }

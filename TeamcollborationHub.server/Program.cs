@@ -16,14 +16,12 @@ using TeamcollborationHub.server.Services.Security;
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env";} ).AddUserSecrets<Program>().Build();
-string clientId = configuration["OAuth:Google:ClientId"] ?? "not found";
-Console.WriteLine(clientId);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TDBContext>(options =>
+builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
                              "Connection string 'sqlserverconnectionstring' not found.")));

@@ -5,14 +5,14 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Configuration;
 
-public sealed class TDBContext : DbContext
+public sealed class TdbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectTask> Tasks { get; set; }
     public DbSet<Comment> Comments { get; set; }
 
-    public TDBContext(DbContextOptions<TDBContext> options) : base(options)
+    public TdbContext(DbContextOptions<TdbContext> options) : base(options)
     {
         try
         {
@@ -28,7 +28,7 @@ public sealed class TDBContext : DbContext
         }
     }
 
-    public TDBContext()
+    public TdbContext()
     {
     }
 
@@ -41,5 +41,6 @@ public sealed class TDBContext : DbContext
         modelBuilder.Entity<Project>().HasMany(p => p.comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
         modelBuilder.Entity<Project>().Property(o => o.status).HasConversion<string>();
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+        modelBuilder.Entity<User>().Property(u=>u.Role).HasConversion<string>();
     }
 }

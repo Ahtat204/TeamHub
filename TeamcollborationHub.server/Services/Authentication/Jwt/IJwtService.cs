@@ -9,5 +9,5 @@ public interface IJwtService
     public string GenerateRefreshToken();
     public Task<RefreshToken?> ValidateRefreshToken(string refreshToken);
     public  Task<string?> SaveRefreshToken(RefreshToken refreshToken);
-    public Task<User> GetUserByRefreshToken(Guid id); 
+    public Task<User?> GetUserByRefreshToken(Guid id); 
 }

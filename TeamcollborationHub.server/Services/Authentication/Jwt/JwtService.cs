@@ -11,14 +11,27 @@ using TeamcollborationHub.server.Entities.Dto;
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 
-public class JwtService(IConfiguration configuration,TdbContext _context) : IJwtService
+public class JwtService : IJwtService
 {
-    public  string? GenerateTokenResponse(User user,out int exipryDuration)
+    private readonly IConfiguration _configuration;
+    private readonly TdbContext context;
+
+    public JwtService()
     {
-        var issuer = configuration["JwtConfig:Issuer"];
-        var audience = configuration["JwtConfig:Audience"];
-        var key = configuration["JwtConfig:Key"];
-        var tokenValidityInMinutes = configuration["JwtConfig:DurationInMinutes"];
+    }
+
+    public JwtService(IConfiguration configuration, TdbContext context)
+    {
+        _configuration = configuration;
+        context = context;
+    }
+
+    public string? GenerateTokenResponse(User user, out int exipryDuration)
+    {
+        var issuer = _configuration["JwtConfig:Issuer"];
+        var audience = _configuration["JwtConfig:Audience"];
+        var key = _configuration["JwtConfig:Key"];
+        var tokenValidityInMinutes = _configuration["JwtConfig:DurationInMinutes"];
         var tokenExpiryDate = DateTime.UtcNow.AddMinutes(double.Parse(tokenValidityInMinutes ?? "60"));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -30,7 +43,8 @@ public class JwtService(IConfiguration configuration,TdbContext _context) : IJwt
             Expires = tokenExpiryDate,
             Issuer = issuer,
             Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)),
+                SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandles = new JwtSecurityTokenHandler();
         var securityToken = tokenHandles.CreateToken(tokenDescriptor);
@@ -39,20 +53,20 @@ public class JwtService(IConfiguration configuration,TdbContext _context) : IJwt
         return accesstoken;
     }
 
-    public string GenerateRefreshToken()=> Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-    
+    public string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
     public async Task<RefreshToken?> ValidateRefreshToken(string refreshToken)
     {
-       return await _context.RefreshTokens.Where(t => t.Token == refreshToken).FirstOrDefaultAsync();
-        
+        return await context.RefreshTokens.Where(t => t.Token == refreshToken).FirstOrDefaultAsync();
     }
+
     public async Task<string?> SaveRefreshToken(RefreshToken refreshToken)
     {
-        var result = _context.RefreshTokens.Add(refreshToken).Entity;
-        await _context.SaveChangesAsync();
+        var result = context.RefreshTokens.Add(refreshToken).Entity;
+        await context.SaveChangesAsync();
         return result.Token;
     }
 
-    public async Task<User> GetUserByRefreshToken(Guid id) =>await _context.RefreshTokens.Where(re=>re.Id==id).Select(u=>u.User).FirstOrDefaultAsync();
-    
+    public async Task<User?> GetUserByRefreshToken(Guid id) => await context.RefreshTokens.Where(re => re.Id == id)
+        .Select(u => u.User).FirstOrDefaultAsync();
 }

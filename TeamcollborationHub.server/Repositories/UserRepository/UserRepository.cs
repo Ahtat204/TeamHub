@@ -9,6 +9,7 @@ namespace TeamcollborationHub.server.Repositories.UserRepository;
 /// </summary>
 public class UserRepository : IUserRepository
 {
+    
     /// <summary>
     /// an instance of TDBContext to interact with the database
     /// </summary>

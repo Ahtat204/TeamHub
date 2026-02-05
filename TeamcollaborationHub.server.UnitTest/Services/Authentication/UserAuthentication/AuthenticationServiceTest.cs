@@ -3,6 +3,7 @@ using Moq;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Repositories.UserRepository;
+using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 
 namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthentication;
@@ -14,12 +15,14 @@ public class AuthenticationServiceTest
     private readonly AuthenticationService _authenticationService;
     private readonly Mock<IPasswordHashingService> _passwordHashingService;
     private readonly Mock<IUserRepository> _authenticationRepository;
+    private readonly IJwtService _jwtService;
     private readonly LoginRequestDto _userRequestDto;
     private readonly User _newUser;
     private readonly CreateUserDto _newUserDto;
 
     public AuthenticationServiceTest()
     {
+        _jwtService = new JwtService();
         _passwordHashingService = new Mock<IPasswordHashingService>();
         _authenticationRepository = new Mock<IUserRepository>();
         _authenticationService =
@@ -54,5 +57,15 @@ public class AuthenticationServiceTest
         var result = _authenticationService.CreateUser(_newUserDto);
         Assert.IsNotNull(result.Result);
         
+    }
+
+    [Test]
+    public void TestRefreshTokenGeneration()
+    {
+        var token = _jwtService.GenerateRefreshToken();
+        var token2 = _jwtService.GenerateRefreshToken();
+        Assert.IsNotNull(token);
+        Assert.IsNotNull(token2);
+        Assert.That(token2, Is.Not.EqualTo(token));
     }
 }

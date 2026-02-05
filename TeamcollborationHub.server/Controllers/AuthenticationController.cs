@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Caching;
-using TeamcollborationHub.server.Helpers;
 
 namespace TeamcollborationHub.server.Controllers;
 
@@ -18,7 +17,7 @@ public class AuthenticationController(
     private readonly IAuthenticationService _authenticationService =
         authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
-    [HttpPost("login")]
+    [HttpPost("/login")]
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto? userCridentials)
     {
         if (userCridentials is null) return BadRequest("Invalid user data");
@@ -38,7 +37,7 @@ public class AuthenticationController(
         return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken,refreshToken.Id.ToString())));
     }
 
-    [HttpPost("signup")]
+    [HttpPost("/signup")]
     public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
     {
         if (user is null) return BadRequest("Invalid user data");
@@ -47,7 +46,7 @@ public class AuthenticationController(
         return Ok(new RegisterUserDto(result.Email, result.Name));
     }
 
-    [HttpPost("refresh")]
+    [HttpPost("/refresh")]
     public async Task<ActionResult<RefreshAccessDto>> Refresh([FromBody] RefreshTokenDto? refreshToken)
     {
         if (refreshToken?.Token is null) return BadRequest("no refresh token found");

@@ -1,11 +1,10 @@
 ﻿using TeamcollborationHub.server.Entities;
 
-namespace TeamcollborationHub.server.Services.Caching
-{
-    public interface ICachingService
-    {
-        Project? GetProjectFromCache(int projectId);
+namespace TeamcollborationHub.server.Services.Caching;
 
-        void SetProjectInCache(string key, Project project);
-    }
+public interface ICachingService<T,TKey>
+{
+    T? GetProjectFromCache(TKey projectId);
+    void SetProjectInCache(TKey key, T project);
+    public void EvictProjectFromCache(TKey key);
 }

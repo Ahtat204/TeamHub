@@ -10,7 +10,7 @@ using TeamcollborationHub.server.Configuration;
 
 namespace TeamcollborationHub.server.Migrations
 {
-    [DbContext(typeof(TDBContext))]
+    [DbContext(typeof(TdbContext))]
     partial class TDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -110,6 +110,29 @@ namespace TeamcollborationHub.server.Migrations
                     b.ToTable("Task");
                 });
 
+            modelBuilder.Entity("TeamcollborationHub.server.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -164,6 +187,17 @@ namespace TeamcollborationHub.server.Migrations
                         .IsRequired();
 
                     b.Navigation("project");
+                });
+
+            modelBuilder.Entity("TeamcollborationHub.server.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TeamcollborationHub.server.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>

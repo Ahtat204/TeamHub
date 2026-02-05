@@ -35,6 +35,17 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 httpContext.Response.ContentType = "application/problem+json";
                 await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
                 return true;
+            case AlreadyExistsException<string>:
+                var prob = new ProblemDetails
+                {
+                    Status = StatusCodes.Status409Conflict,
+                    Title = "value already exists",
+                    Detail = "The value already exists.Try using different value."
+                };
+                httpContext.Response.StatusCode = prob.Status.Value;
+                httpContext.Response.ContentType = "application/problem+json";
+                await httpContext.Response.WriteAsJsonAsync(prob, cancellationToken);
+                return true;
         }
      
         return true;

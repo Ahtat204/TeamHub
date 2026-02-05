@@ -11,9 +11,9 @@ using TeamcollborationHub.server.Configuration;
 
 namespace TeamcollborationHub.server.Migrations
 {
-    [DbContext(typeof(TDBContext))]
-    [Migration("20251205143106_UserUpdated")]
-    partial class UserUpdated
+    [DbContext(typeof(TdbContext))]
+    [Migration("20260205183312_New_Migration")]
+    partial class New_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,29 @@ namespace TeamcollborationHub.server.Migrations
                     b.ToTable("Task");
                 });
 
+            modelBuilder.Entity("TeamcollborationHub.server.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -134,7 +157,7 @@ namespace TeamcollborationHub.server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("projectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -142,7 +165,7 @@ namespace TeamcollborationHub.server.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("projectId");
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Users");
                 });
@@ -169,13 +192,22 @@ namespace TeamcollborationHub.server.Migrations
                     b.Navigation("project");
                 });
 
+            modelBuilder.Entity("TeamcollborationHub.server.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TeamcollborationHub.server.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>
                 {
                     b.HasOne("TeamcollborationHub.server.Entities.Project", "project")
                         .WithMany("contributor")
-                        .HasForeignKey("projectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("project");
                 });

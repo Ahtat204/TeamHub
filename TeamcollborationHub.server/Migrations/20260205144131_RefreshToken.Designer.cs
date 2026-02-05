@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamcollborationHub.server.Configuration;
 
@@ -11,9 +12,11 @@ using TeamcollborationHub.server.Configuration;
 namespace TeamcollborationHub.server.Migrations
 {
     [DbContext(typeof(TdbContext))]
-    partial class TDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260205144131_RefreshToken")]
+    partial class RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

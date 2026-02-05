@@ -12,7 +12,7 @@ namespace TeamCollaborationHub.server.IntegrationTest;
 
 public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
 {
-    private readonly TeamHubApplicationFactory<Program, TDBContext> _applicationFactory;
+    private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
 
     private User user = new()
@@ -22,7 +22,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         Password = "password123",
     };
 
-    public AuthenticationIntegrationTest(TeamHubApplicationFactory<Program, TDBContext> appFactory) : base(appFactory)
+    public AuthenticationIntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
@@ -59,7 +59,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     public async Task LoginTest() // successfully passed
     {
         using var httpClient = _applicationFactory.CreateClient();
-        UserRequestDto? request = new ("lahcen30@gmail.com", "password123");
+        LoginRequestDto? request = new ("lahcen30@gmail.com", "password123");
         string json=JsonSerializer.Serialize(request);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {
@@ -99,7 +99,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
             Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
         };
         var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
-        var UserRequest=new UserRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
+        var UserRequest=new LoginRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
         string json=JsonSerializer.Serialize(UserRequest);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {

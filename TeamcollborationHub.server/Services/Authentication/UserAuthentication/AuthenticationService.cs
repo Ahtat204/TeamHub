@@ -11,7 +11,7 @@ public class AuthenticationService(
     IUserRepository authenticationRepository
    ) : IAuthenticationService
 {
-    public async Task<User?> AuthenticateUser(UserRequestDto userRequest)
+    public async Task<User?> AuthenticateUser(LoginRequestDto userRequest)
     {
         var email=userRequest.Email.Trim().ToLower();
         var user = await authenticationRepository.GetUserByEmail(email);

@@ -27,9 +27,9 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
             {
                 services.AddScoped<IUserRepository, UserRepository>();
                 
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TDBContext>));
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TdbContext>));
                 if (descriptor is not null) { services.Remove(descriptor); }
-                services.AddDbContext<TDBContext>(options => { options.UseSqlServer(_sqlServerContainer.GetConnectionString()); });
+                services.AddDbContext<TdbContext>(options => { options.UseSqlServer(_sqlServerContainer.GetConnectionString()); });
             });
             builder.UseEnvironment("Development");
             

@@ -5,14 +5,15 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Configuration;
 
-public sealed class TDBContext : DbContext
+public sealed class TdbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectTask> Tasks { get; set; }
     public DbSet<Comment> Comments { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-    public TDBContext(DbContextOptions<TDBContext> options) : base(options)
+    public TdbContext(DbContextOptions<TdbContext> options) : base(options)
     {
         try
         {
@@ -28,7 +29,7 @@ public sealed class TDBContext : DbContext
         }
     }
 
-    public TDBContext()
+    public TdbContext()
     {
     }
 

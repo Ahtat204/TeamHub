@@ -3,37 +3,72 @@ using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Services.Caching;
+using TeamcollborationHub.server.Helpers;
 
 namespace TeamcollborationHub.server.Controllers;
+
 [Route("api")]
 [ApiController]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController(
+    IAuthenticationService authenticationService,
+    IJwtService jwtService,
+    ICachingService<RefreshToken, string> refreshTokenCachingService) : ControllerBase
 {
-    private readonly IAuthenticationService _authenticationService;
-    private readonly IJwtService _jwtService;
+    private readonly IAuthenticationService _authenticationService =
+        authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 
-    public AuthenticationController(IAuthenticationService authenticationService, IJwtService jwtService)
+    [HttpPost("login")]
+    public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto? userCridentials)
     {
-        _jwtService = jwtService;
-        _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-    }
-
-    [HttpPost("/login")]
-    public async Task<ActionResult<AuthenticationResponseDto>> Login([FromBody] UserRequestDto? userCridentials)
-    {
-        if(userCridentials is null)  return BadRequest("Invalid user data"); 
+        if (userCridentials is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.AuthenticateUser(userCridentials);
-        if(result is null) return NotFound("Invalid user data"); 
-        var token=_jwtService.GenerateTokenResponse(result,out var date);
-        return Ok(new AuthenticationResponseDto(result.Email, token, date));
-        
+        if (result is null) return NotFound("Invalid user data");
+        var token = jwtService.GenerateTokenResponse(result, out var date);
+        var generateRefreshToken = jwtService.GenerateRefreshToken();
+        var refreshToken = new RefreshToken
+        {
+            Token = generateRefreshToken,
+            Expires = DateTime.UtcNow.AddDays(10),
+            UserId = result.Id,
+            Id = Guid.NewGuid(),
+        };
+        refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
+        await jwtService.SaveRefreshToken(refreshToken);
+        return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken,refreshToken.Id.ToString())));
     }
-    [HttpPost("/signup")]
+
+    [HttpPost("signup")]
     public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
     {
-        if(user is null) return BadRequest("Invalid user data");
+        if (user is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.CreateUser(user);
-        if(result is null) return BadRequest("Invalid user data");
+        if (result is null) return BadRequest("Invalid user data");
         return Ok(new RegisterUserDto(result.Email, result.Name));
+    }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<RefreshAccessDto>> Refresh([FromBody] RefreshTokenDto? refreshToken)
+    {
+        if (refreshToken?.Token is null) return BadRequest("no refresh token found");
+        var found =await jwtService.ValidateRefreshToken(refreshToken.Token);
+        
+        if (found is  null)
+        {
+            return NotFound("Invalid refresh token");
+        }
+        
+        RefreshToken newRefreshToken = new()
+        {
+            Token = jwtService.GenerateRefreshToken(),
+            Expires = DateTime.UtcNow.AddDays(10),
+            UserId = found.UserId,
+            Id = Guid.NewGuid(),
+        };
+        var user=await jwtService.GetUserByRefreshToken(found.Id);
+        var accessToken=jwtService.GenerateTokenResponse(user, out var date);
+        var result=await jwtService.SaveRefreshToken(newRefreshToken);
+        return Ok(new RefreshAccessDto(accessToken,newRefreshToken.Token));
+
     }
 }

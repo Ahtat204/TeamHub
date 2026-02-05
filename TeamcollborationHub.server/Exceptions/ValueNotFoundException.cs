@@ -1,10 +1,6 @@
 ﻿namespace TeamcollborationHub.server.Exceptions;
 
-public class ValueNotFoundException : Exception
+public class ValueNotFoundException(string secretName) : Exception(secretName + " \t was not found")
 {
-   private readonly string secretName;
-    public ValueNotFoundException( string secretName) : base(secretName+" \t was not found")
-    {
-        this.secretName = secretName;
-    }
+   private readonly string _secretName = secretName;
 }

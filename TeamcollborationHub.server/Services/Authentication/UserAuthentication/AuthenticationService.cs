@@ -73,7 +73,7 @@ public class AuthenticationService(
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
         var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
-        if (emailexist is not null) throw new Exception("this email already exist");
+        if (emailexist is not null) throw new AlreadyExistsException<string>(user.Email);
         var hashedPassword = passwordHashingService.Hash(user.Password);
         var savedUser = new User
         {

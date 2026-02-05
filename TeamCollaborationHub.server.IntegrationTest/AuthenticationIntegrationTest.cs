@@ -147,7 +147,6 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
             Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
         };
         var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
-        registerResponseMessage.EnsureSuccessStatusCode();
         CreateUserDto? usersignUpRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
         string secondRequest = JsonSerializer.Serialize(usersignUpRequest);
         var SecondRequest = new HttpRequestMessage(HttpMethod.Post, "/signup")

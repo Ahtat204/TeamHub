@@ -14,7 +14,7 @@ public class AuthenticationServiceTest
     private readonly AuthenticationService _authenticationService;
     private readonly Mock<IPasswordHashingService> _passwordHashingService;
     private readonly Mock<IUserRepository> _authenticationRepository;
-    private readonly UserRequestDto _userRequestDto;
+    private readonly LoginRequestDto _loginRequestDto;
     private readonly User _newUser;
     private readonly CreateUserDto _newUserDto;
 
@@ -24,7 +24,7 @@ public class AuthenticationServiceTest
         _authenticationRepository = new Mock<IUserRepository>();
         _authenticationService =
             new AuthenticationService(_passwordHashingService.Object, _authenticationRepository.Object);
-        _userRequestDto = new UserRequestDto("lahcen28ahtat@gmail", "pass3453");
+        _loginRequestDto = new LoginRequestDto("lahcen28ahtat@gmail", "pass3453");
         _newUser = new User
         {
             Email = "lahcen28ahtat@gmail",
@@ -37,8 +37,8 @@ public class AuthenticationServiceTest
     public void AuthenticateUserTest_ShouldReturnUser()
     {
         _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(_newUser);
-        _passwordHashingService.Setup(ph => ph.VerifyPassword(_userRequestDto.Password, _newUser.Password)).Returns(true);
-        var result = _authenticationService.AuthenticateUser(_userRequestDto);
+        _passwordHashingService.Setup(ph => ph.VerifyPassword(_loginRequestDto.Password, _newUser.Password)).Returns(true);
+        var result = _authenticationService.AuthenticateUser(_loginRequestDto);
         var user = result.Result;
         Assert.IsNotNull(user);
         Assert.That(user.Email, Is.EqualTo("lahcen28ahtat@gmail"));

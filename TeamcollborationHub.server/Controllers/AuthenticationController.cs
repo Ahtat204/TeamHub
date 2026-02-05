@@ -18,17 +18,26 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
     }
 
-    [HttpPost("/login")]
-    public async Task<ActionResult<AuthenticationResponseDto>> Login([FromBody] UserRequestDto? userCridentials)
+    [HttpPost("login")]
+    public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto? userCridentials)
     {
         if(userCridentials is null)  return BadRequest("Invalid user data"); 
         var result = await _authenticationService.AuthenticateUser(userCridentials);
         if(result is null) return NotFound("Invalid user data"); 
         var token=_jwtService.GenerateTokenResponse(result,out var date);
-        return Ok(new AuthenticationResponseDto(result.Email, token, date));
+        var refreshToken=_jwtService.GenerateRefreshToken();
+        var refreshToken1 = new RefreshToken
+        {
+            Token = refreshToken,
+            Expires = DateTime.UtcNow.AddDays(10),
+            UserId = result.Id,
+            Id = Guid.NewGuid(),
+        };
+        var save=await _authenticationService.SaveRefreshToken(refreshToken1);
+        return Ok(new LoginResponseDto(result.Email, token, date,refreshToken));
         
     }
-    [HttpPost("/signup")]
+    [HttpPost("signup")]
     public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
     {
         if(user is null) return BadRequest("Invalid user data");
@@ -36,4 +45,10 @@ public class AuthenticationController : ControllerBase
         if(result is null) return BadRequest("Invalid user data");
         return Ok(new RegisterUserDto(result.Email, result.Name));
     }
+
+    /*[HttpPost("refresh")]
+    public async Task<ActionResult<RefreshAccessDto>> Refresh([FromBody] string? refreshToken)
+    {
+        if(refreshToken is null) return BadRequest("Invalid refresh token");
+    }*/
 }

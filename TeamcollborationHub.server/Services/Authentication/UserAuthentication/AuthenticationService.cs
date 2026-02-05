@@ -11,12 +11,12 @@ public class AuthenticationService(
     IUserRepository authenticationRepository
    ) : IAuthenticationService
 {
-    public async Task<User?> AuthenticateUser(UserRequestDto userRequest)
+    public async Task<User?> AuthenticateUser(LoginRequestDto loginRequest)
     {
-        var email=userRequest.Email.Trim().ToLower();
+        var email=loginRequest.Email.Trim().ToLower();
         var user = await authenticationRepository.GetUserByEmail(email);
         if (user is null) throw new NotFoundException<User>();
-        var verified = passwordHashingService.VerifyPassword(userRequest.Password, user.Password);
+        var verified = passwordHashingService.VerifyPassword(loginRequest.Password, user.Password);
         if (!verified) throw new NotFoundException<User>("due to incorrect password");
         return user;
     }
@@ -52,8 +52,10 @@ public class AuthenticationService(
         return await authenticationRepository.UpdateUser(checkuser);
     }
 
-    public async Task<User?> DeleteUser(int id)
-    {
-        return await authenticationRepository.deleteUser(id);
-    }
+    public async Task<User?> DeleteUser(int id) => await authenticationRepository.DeleteUser(id);
+    
+
+    public async Task<string?> SaveRefreshToken(RefreshToken refreshToken)=> await authenticationRepository.SaveRefreshToken(refreshToken: refreshToken);
+        
+    
 }

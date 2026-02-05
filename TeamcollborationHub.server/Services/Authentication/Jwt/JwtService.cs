@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TeamcollborationHub.server.Entities;
@@ -11,7 +12,7 @@ public class JwtService(IConfiguration configuration) : IJwtService
 {
    
 
-    public  string? GenerateTokenResponse(User user,out int expiryDate)
+    public  string? GenerateTokenResponse(User user,out int exipryDuration)
     {
         var issuer = configuration["JwtConfig:Issuer"];
         var audience = configuration["JwtConfig:Audience"];
@@ -33,7 +34,12 @@ public class JwtService(IConfiguration configuration) : IJwtService
         var tokenHandles = new JwtSecurityTokenHandler();
         var securityToken = tokenHandles.CreateToken(tokenDescriptor);
         var accesstoken = tokenHandles.WriteToken(securityToken);
-        expiryDate = (int)tokenExpiryDate.Subtract(DateTime.UtcNow).TotalSeconds;
+        exipryDuration = (int)tokenExpiryDate.Subtract(DateTime.UtcNow).TotalSeconds;
         return accesstoken;
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }

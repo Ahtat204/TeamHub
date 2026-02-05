@@ -23,7 +23,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TDBContext>(options =>
+builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
                              "Connection string 'sqlserverconnectionstring' not found.")));

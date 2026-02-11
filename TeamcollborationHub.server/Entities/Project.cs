@@ -10,16 +10,16 @@ namespace TeamcollborationHub.server.Entities;
 [Table("Project")]
 public class Project
 {
-    [Key] public int Id { get; set; }
+    [Key] public int Id { get; init; }
     [Required] [StringLength(50)] 
-    public required string Name { get; set; }
+    public required string Name { get; init; }
     [StringLength(300)] 
-    public string Description { get; set; } = string.Empty;
-    public ICollection<User>? contributor { get; set; }
-    public ProjectStatus status { get; set; } = ProjectStatus.NotStarted;
-    public ICollection<Comment>? comments { get; set; }
-    public ICollection<ProjectTask>? Tasks { get; set; }
+    public string Description { get; init; } = string.Empty;
+    public ICollection<User>? contributor { get; init; }
+    public ProjectStatus? status { get; init; } = ProjectStatus.NotStarted;
+    public ICollection<Comment>? comments { get; init; }
+    public ICollection<ProjectTask>? Tasks { get; init; }
     [DataType(DataType.Date)] public DateTime? CreatedDateTime { get; set; }
     [DataType(DataType.Date)] public DateTime? LastModifiedDateTime { get; set; }
-    [DataType(DataType.Date)] public DateTime? EndDateTime { get; set; }
+    [DataType(DataType.Date)] public DateTime? Deadline { get; set; }
 }

@@ -6,6 +6,7 @@ using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using dotenv.net;
 using System.Text;
+using MediatR;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
@@ -20,6 +21,7 @@ builder.Configuration
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??

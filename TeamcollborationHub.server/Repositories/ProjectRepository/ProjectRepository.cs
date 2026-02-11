@@ -60,8 +60,8 @@ public class ProjectRepository(TDBContext dbContext) : IProjectRepository
        result?.Tasks?.Add(projectTaskId);
     }
     public int RemoveProjectTask(int projectTaskId) => _dbContext.Projects.Where(pr=>pr.Id==projectTaskId).ExecuteDelete();
-    public int SetProjectStartDate(int projectId, DateTime startDate)=>_dbContext.Projects.Where(p=>p.Id==projectId).ExecuteUpdate(u=>u.SetProperty(pr=>pr.EndDateTime, startDate));
-    public int SetProjectEndDate(int projectId, DateTime endDate)=>_dbContext.Projects.Where(p=>p.Id==projectId).ExecuteUpdate(u=>u.SetProperty(pr=>pr.EndDateTime, endDate));
+    public int SetProjectStartDate(int projectId, DateTime startDate)=>_dbContext.Projects.Where(p=>p.Id==projectId).ExecuteUpdate(u=>u.SetProperty(pr=>pr.Deadline, startDate));
+    public int SetProjectEndDate(int projectId, DateTime endDate)=>_dbContext.Projects.Where(p=>p.Id==projectId).ExecuteUpdate(u=>u.SetProperty(pr=>pr.Deadline, endDate));
     public int SetProjectStatus(int projectId, ProjectStatus status)=>_dbContext.Projects.Where(p => p.Id==projectId).ExecuteUpdate(s=>s.SetProperty(pr=>pr.status,status));
     public IQueryable<Project>? SearchProjects(string searchTerm)
     {

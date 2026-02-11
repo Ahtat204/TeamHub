@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
+using TeamcollborationHub.server.Dto;
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 

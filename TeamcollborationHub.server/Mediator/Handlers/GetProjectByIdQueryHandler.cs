@@ -6,9 +6,9 @@ using TeamcollborationHub.server.Mediator.Queries;
 
 namespace TeamcollborationHub.server.Mediator.Handlers;
 
-public class GetProjectQueryHandler(TDBContext context): IRequestHandler<GetProjectQuery, Project>
+public class GetProjectByIdQueryHandler(TDBContext context): IRequestHandler<GetProjectByIdQuery, Project>
 {
-    public Task<Project> Handle(GetProjectQuery request, CancellationToken cancellationToken)
+    public Task<Project> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
     {
         var result = context.Projects.FirstOrDefault(pr => pr.Id == request.Id);
         if (result == null) throw new NotFoundException<Entities.Project>();

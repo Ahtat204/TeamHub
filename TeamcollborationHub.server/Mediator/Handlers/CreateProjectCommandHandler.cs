@@ -10,7 +10,7 @@ public class CreateProjectCommandHandler(TDBContext dbContext) : IRequestHandler
     public async Task<Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        Entities.Project project = new()
+        Project project = new()
         {
             Name = request.Name,
             Description = request.Description,

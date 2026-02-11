@@ -6,7 +6,7 @@ using TeamcollborationHub.server.Enums;
 namespace TeamcollborationHub.server.Repositories.ProjectRepository;
 
 /// <summary>
-/// 
+///TODO :this is not gonna be used ,Initially I thought about using the same pattern for the project table , but creating a project record is too complex , and I decided to use CQRS since it seperates reads and writes, which exactly what's needed here, as fecthing a project record , or even all of them is a lot simpler than creating one 
 /// </summary>
 /// <param name="dbContext"></param>
 public class ProjectRepository(TDBContext dbContext) : IProjectRepository

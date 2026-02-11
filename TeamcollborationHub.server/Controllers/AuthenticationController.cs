@@ -1,7 +1,7 @@
-﻿using TeamcollborationHub.server.Entities.Dto;
-using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Dto;
 
 namespace TeamcollborationHub.server.Controllers;
 [Route("api/[controller]")]

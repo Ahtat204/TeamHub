@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Connections.Features;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Security;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Dto;
 
 namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 

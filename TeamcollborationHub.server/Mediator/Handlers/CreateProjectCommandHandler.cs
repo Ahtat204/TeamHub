@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Mediator.Commands;
 
-namespace TeamcollborationHub.server.Features.Project.CreateProject;
+namespace TeamcollborationHub.server.Mediator.Handlers;
 
-public class CreateProjectCommandHandler(TDBContext dbContext) : IRequestHandler<CreateProjectCommand, Entities.Project>
+public class CreateProjectCommandHandler(TDBContext dbContext) : IRequestHandler<CreateProjectCommand, Project>
 {
-    public async Task<Entities.Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         Entities.Project project = new()

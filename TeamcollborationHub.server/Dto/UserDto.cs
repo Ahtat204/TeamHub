@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TeamcollborationHub.server.Entities.Dto;
+namespace TeamcollborationHub.server.Dto;
 
 /// <summary>
 /// 

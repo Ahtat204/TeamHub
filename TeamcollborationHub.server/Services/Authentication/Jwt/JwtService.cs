@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Entities.Dto;
+using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 
@@ -20,9 +21,13 @@ public class JwtService: IJwtService
 
     public  string? GenerateTokenResponse(User user,out int expiryDate)
     {
-        var issuer = configuration["JwtConfig:Issuer"];
+        var issuer = configuration["JwtConfig:Issuer"] ;
         var audience = configuration["JwtConfig:Audience"];
         var key = configuration["JwtConfig:Key"];
+        if(key is null || issuer is null || audience is null)
+        {
+            throw new NotFoundException<string>("JWT configuration is missing.");
+        }
         var tokenValidityInMinutes = configuration["JwtConfig:DurationInMinutes"];
         var tokenExpiryDate = DateTime.UtcNow.AddMinutes(double.Parse(tokenValidityInMinutes ?? "60"));
         var tokenDescriptor = new SecurityTokenDescriptor

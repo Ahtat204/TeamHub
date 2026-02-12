@@ -1,14 +1,15 @@
 .nav-bar{
   background: #ffffff !important;
   position: fixed !important;
-  top: 0;
+  top: 5px;
   display: flex;
-  left: 20px !important;
+  width:100vw;
+
+  left: 35px !important;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap:200px
-
+  gap:200px;
 
 
 }
@@ -17,10 +18,20 @@
 }
 .searchbar{
   display: flex;
-
-  width: 100px !important;
   padding-bottom: 10px !important;
   align-items: center;
+  position: fixed !important;
+  left: 30rem !important;
+  background-color: #ffffff !important;
 
+}
+.search-input{
+  margin-top: 20px;
+  width: 700px !important;
+  height: 40px !important;
+  position: absolute;
+  border-radius: 14px;
+  padding-right: 3px !important;
+  left: 40px !important;
 
 }

@@ -1,0 +1,26 @@
+.nav-bar{
+  background: #ffffff !important;
+  position: fixed !important;
+  top: 0;
+  display: flex;
+  left: 20px !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap:200px
+
+
+
+}
+.logo{
+  color: #000000 !important;
+}
+.searchbar{
+  display: flex;
+
+  width: 100px !important;
+  padding-bottom: 10px !important;
+  align-items: center;
+
+
+}

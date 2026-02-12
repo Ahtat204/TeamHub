@@ -1,6 +1,5 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { UserSignup } from './user-signup/user-signup';
@@ -10,6 +9,7 @@ import {MatCard, MatCardContent, MatCardHeader} from '@angular/material/card';
 import {MatFormField, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
+import { Dashboard } from './dashboard/dashboard';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,8 @@ import {MatInput} from '@angular/material/input';
     MatFormField,
     MatIcon,
     MatInput,
-    MatSuffix
+    MatSuffix,
+    Dashboard
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

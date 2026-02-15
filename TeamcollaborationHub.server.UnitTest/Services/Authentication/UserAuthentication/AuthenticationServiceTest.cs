@@ -1,6 +1,6 @@
 ﻿using Moq;
+using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;

@@ -10,6 +10,7 @@ import {MatFormField, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import { Dashboard } from './dashboard/dashboard';
+import { ProjectsStats } from './projects-stats/projects-stats';
 
 @NgModule({
   declarations: [
@@ -28,10 +29,14 @@ import { Dashboard } from './dashboard/dashboard';
     MatIcon,
     MatInput,
     MatSuffix,
-    Dashboard
+    Dashboard,
+    ProjectsStats
   ],
   providers: [
     provideBrowserGlobalErrorListeners()
+  ],
+  exports: [
+    ProjectsStats
   ],
   bootstrap: [App]
 })

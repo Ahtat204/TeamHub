@@ -1,20 +1,23 @@
-.nav-bar{
-  background: #ffffff !important;
-  position: fixed !important;
-  top: 5px;
-  display: flex;
-  width:100vw;
+.dash-body{
 
-  left: 35px !important;
+}
+
+.nav-bar{
+  background: #d1caca !important;
+  position: fixed !important;
+  top: 1px;
+  display: flex;
+  width:100%;
+
+  left: 5px !important;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap:200px;
-
-
 }
 .logo{
   color: #000000 !important;
+  margin-left:14px;
 }
 .searchbar{
   display: flex;
@@ -26,12 +29,17 @@
 
 }
 .search-input{
-  margin-top: 20px;
+  margin-top: 10px;
   width: 700px !important;
   height: 40px !important;
   position: absolute;
   border-radius: 14px;
   padding-right: 3px !important;
   left: 40px !important;
-
+}
+.project-section{
+  display: flex;
+  flex-direction: row;
+  justify-content:space-around;
+  gap: 0;
 }

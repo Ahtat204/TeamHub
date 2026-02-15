@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {ProjectsStats} from '../projects-stats/projects-stats';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,7 +7,12 @@ import { Component } from '@angular/core';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 
+  imports: [
+    ProjectsStats
+
+  ]
 })
 export class Dashboard {
-
+  bgColor = 'navy';
+  textColor = 'white';
 }

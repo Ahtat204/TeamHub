@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
 
-public class GetProjectTaskByIdQueryHandler(TDBContext db):IRequestHandler<GetProjectTaskByIdQuery, ProjectTask>
+public class GetProjectTaskByIdQueryHandler(TdbContext db):IRequestHandler<GetProjectTaskByIdQuery, ProjectTask>
 {
     public async Task<ProjectTask> Handle(GetProjectTaskByIdQuery request, CancellationToken cancellationToken)
     {

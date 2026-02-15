@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Entities;
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
 
 // TODO:Add ArgumentNullException in the GlobalException Handler 
-public class GetAllProjectTasksQueryHandler(TDBContext db):IRequestHandler<GetAllProjectTasksQuery, IEnumerable<ProjectTask>?>//done
+public class GetAllProjectTasksQueryHandler(TdbContext db):IRequestHandler<GetAllProjectTasksQuery, IEnumerable<ProjectTask>?>//done
 {
     public Task<IEnumerable<ProjectTask>?> Handle(GetAllProjectTasksQuery request, CancellationToken cancellationToken)
     {

@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetProjectContributorsById;
 
-public class GetProjectContributorsByIdQueryHandler(TDBContext db):IRequestHandler<GetProjectContributorsByIdQuery,IEnumerable<User>>
+public class GetProjectContributorsByIdQueryHandler(TdbContext db):IRequestHandler<GetProjectContributorsByIdQuery,IEnumerable<User>>
 {
     public  Task<IEnumerable<User>> Handle(GetProjectContributorsByIdQuery request, CancellationToken cancellationToken)
     {

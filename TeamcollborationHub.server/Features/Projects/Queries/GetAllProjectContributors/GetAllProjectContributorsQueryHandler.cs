@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors
 {
-    public class GetAllProjectContributorsQueryHandler(TDBContext dBContext) : IRequestHandler<GetAllProjectContributorsQuery, IEnumerable<User>>
+    public class GetAllProjectContributorsQueryHandler(TdbContext dBContext) : IRequestHandler<GetAllProjectContributorsQuery, IEnumerable<User>>
     {
         public async Task<IEnumerable<User>> Handle(GetAllProjectContributorsQuery request, CancellationToken cancellationToken)
         {

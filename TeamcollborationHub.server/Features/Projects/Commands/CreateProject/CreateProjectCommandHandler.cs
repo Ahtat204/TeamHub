@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 
-public class CreateProjectCommandHandler(TDBContext dbContext) : IRequestHandler<CreateProjectCommand, Project>
+public class CreateProjectCommandHandler(TdbContext dbContext) : IRequestHandler<CreateProjectCommand, Project>
 {
     public async Task<Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {

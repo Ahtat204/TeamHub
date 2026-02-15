@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
 
-public class GetProjectByIdQueryHandler(TDBContext context): IRequestHandler<GetProjectByIdQuery, Project>
+public class GetProjectByIdQueryHandler(TdbContext context): IRequestHandler<GetProjectByIdQuery, Project>
 {
     // TODO:Add NotFoundException<Project> in the GlobalException Handler ,better do it before merging to test its functionality
     public async Task<Project> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)

@@ -11,12 +11,12 @@ public class UserRepository:IUserRepository
     /// <summary>
     /// an instance of TDBContext to interact with the database
     /// </summary>
-    private readonly TDBContext _context;
+    private readonly TdbContext _context;
     /// <summary>
     /// a Constructor that injects an instance of TDBContext
     /// </summary>
     /// <param name="context"></param>
-    public UserRepository(TDBContext context)
+    public UserRepository(TdbContext context)
     {
         _context = context;
     }

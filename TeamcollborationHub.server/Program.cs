@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
@@ -27,7 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TDBContext>(options =>
+builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
                          throw new InvalidOperationException(
                              "Connection string 'SQLServerConnectionString' not found.")));
@@ -96,6 +97,14 @@ app.MapGet("api/project/tasks/{id:int}", async ([FromQuery] int id, IMediator me
 app.MapGet("api/project/contributor/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
 {
     var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
+    return  Results.Ok(result);
+});
+#endregion
+#region PostRequests
+
+app.MapPost("api/projects/", async (CreateProjectCommand projectCommand, IMediator mediator) =>
+{
+    var result = await mediator.Send(projectCommand);
     return  Results.Ok(result);
 });
 #endregion

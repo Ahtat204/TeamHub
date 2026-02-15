@@ -10,7 +10,7 @@ using TeamcollborationHub.server.Configuration;
 
 namespace TeamcollborationHub.server.Migrations
 {
-    [DbContext(typeof(TDBContext))]
+    [DbContext(typeof(TdbContext))]
     partial class TDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery
 {
-    public class GetAllProjectsQueryHandler(TDBContext dBContext) : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
+    public class GetAllProjectsQueryHandler(TdbContext dBContext) : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
     {
         public async Task<IEnumerable<Project>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
         {

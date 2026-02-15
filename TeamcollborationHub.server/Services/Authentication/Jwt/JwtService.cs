@@ -10,9 +10,9 @@ namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 
 public class JwtService: IJwtService
 {
-    private readonly TDBContext _tDBContext;
+    private readonly TdbContext _tDBContext;
     private readonly IConfiguration configuration;
-    public JwtService(TDBContext tDBContext, IConfiguration _configuration)
+    public JwtService(TdbContext tDBContext, IConfiguration _configuration)
     {
         _tDBContext = tDBContext;
         configuration = _configuration;

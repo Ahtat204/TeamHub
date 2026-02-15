@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Mediator.Queries;
+
 
 namespace TeamcollborationHub.server.Services.Projects;
 
@@ -20,20 +20,14 @@ public class ProjectService(IMediator mediator) : IProjectService
     {
         throw new NotImplementedException();
     }
-
-    public async Task<List<User>> GetAllProjectContributors() => await 
+    
     
 
     public Task<List<Project>> GetAllProjects()
     {
         throw new NotImplementedException();
     }
-
-    public Task<List<ProjectTask>> GetAllProjectTasks()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public Task<Project> GetProjectById(int id)
     {
         throw new NotImplementedException();

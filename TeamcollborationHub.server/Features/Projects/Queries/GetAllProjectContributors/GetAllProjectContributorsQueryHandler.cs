@@ -2,9 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Mediator.Queries;
 
-namespace TeamcollborationHub.server.Mediator.Handlers
+namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors
 {
     public class GetAllProjectContributorsQueryHandler(TDBContext dBContext) : IRequestHandler<GetAllProjectContributorsQuery, IEnumerable<User>>
     {

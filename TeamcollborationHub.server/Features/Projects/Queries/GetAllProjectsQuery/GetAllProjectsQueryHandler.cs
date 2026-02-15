@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Mediator.Queries;
 
-namespace TeamcollborationHub.server.Mediator.Handlers
+namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery
 {
     public class GetAllProjectsQueryHandler(TDBContext dBContext) : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
     {

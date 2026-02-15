@@ -6,11 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TeamcollborationHub.server.Mediator.Queries;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
+using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
+using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-using TeamcollborationHub.server.Services.Projects;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,7 +39,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
@@ -60,15 +62,12 @@ builder.Services.AddAuthentication(opt =>
     });
 builder.Services.AddAuthorization();
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-#region Get
+#region GetRequests
 app.MapGet("api/projects", async (GetAllProjectsQuery get, IMediator mediator) =>
 {
     var result = await mediator.Send(get);
@@ -84,12 +83,22 @@ app.MapGet("api/projects/{id:int}/contributors", async ([FromQuery] int id, IMed
     var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
     return  Results.Ok(result);
 });
-
-
-
+app.MapGet("api/{id:int}/task", async ([FromQuery] int id, IMediator mediator) =>
+{
+    var result = await mediator.Send(new GetAllProjectTasksQuery(id));
+    return  Results.Ok(result);
+}); //fetch all Task of a specific project
+app.MapGet("api/project/tasks/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
+{
+    var result = await mediator.Send(new GetProjectTaskByIdQuery(id));
+    return  Results.Ok(result);
+});
+app.MapGet("api/project/contributor/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
+{
+    var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
+    return  Results.Ok(result);
+});
 #endregion
-
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

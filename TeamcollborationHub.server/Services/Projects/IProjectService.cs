@@ -5,9 +5,8 @@ namespace TeamcollborationHub.server.Services.Projects;
 public interface IProjectService
 {
     #region Queries
-    public Task<List<ProjectTask>>  GetAllProjectTasks();
-    public Task<ProjectTask> GetProjectTaskById(int id);
-    public Task<List<User>> GetAllProjectContributors();
+    
+   
     public Task<User> GetProjectContributorById(int id);
 
     #endregion

@@ -5,7 +5,11 @@
 
 # dotenv files
 .env
-
+*.secrets
+*.py
+*.txt
+*.bat
+*.webp
 # User-specific files
 *.rsuser
 *.suo

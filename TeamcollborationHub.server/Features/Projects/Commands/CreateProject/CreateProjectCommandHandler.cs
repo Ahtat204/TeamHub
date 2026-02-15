@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Mediator.Commands;
 
-namespace TeamcollborationHub.server.Mediator.Handlers;
+namespace TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 
 public class CreateProjectCommandHandler(TDBContext dbContext) : IRequestHandler<CreateProjectCommand, Project>
 {

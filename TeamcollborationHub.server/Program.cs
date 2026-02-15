@@ -27,8 +27,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 // this script is not yet tested but it should work as follows: when a request comes in, the script will increment the request count for the IP address in Redis. If the current count is 1, it means this is the first request from this IP address, so we set an expiration time for the key. If the current count exceeds the maximum allowed requests, we return 0 to indicate that the request should be blocked. Otherwise, we return 1 to indicate that the request is allowed.
-builder.Services.AddSingleton<LuaScript>(LuaScript.Prepare(@"
-
+builder.Services.AddSingleton(LuaScript.Prepare(@"
     local current
     current = redis.call('incr', KEYS[1])
     if tonumber(current) == 1 then
@@ -73,6 +72,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<IpBasedRateLimiter>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

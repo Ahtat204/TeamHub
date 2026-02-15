@@ -9,7 +9,9 @@ namespace TeamcollborationHub.server.Controllers;
 public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-    [HttpPost("/login")]
+    [HttpPost("/login")] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+    [Produces("application/json")]//TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+    [ProducesResponseType(StatusCodes.Status200OK)]//TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     public async Task<ActionResult<User>> Login([FromBody] UserRequestDto? userCridentials)
     {
         if(userCridentials is null)  return BadRequest("Invalid user data"); 
@@ -18,12 +20,14 @@ public class AuthenticationController(IAuthenticationService authenticationServi
         return Ok(response);
 
     }
-    [HttpPost("/signup")]
+    [HttpPost("/signup")] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+    [ProducesResponseType(StatusCodes.Status200OK)] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+    [ProducesResponseType(StatusCodes.Status400BadRequest)] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto? user)
     {
         if(user is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.CreateUser(user);
         if(result is null) return BadRequest("Invalid user data");
-        return Ok(result);
+        return Created("api/signup",result); //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     }
 }

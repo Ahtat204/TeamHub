@@ -37,7 +37,7 @@ public class UserRepository:IUserRepository
         return user;
     }
     /// <summary>
-    /// an asynchronous method for searching a user by email in the database
+    /// an asynchronous method for searching a user by email in the database,relying on the fact that the email is unique
     /// </summary>
     /// <param name="email">the email of the targeted <code>User</code>></param>
     /// <returns>returns the user associated with the email if found</returns>

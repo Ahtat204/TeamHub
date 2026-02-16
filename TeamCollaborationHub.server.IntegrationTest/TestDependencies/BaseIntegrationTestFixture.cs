@@ -23,13 +23,7 @@ public abstract class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicat
       HttpClient = appFactory.CreateClient();
       var context=scope.ServiceProvider.GetRequiredService<TdbContext>();
       var part = scope.ServiceProvider.GetRequiredService<ApplicationPartManager>();
-      var feature = new ControllerFeature();
-      part.PopulateFeature(feature);
-      _logger = scope.ServiceProvider.GetRequiredService<ILogger<BaseIntegrationTestFixture>>();
-      foreach (var controller in feature.Controllers)
-      {
-         _logger.LogInformation($"Registering controller {controller.Name}");
-      }
+      
       context.Database.EnsureCreated();
       
    }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
 using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
+using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
+using TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
@@ -15,7 +17,7 @@ public static class ProjectEndpoints
 {
     public static WebApplication MapEndpoints(this WebApplication app)
     {
-        ù#region GetRequests
+        #region GetRequests
 
         app.MapGet("api/projects", async (GetAllProjectsQuery get, IMediator mediator) =>
         {
@@ -69,6 +71,22 @@ public static class ProjectEndpoints
         });
 
         #endregion
+
+        #region DeleteRequests
+
+        app.MapDelete("api/project/contributor/{id:int}",
+            async (IMediator mediator, RemoveContributorFromProjectCommand removeContributor) =>
+            {
+                await mediator.Send(removeContributor);
+                return Results.NoContent();
+            });
+        app.MapDelete("api/project/task/{id:int}", async (IMediator mediator,[FromQuery]int id) =>
+        {
+          await mediator.Send(new RemoveProjectTaskCommand(id));
+          return Results.NoContent();
+        });
+        #endregion
+
         return app;
     }
 }

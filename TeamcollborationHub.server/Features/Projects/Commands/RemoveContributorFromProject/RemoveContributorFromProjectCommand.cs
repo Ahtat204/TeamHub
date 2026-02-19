@@ -2,4 +2,4 @@
 
 namespace TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 
-public record RemoveContributorFromProject(int ProjectId, int UserId) : IRequest<bool>;
+public record RemoveContributorFromProjectCommand(int ProjectId, int UserId) : IRequest;

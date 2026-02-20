@@ -84,6 +84,12 @@ builder.Services.AddAuthentication(opt =>
         googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET", configuration) ??
                                      configuration["OAuth:Google:ClientSecret"] ??
                                      throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+    }).AddCookie("Cookies", options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.LoginPath= "/Account/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
 ;
 builder.Services.AddAuthorization();

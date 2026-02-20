@@ -36,7 +36,7 @@ builder.Services.AddOpenTelemetry().ConfigureResource(ress => ress.AddService("T
 {
     trace.AddAspNetCoreInstrumentation().AddHttpClientInstrumentation().AddEntityFrameworkCoreInstrumentation().AddOtlpExporter();
 });
-builder.Logging.AddOpenTelemetry(log=>log.AddOtlpExporter())
+builder.Logging.AddOpenTelemetry(log => log.AddOtlpExporter());
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {ProjectsStats} from '../projects-stats/projects-stats';
+import {ProjectGrid} from '../project-grid/project-grid';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,7 +9,8 @@ import {ProjectsStats} from '../projects-stats/projects-stats';
   styleUrl: './dashboard.css',
 
   imports: [
-    ProjectsStats
+    ProjectsStats,
+    ProjectGrid
 
   ]
 })

@@ -11,6 +11,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import { Dashboard } from './dashboard/dashboard';
 import { ProjectsStats } from './projects-stats/projects-stats';
+import { ProjectGrid } from './project-grid/project-grid';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ProjectsStats } from './projects-stats/projects-stats';
     MatInput,
     MatSuffix,
     Dashboard,
-    ProjectsStats
+    ProjectsStats,
+    ProjectGrid
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

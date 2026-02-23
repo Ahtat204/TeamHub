@@ -9,7 +9,8 @@ using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 using StackExchange.Redis;
-using TeamcollborationHub.server.Services.RateLimiting;
+using TeamcollborationHub.server.Middlewares;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,13 @@ builder.Services.AddDbContext<TDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
                          throw new InvalidOperationException(
                              "Connection string 'SQLServerConnectionString' not found.")));
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect("localhost:6379"));
+builder.Services.AddSingleton<IDatabase>(sp =>
+{
+    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+    return multiplexer.GetDatabase(); // cheap pass-through
+});
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
@@ -27,7 +35,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 // this script is not yet tested but it should work as follows: when a request comes in, the script will increment the request count for the IP address in Redis. If the current count is 1, it means this is the first request from this IP address, so we set an expiration time for the key. If the current count exceeds the maximum allowed requests, we return 0 to indicate that the request should be blocked. Otherwise, we return 1 to indicate that the request is allowed.
-builder.Services.AddSingleton(LuaScript.Prepare(@"
+builder.Services.AddSingleton<LuaScript>(LuaScript.Prepare(@"
     local current
     current = redis.call('incr', KEYS[1])
     if tonumber(current) == 1 then
@@ -38,7 +46,6 @@ builder.Services.AddSingleton(LuaScript.Prepare(@"
     else
         return 1
     end"));
-builder.Services.AddSingleton<IRateLimiter, IpBasedRateLimiter>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
@@ -72,7 +79,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<IpBasedRateLimiter>();
+app.UseIpBasedRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

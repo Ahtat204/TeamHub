@@ -4,16 +4,15 @@ using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Services.Caching
 {
-    public class RedisCachingService : ICachingService
+    public class RedisCachingService(IDistributedCache? distributedCache, ILogger<RedisCachingService> logger) : ICachingService<Project>
     {
-        private readonly IDistributedCache? _distributedCache;
-
-        public RedisCachingService(IDistributedCache? distributedCache)=> _distributedCache = distributedCache;
+       
         public Project? GetProjectFromCache(int projectId)
         {
-            var data=_distributedCache?.GetString(projectId.ToString());
-            if(data == null) return default;
-            return JsonSerializer.Deserialize<Project>(data)!;
+            var data=distributedCache?.GetString(projectId.ToString());
+            if (data is not null) return JsonSerializer.Deserialize<Project>(data)!;
+            logger.LogWarning("Cache Miss");
+            return  null;
         }
 
         public void SetProjectInCache(string key, Project project)
@@ -23,7 +22,7 @@ namespace TeamcollborationHub.server.Services.Caching
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
                 SlidingExpiration = TimeSpan.FromMinutes(2)
             };
-            _distributedCache?.SetString(key,JsonSerializer.Serialize(project),options); 
+            distributedCache?.SetString(key,JsonSerializer.Serialize(project),options); 
         }
     }
 }

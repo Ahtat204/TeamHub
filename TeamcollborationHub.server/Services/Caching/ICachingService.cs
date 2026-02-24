@@ -1,11 +1,8 @@
-﻿using TeamcollborationHub.server.Entities;
+﻿namespace TeamcollborationHub.server.Services.Caching;
 
-namespace TeamcollborationHub.server.Services.Caching
-{
-    public interface ICachingService
+    public interface ICachingService<T>
     {
-        Project? GetProjectFromCache(int projectId);
-
-        void SetProjectInCache(string key,Project project);
+        T? GetProjectFromCache(int projectId);
+        void SetProjectInCache(string key,T value);
     }
-}
+

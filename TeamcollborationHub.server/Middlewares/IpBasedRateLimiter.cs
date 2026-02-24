@@ -17,8 +17,7 @@ internal class IpBasedRateLimiter(
             throw new ValueProviderException("service wasn't properly configured");
         var ip = context.Connection.RemoteIpAddress?.ToString() ??
                  throw new NotFoundException<string>("Unable to determine client IP address.");
-        var allowed =
-            (int)await redisDatabase.ScriptEvaluateAsync(luaScript.ToString() ?? throw new InvalidOperationException(),
+        var allowed = (int)await redisDatabase.ScriptEvaluateAsync(luaScript.ToString() ?? throw new InvalidOperationException(),
                 [ip], [10, 1]);
         if (allowed == 0)
         {

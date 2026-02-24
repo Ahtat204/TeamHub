@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System.Text;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Exceptions;
 
@@ -17,7 +18,8 @@ internal class IpBasedRateLimiter(
             throw new ValueProviderException("service wasn't properly configured");
         var ip = context.Connection.RemoteIpAddress?.ToString() ??
                  throw new NotFoundException<string>("Unable to determine client IP address.");
-        var allowed = (int)await redisDatabase.ScriptEvaluateAsync(luaScript.ToString() ?? throw new InvalidOperationException(),
+        var script = luaScript.ExecutableScript;
+        var allowed = (int)await redisDatabase.ScriptEvaluateAsync(script?? throw new InvalidOperationException(),
                 [ip], [10, 1]);
         if (allowed == 0)
         {

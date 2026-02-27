@@ -11,15 +11,20 @@ public class IpBasedRateLimiter
     private readonly LuaScript _luaScript;
     private readonly IDatabase _redisDatabase;
     private readonly RequestDelegate _next;
+    private readonly int MaxRequests;
+    private readonly IConfiguration _configuration;
+    private readonly int expiry = 60;
 
     public IpBasedRateLimiter(ILogger<IpBasedRateLimiter> logger,
         LuaScript luaScript,
-        IDatabase redisDatabase, RequestDelegate next)
+        IDatabase redisDatabase, RequestDelegate next, IConfiguration configuration)
     {
         _logger = logger;
         _luaScript = luaScript;
         _redisDatabase = redisDatabase;
         _next = next;
+        _configuration = configuration;
+        MaxRequests= _configuration.GetValue<int>("maxReq");
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -32,8 +37,8 @@ public class IpBasedRateLimiter
                  throw new NotFoundException<string>("Unable to determine client IP address.");
         RedisKey[] redisKey = {ip};
         string script = _luaScript.ExecutableScript;
-        var allowed = (long)await _redisDatabase.ScriptEvaluateAsync(script, [ip], [5, 1]);
-        if (allowed == 0)
+        var res =(long) await _redisDatabase.ScriptEvaluateAsync(script, redisKey,[MaxRequests,expiry]);
+        if (res == 1)
         {
             context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
             await context.Response.WriteAsync("Too many requests. Please try again later.");
@@ -42,12 +47,5 @@ public class IpBasedRateLimiter
         }
         _logger.LogInformation("the request was {request} and response is {response}",context.Request.Body,context.Response.Body );
         await _next(context);
-    }
-}
-public static class RegisterMiddleware
-{
-    public static IApplicationBuilder UseIpBasedRateLimiter(this IApplicationBuilder builder)
-    {
-        return builder.UseMiddleware<IpBasedRateLimiter>();
     }
 }

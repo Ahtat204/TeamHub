@@ -10,6 +10,7 @@ using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Middlewares;
 
 
@@ -31,14 +32,22 @@ builder.Services.AddSingleton<IDatabase>(sp =>
 });
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString");
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString") ?? throw new NotFoundException<string>("RedisConnectionString");
     options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? "DefaultInstance";
 });
 builder.Services.AddScoped<ICachingService<Project>, RedisCachingService>();
+string script= @"
+            local requests = redis.call('INCR',KEYS[1])
+            redis.call('EXPIRE', ARGV[1], ARGV[3])
+            if requests < tonumber(ARGV[2]) then
+                return 0
+            else
+                return 1
+            end
+            ";
 builder.Services.AddSingleton(
-    LuaScript.Prepare("local current = redis.call('incr', KEYS[1])\nif tonumber(current) == 1 then\n    redis.call('expire', KEYS[1], ARGV[2])\nend\nif tonumber(current) > tonumber(ARGV[1]) then\n    return 0\nelse\n    return 1\nend")
+    LuaScript.Prepare("local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
 );
-
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();

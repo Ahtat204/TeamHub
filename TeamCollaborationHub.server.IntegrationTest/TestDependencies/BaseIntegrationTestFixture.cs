@@ -1,0 +1,30 @@
+﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using TeamcollborationHub.server.Configuration;
+
+
+namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
+
+public abstract class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicationFactory<Program, TdbContext>>
+{
+   private readonly TeamHubApplicationFactory<Program, TdbContext> AppFactory;
+   protected readonly IServiceScope scope;
+   protected readonly HttpClient HttpClient;
+   private readonly ILogger<BaseIntegrationTestFixture> _logger;
+   
+
+   protected BaseIntegrationTestFixture(TeamHubApplicationFactory<Program, TdbContext> appFactory)
+   {
+      AppFactory =appFactory ?? throw new System.ArgumentNullException(nameof(appFactory));
+      scope = AppFactory.Services.CreateScope();
+      HttpClient = appFactory.CreateClient();
+      var context=scope.ServiceProvider.GetRequiredService<TdbContext>();
+      var part = scope.ServiceProvider.GetRequiredService<ApplicationPartManager>();
+      
+      context.Database.EnsureCreated();
+      
+   }
+}

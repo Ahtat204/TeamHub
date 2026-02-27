@@ -1,30 +1,33 @@
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
+using System.Text;
+using dotenv.net;
+using TeamcollborationHub.server.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using StackExchange.Redis;
+using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
-using StackExchange.Redis;
-using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Exceptions;
-using TeamcollborationHub.server.Middlewares;
 
 
-
+DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env";} ).AddUserSecrets<Program>().Build();
+#region DependencyInjection
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerConnectionString") ??
+builder.Services.AddDbContext<TdbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
-                             "Connection string 'SQLServerConnectionString' not found.")));
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect("localhost:6379"));
+                             "Connection string 'sqlserverconnectionstring' not found.")));
 builder.Services.AddSingleton<IDatabase>(sp =>
 {
     var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
@@ -32,25 +35,17 @@ builder.Services.AddSingleton<IDatabase>(sp =>
 });
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("RedisConnectionString") ?? throw new NotFoundException<string>("RedisConnectionString");
-    options.InstanceName = builder.Configuration.GetValue<string>("RedisInstanceName") ?? "DefaultInstance";
+    options.Configuration = configuration.GetConnectionString("RedisConnectionString");
+    options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
-builder.Services.AddScoped<ICachingService<Project>, RedisCachingService>();
-string script= @"
-            local requests = redis.call('INCR',KEYS[1])
-            redis.call('EXPIRE', ARGV[1], ARGV[3])
-            if requests < tonumber(ARGV[2]) then
-                return 0
-            else
-                return 1
-            end
-            ";
 builder.Services.AddSingleton(
     LuaScript.Prepare("local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
 );
+builder.Services.AddScoped<ICachingService<Project,string>, RedisCachingService>();
+builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {
@@ -67,23 +62,31 @@ builder.Services.AddAuthentication(opt =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-            ValidAudience = builder.Configuration["JwtConfig:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]!))
+            ValidIssuer =  LoadValues.LoadValue("ISSUER",configuration) ?? configuration["JwtConfig:Issuer"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidateIssuer)),
+            ValidAudience = LoadValues.LoadValue("AUDIENCE", configuration) ?? configuration["JwtConfig:Audience"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidAudience)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("KEY", configuration) ?? configuration["JwtConfig:KEY"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.IssuerSigningKey)))),
         };
         options.SaveToken = true;
-    });
+    }).
+    AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = LoadValues.LoadEnv("CLIENT_ID") ?? configuration["OAuth:Google:ClientId"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+        googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET",configuration) ?? configuration["OAuth:Google:ClientSecret"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+    }); ;
 builder.Services.AddAuthorization();
+#endregion
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseIpBasedRateLimiter();
+#region Middlewares
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+#endregion
 app.Run();
+public partial class Program { } // added to solve Can't find <'TeamcollaborationHub\TeamCollaborationHub.server.IntegrationTest\bin\Debug\net8.0\testhost.deps.json'> problem 

@@ -105,7 +105,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-
+*.bat
 # Chutzpah Test files
 _Chutzpah*
 
@@ -183,6 +183,8 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
+
+
 # Click-Once directory
 publish/
 

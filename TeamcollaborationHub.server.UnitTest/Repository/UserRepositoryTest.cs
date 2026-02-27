@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace TeamcollaborationHub.server.UnitTest.Repository;
 
-internal class UserRepositoryTest
+public class UserRepositoryTest
 {
 }

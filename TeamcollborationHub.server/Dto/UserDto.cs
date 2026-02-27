@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 
-namespace TeamcollborationHub.server.Entities.Dto;
+namespace TeamcollborationHub.server.Dto;
 
 /// <summary>
 /// 

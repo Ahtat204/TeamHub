@@ -4,10 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TeamCollaborationHub.server.IntegrationTest.TestDependencies;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using System.Text.Json;
-using TeamcollborationHub.server.Exceptions;
+using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using HttpRequestMessage = System.Net.Http.HttpRequestMessage;
 
@@ -19,14 +18,14 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
 
-    private User user = new()
+    private readonly User _user = new()
     {
         Name = "John Doe",
         Email = "test@test.com",
         Password = "password123",
     };
 
-    private User usertest = new User()
+    private readonly User _usertest = new User()
     {
         Name = "Lahcen ahtat",
         Email = "lahce28ahtat@gmail.com",
@@ -38,6 +37,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
+        
     }
 
     #region DatabaseTests
@@ -45,19 +45,19 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task InsertUserTest()
     {
-        var result = await _userRepository?.CreateUser(user);
+        var result = await _userRepository?.CreateUser(_user);
         var response = await _userRepository?.GetUserByEmail(result?.Email);
         Assert.NotNull(response);
-        Assert.Equal(user.Email, response?.Email);
+        Assert.Equal(_user.Email, response?.Email);
     }
 
 
     [Fact]
     public async Task DeleteUserTest()
     {
-        var request = await _userRepository?.CreateUser(user);
-        var response = await _userRepository?.deleteUser(user.Email);
-        var getUserResponse = await _userRepository?.GetUserByEmail(user.Email);
+        var request = await _userRepository?.CreateUser(_user);
+        var response = await _userRepository?.deleteUser(_user.Email);
+        var getUserResponse = await _userRepository?.GetUserByEmail(_user.Email);
         Assert.NotNull(response);
         Assert.Null(getUserResponse);
     }
@@ -65,7 +65,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RefreshTokenTestInsertionAndValidationTest()
     {
-        var user = await _userRepository?.CreateUser(usertest);
+        var user = await _userRepository?.CreateUser(_usertest);
         var getUserResponse = await _userRepository?.GetUserByEmail(user.Email);
         var refreshToken = new RefreshToken()
         {
@@ -233,5 +233,9 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
+    public async Task RateLimitTest()
+    {
+        
+    }
     #endregion
 }

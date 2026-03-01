@@ -11,7 +11,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
 import { Dashboard } from './dashboard/dashboard';
 import { ProjectsStats } from './projects-stats/projects-stats';
-import { ProjectGrid } from './project-grid/project-grid';
+import { ProjectElement } from './project-grid/project-element.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,7 @@ import { ProjectGrid } from './project-grid/project-grid';
     MatSuffix,
     Dashboard,
     ProjectsStats,
-    ProjectGrid
+    ProjectElement
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

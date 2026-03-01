@@ -1,27 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, Injectable} from '@angular/core';
 import {ProjectsStats} from '../projects-stats/projects-stats';
-import {ProjectElement} from '../project-grid/project-element.component';
+import {Project, ProjectElement} from '../project-grid/project-element.component';
 import {NgForOf} from '@angular/common';
 import {User} from '../user-signup/user-signup';
 
-export class Project{
-  public Id:Number;
-  public Name:string;
-  public Description:string;
-  public Contributors?:User[];
-  public Status:string;
-  public EndDate:Date;
-  public StartDate:Date;
-  constructor(Id:Number,Status:string,Name:string,EndDate:Date,StartDate:Date,Description:string,Contributors?:User[]) {
-    this.Id = Id;
-    this.Name = Name;
-    this.Description = Description;
-    this.Contributors = Contributors;
-    this.Status = Status;
-    this.EndDate = EndDate;
-    this.StartDate = StartDate;
-  }
-}
+
+
 
 
 @Component({
@@ -38,5 +22,47 @@ export class Project{
   ]
 })
 export class Dashboard {
-  projects:Project[]=new Array<Project>();
+  projects: Project[] = [
+    new Project(
+      1,
+      "Completed",
+      "AI Recommendation Engine",
+      new Date("2025-06-30"),
+      new Date("2025-02-01"),
+      "Built a hybrid recommendation system combining collaborative and content-based filtering.",
+      []
+    ),
+    new Project(
+      2,
+      "In Progress",
+      "Real-Time Payment Gateway",
+      new Date("2026-01-15"),
+      new Date("2025-09-01"),
+      "Microservices-based payment processing system with rate limiting and fraud detection."
+    ),
+    new Project(
+      3,
+      "Planned",
+      "Kubernetes Deployment Platform",
+      new Date("2026-05-01"),
+      new Date("2026-02-01"),
+      "CI/CD automation platform using container orchestration and GitOps principles."
+    ),
+    new Project(
+      4,
+      "Completed",
+      "Computer Vision Attendance System",
+      new Date("2025-04-20"),
+      new Date("2024-11-10"),
+      "Facial recognition-based attendance tracking system for educational institutions."
+    ),
+    new Project(
+      5,
+      "On Hold",
+      "Game Physics Engine Prototype",
+      new Date("2026-08-01"),
+      new Date("2026-03-01"),
+      "Experimental rigid-body physics engine optimized for multiplayer environments."
+    )
+  ];
 }

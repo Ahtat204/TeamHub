@@ -8,8 +8,8 @@
 <app-projects-stats class="project-section"/>
 <main class="dash-body">
   <section class="project-grid">
-    <div  *ngFor="let project of projects;let i=index">
-      <app-project-grid/>
+    <div>
+      <app-project-grid *ngFor="let p of projects" [project]="p"/>
     </div>
 
   </section>

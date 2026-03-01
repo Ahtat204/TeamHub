@@ -1,20 +1,36 @@
-import {Component, Input} from '@angular/core';
-import {MatButton} from '@angular/material/button';
+import {Component, Injectable, Input} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {User} from '../user-signup/user-signup';
-import {Project} from '../dashboard/dashboard';
 
-
+@Injectable({
+  providedIn: 'root'
+})
+export class Project{
+  public Id:Number;
+  public Name:string;
+  public Description:string;
+  public Contributors?:User[];
+  public Status:string;
+  public EndDate:Date;
+  public StartDate:Date;
+  constructor(Id:Number,Status:string,Name:string,EndDate:Date,StartDate:Date,Description:string,Contributors?:User[]) {
+    this.Id = Id;
+    this.Name = Name;
+    this.Description = Description;
+    this.Contributors = Contributors;
+    this.Status = Status;
+    this.EndDate = EndDate;
+    this.StartDate = StartDate;
+  }
+}
 @Component({
   selector: 'app-project-grid',
   standalone: true,
-  imports: [MatButton, MatCardModule],
+  imports: [MatCardModule],
   templateUrl: './project-element.component.html',
   styleUrl: './project-element.component.css',
 })
 export class ProjectElement {
-  @Input() public project:Project;
-  constructor(project: Project) {
-    this.project = project;
-  }
+  @Input() public project!:Project;
+
 }

@@ -113,3 +113,10 @@ Troubleshooting Tips:
 - Verify Node.js and npm versions for Angular compatibility.
 - Ensure Docker daemon is running before executing container commands.
 - Check database connection string for typos or incorrect credentials.
+
+## Upcoming Features
+ - A fixed-Window,Ip-based  Rate Limiting Middleware with  `Redis` and `Lua` ,ensuring absolute atomicity
+ - `CQRS ` using the well-known `MediatR` library ,to decouple a project creation from project fetching
+ - RBAC Authorization, ensuring project contributors have different authorities
+ - Session Managment and Cookies
+ - Observability with `OpenTelemetry` and `Grafana`

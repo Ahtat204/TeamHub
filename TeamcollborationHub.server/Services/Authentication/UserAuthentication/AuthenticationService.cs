@@ -1,5 +1,5 @@
-﻿using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Entities.Dto;
+﻿using TeamcollborationHub.server.Dto;
+using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Security;

@@ -6,6 +6,7 @@ using TeamcollborationHub.server.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
@@ -27,12 +28,19 @@ builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
                          throw new InvalidOperationException(
                              "Connection string 'sqlserverconnectionstring' not found.")));
+builder.Services.AddSingleton<IDatabase>(sp =>
+{
+    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+    return multiplexer.GetDatabase(); // cheap pass-through
+});
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = configuration.GetConnectionString("RedisConnectionString");
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
-
+builder.Services.AddSingleton(
+    LuaScript.Prepare("local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
+);
 builder.Services.AddScoped<ICachingService<Project,string>, RedisCachingService>();
 builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();

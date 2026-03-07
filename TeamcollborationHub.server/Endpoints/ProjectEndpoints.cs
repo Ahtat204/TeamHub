@@ -6,7 +6,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectsQuery;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;

@@ -8,11 +8,11 @@ namespace TeamcollborationHub.server.Services.Caching
     {
         private readonly IDistributedCache? _distributedCache;
 
-        public RedisCachingService(IDistributedCache? distributedCache)=> _distributedCache = distributedCache;
+        public RedisCachingService(IDistributedCache? distributedCache) => _distributedCache = distributedCache;
         public Project? GetProjectFromCache(int projectId)
         {
-            var data=_distributedCache?.GetString(projectId.ToString());
-            if(data == null) return default;
+            var data = _distributedCache?.GetString(projectId.ToString());
+            if (data == null) return default;
             return JsonSerializer.Deserialize<Project>(data)!;
         }
 
@@ -23,7 +23,7 @@ namespace TeamcollborationHub.server.Services.Caching
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
                 SlidingExpiration = TimeSpan.FromMinutes(2)
             };
-            _distributedCache?.SetString(key,JsonSerializer.Serialize(project),options); 
+            _distributedCache?.SetString(key, JsonSerializer.Serialize(project), options);
         }
     }
 }

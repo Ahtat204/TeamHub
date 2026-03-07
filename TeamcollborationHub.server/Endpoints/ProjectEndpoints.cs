@@ -80,10 +80,10 @@ public static class ProjectEndpoints
                 await mediator.Send(removeContributor);
                 return Results.NoContent();
             });
-        app.MapDelete("api/projects/task/{id:int}", async (IMediator mediator,[FromQuery]int id) =>
+        app.MapDelete("api/projects/task/{id:int}", async (IMediator mediator, [FromQuery] int id) =>
         {
-          await mediator.Send(new RemoveProjectTaskCommand(id));
-          return Results.NoContent();
+            await mediator.Send(new RemoveProjectTaskCommand(id));
+            return Results.NoContent();
         });
         #endregion
 

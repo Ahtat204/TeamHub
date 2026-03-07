@@ -4,11 +4,10 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Dto;
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 
-public class JwtService: IJwtService
+public class JwtService : IJwtService
 {
     private readonly TdbContext _tDBContext;
     private readonly IConfiguration configuration;
@@ -18,7 +17,7 @@ public class JwtService: IJwtService
         configuration = _configuration;
     }
 
-    public  string? GenerateTokenResponse(User user,out int expiryDate)
+    public string? GenerateTokenResponse(User user, out int expiryDate)
     {
 
         var issuer = configuration["JwtConfig:Issuer"];

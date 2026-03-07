@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 

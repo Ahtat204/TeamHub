@@ -10,7 +10,7 @@ namespace TeamcollborationHub.server.Entities;
 public class User
 {
     [Key] public int Id { get; init; }
-    [Column("name")] 
+    [Column("name")]
     [StringLength(50)]
     public string Name { get; set; } = string.Empty;
 

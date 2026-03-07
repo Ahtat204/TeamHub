@@ -20,14 +20,14 @@ public class ProjectService(IMediator mediator) : IProjectService
     {
         throw new NotImplementedException();
     }
-    
-    
+
+
 
     public Task<List<Project>> GetAllProjects()
     {
         throw new NotImplementedException();
     }
-    
+
     public Task<Project> GetProjectById(int id)
     {
         throw new NotImplementedException();

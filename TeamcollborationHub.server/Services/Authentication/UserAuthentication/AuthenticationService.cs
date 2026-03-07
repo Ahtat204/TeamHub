@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Connections.Features;
+﻿using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using TeamcollborationHub.server.Services.Security;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-using TeamcollborationHub.server.Dto;
+using TeamcollborationHub.server.Services.Security;
 
 namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
@@ -24,7 +23,7 @@ public class AuthenticationService : IAuthenticationService
         _jwtservice = jwtservice;
     }
 
-    public AuthenticationService(PasswordHashing passwordHashing,IUserRepository userRepository)
+    public AuthenticationService(PasswordHashing passwordHashing, IUserRepository userRepository)
     {
         _userRepository = userRepository;
         _passwordHashingService = passwordHashing;
@@ -32,23 +31,23 @@ public class AuthenticationService : IAuthenticationService
 
     public AuthenticationService(IPasswordHashingService passwordHashing, IUserRepository userRepository, IJwtService jwtservice)
     {
-        passwordHashing = passwordHashing;
+        _passwordHashingService = passwordHashing;
         _userRepository = userRepository;
         _jwtservice = jwtservice;
     }
 
     /// <summary>
-/// for testing purposes
-/// </summary>
-/// <param name="passwordHashing"></param>
-/// <param name="passwordHashingService"></param>
-/// <param name="authenticationRepository"></param>
-/// <exception cref="NotImplementedException"></exception>
- 
+    /// for testing purposes
+    /// </summary>
+    /// <param name="passwordHashing"></param>
+    /// <param name="passwordHashingService"></param>
+    /// <param name="authenticationRepository"></param>
+    /// <exception cref="NotImplementedException"></exception>
+
 
     public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
     {
-        var email=UserRequest.Email.Trim().ToLower();
+        var email = UserRequest.Email.Trim().ToLower();
         var User = await _userRepository.GetUserByEmail(email);
         if (User is null) throw new NotFoundException<User>();
         var verified = _passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
@@ -80,7 +79,7 @@ public class AuthenticationService : IAuthenticationService
         var checkuser = await _userRepository.GetUserByEmail(user.Email);
         if (checkuser is null) throw new NotFoundException<User>("because email does not exist");
         checkuser.Email = user.Email.Trim().ToLower();
-        checkuser.Password =checkuser.Password==user.Password?user.Password:_passwordHashingService.Hash(user.Password);
+        checkuser.Password = checkuser.Password == user.Password ? user.Password : _passwordHashingService.Hash(user.Password);
         checkuser.Name = user.Name.Trim();
         return await _userRepository.UpdateUser(checkuser);
     }

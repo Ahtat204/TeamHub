@@ -12,7 +12,7 @@ namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthe
 [TestOf(typeof(AuthenticationService))]
 public class AuthenticationServiceTest
 {
- 
+
     private Mock<IPasswordHashingService> _passwordHashingMock;
     private Mock<IUserRepository> _authRepoMock;
     private Mock<IJwtService> _jwtServiceMock;
@@ -31,7 +31,6 @@ public class AuthenticationServiceTest
             _jwtServiceMock.Object
         );
     }
-    
     [Test]
     public async Task AuthenticateUser_Success_ReturnsAuthenticationResponse()
     {
@@ -47,7 +46,7 @@ public class AuthenticationServiceTest
         _passwordHashingMock.Setup(h => h.VerifyPassword(password, user.Password)).Returns(true);
         _jwtServiceMock.Setup(j => j.GenerateTokenResponse(user, out expiryDate)).Returns(token);
 
-        var requestDto = new UserRequestDto( Email :email, Password : password);
+        var requestDto = new UserRequestDto(Email: email, Password: password);
 
         // Act
         var result = await _authService.AuthenticateUser(requestDto);
@@ -57,27 +56,4 @@ public class AuthenticationServiceTest
         Assert.That(result.email, Is.EqualTo(email));
         Assert.That(result.AccessToken, Is.EqualTo(token));
     }
-/*
-    [Test]
-    public async Task CreateUserTest()
-    {
-        CreateUserDto user = new(Email: "test@test.com", Password: "password", UserName: "test");
-        var hashedpassword = _passwordHashingService.Hash(user.Password);
-        User? nullvalue = null;
-        var repouser = new User
-        {
-            Id = 0,
-            Name = user.UserName.Trim(),
-            Email = user.Email.Trim().ToLower(),
-            Password = hashedpassword,
-            ProjectId = null,
-            project = null
-        };
-        _authenticationRepository.Setup(repo => repo.GetUserByEmail(user.Email)).Returns(Task.FromResult(nullvalue));
-        _authenticationRepository.Setup(repo => repo.CreateUser(repouser)).Returns(Task.FromResult(repouser));
-        var result = await _authenticationService.CreateUser(user);
-        Assert.IsNotNull(result);
-        Assert.That(result.Email, Is.EqualTo(user.Email));
-    }
-    */
 }

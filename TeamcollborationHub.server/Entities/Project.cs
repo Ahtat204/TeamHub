@@ -11,9 +11,10 @@ namespace TeamcollborationHub.server.Entities;
 public class Project
 {
     [Key] public int Id { get; init; }
-    [Required] [StringLength(50)] 
+    [Required]
+    [StringLength(50)]
     public required string Name { get; init; }
-    [StringLength(300)] 
+    [StringLength(300)]
     public string Description { get; init; } = string.Empty;
     public ICollection<User>? contributor { get; init; }
     public ProjectStatus? status { get; init; } = ProjectStatus.NotStarted;

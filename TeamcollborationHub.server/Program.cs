@@ -1,14 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using TeamcollborationHub.server.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using TeamcollborationHub.server.Services.Caching;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Endpoints;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+using TeamcollborationHub.server.Services.Caching;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);

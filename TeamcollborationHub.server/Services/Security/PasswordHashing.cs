@@ -1,10 +1,8 @@
 ﻿using System.Security.Cryptography;
-using System.Threading.Tasks.Dataflow;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace TeamcollborationHub.server.Services.Security;
 
-public class PasswordHashing: IPasswordHashingService
+public class PasswordHashing : IPasswordHashingService
 {
     private const int SaltSize = 16; // 128 bit
     private const int HashSize = 32; // 256 bit
@@ -28,7 +26,7 @@ public class PasswordHashing: IPasswordHashingService
     public bool VerifyPassword(string password, string passwordHash)
     {
         string[] parts = passwordHash.Split('-');
-        var hash= Convert.FromHexString(parts[1]);
+        var hash = Convert.FromHexString(parts[1]);
         var salt = Convert.FromHexString(parts[0]);
 
         var hashToVerify = Rfc2898DeriveBytes.Pbkdf2(
@@ -37,7 +35,7 @@ public class PasswordHashing: IPasswordHashingService
             Iterations,
             _hashAlgorithm,
             HashSize
-        ); 
+        );
 
         return CryptographicOperations.FixedTimeEquals(hash, hashToVerify);
     }

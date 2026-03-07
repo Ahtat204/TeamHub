@@ -10,6 +10,6 @@ public class AuthenticationControllerTest
     [Test]
     public void METHOD()
     {
-        
+
     }
 }

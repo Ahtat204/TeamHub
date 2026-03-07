@@ -9,10 +9,10 @@ namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectCont
     {
         public async Task<IEnumerable<User>> Handle(GetAllProjectContributorsQuery request, CancellationToken cancellationToken)
         {
-          var result= dBContext.Projects.Include(pro => pro.contributor).FirstOrDefault(pr => pr.Id == request.id) is { } project
-                ? await Task.FromResult(project.contributor ?? Enumerable.Empty<User>())
-                : await Task.FromResult(Enumerable.Empty<User>());
-              return result;
+            var result = dBContext.Projects.Include(pro => pro.contributor).FirstOrDefault(pr => pr.Id == request.id) is { } project
+                  ? await Task.FromResult(project.contributor ?? Enumerable.Empty<User>())
+                  : await Task.FromResult(Enumerable.Empty<User>());
+            return result;
         }
     }
 }

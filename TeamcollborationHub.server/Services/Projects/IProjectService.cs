@@ -5,8 +5,8 @@ namespace TeamcollborationHub.server.Services.Projects;
 public interface IProjectService
 {
     #region Queries
-    
-   
+
+
     public Task<User> GetProjectContributorById(int id);
 
     #endregion
@@ -14,7 +14,7 @@ public interface IProjectService
     public Task<Project> CreateProject(Project project);
     public Task<Project> AddContributorToProject(int projectId, int userId);
     public Task<Project> RemoveContributorFromProject(int projectId, int userId);
-    public Task<Project> AddProjectTask(int id,ProjectTask projectTask);
+    public Task<Project> AddProjectTask(int id, ProjectTask projectTask);
     public Task<Project> RemoveProjectTask(int projectTaskId);
     public Task<Project> SetProjectStartDate(int projectId, DateTime startDate);
 

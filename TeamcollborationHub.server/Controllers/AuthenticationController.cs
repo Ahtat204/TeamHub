@@ -1,7 +1,7 @@
-﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
-using Microsoft.AspNetCore.Mvc;
-using TeamcollborationHub.server.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Dto;
+using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
 namespace TeamcollborationHub.server.Controllers;
 [Route("api/[controller]")]
@@ -14,9 +14,9 @@ public class AuthenticationController(IAuthenticationService authenticationServi
     [ProducesResponseType(StatusCodes.Status200OK)]//TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     public async Task<ActionResult<User>> Login([FromBody] UserRequestDto? userCridentials)
     {
-        if(userCridentials is null)  return BadRequest("Invalid user data"); 
+        if (userCridentials is null) return BadRequest("Invalid user data");
         var response = await _authenticationService.AuthenticateUser(userCridentials);
-        if(response is null) return BadRequest("Invalid user data"); 
+        if (response is null) return BadRequest("Invalid user data");
         return Ok(response);
 
     }
@@ -25,9 +25,9 @@ public class AuthenticationController(IAuthenticationService authenticationServi
     [ProducesResponseType(StatusCodes.Status400BadRequest)] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     public async Task<ActionResult<User>> SignUp([FromBody] CreateUserDto? user)
     {
-        if(user is null) return BadRequest("Invalid user data");
+        if (user is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.CreateUser(user);
-        if(result is null) return BadRequest("Invalid user data");
-        return Created("api/signup",result); //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+        if (result is null) return BadRequest("Invalid user data");
+        return Created("api/signup", result); //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     }
 }

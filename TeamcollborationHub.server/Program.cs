@@ -17,8 +17,10 @@ using TeamcollborationHub.server.Services.Security;
 
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env";} ).AddUserSecrets<Program>().Build();
+var configuration = builder.Configuration
+    .AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
 #region DependencyInjection
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
@@ -36,16 +38,17 @@ builder.Services.AddSingleton<IDatabase>(sp =>
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = configuration.GetConnectionString("RedisConnectionString");
-    options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
+    options.InstanceName = LoadValues.LoadValue("RedisInstanceName", configuration) ?? "DefaultInstance";
 });
 builder.Services.AddSingleton(
-    LuaScript.Prepare("local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
+    LuaScript.Prepare(
+        "local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
 );
-builder.Services.AddScoped<ICachingService<Project,string>, RedisCachingService>();
+builder.Services.AddScoped<ICachingService<Project, string>, RedisCachingService>();
 builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {
@@ -54,27 +57,34 @@ builder.Services.AddAuthentication(opt =>
     })
     .AddJwtBearer(options =>
     {
-        
         options.TokenValidationParameters = new()
         {
             ValidateIssuer = true,
-            
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer =  LoadValues.LoadValue("ISSUER",configuration) ?? configuration["JwtConfig:Issuer"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidateIssuer)),
-            ValidAudience = LoadValues.LoadValue("AUDIENCE", configuration) ?? configuration["JwtConfig:Audience"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidAudience)),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(LoadValues.LoadValue("KEY", configuration) ?? configuration["JwtConfig:KEY"] ?? throw new ValueNotFoundException(nameof(TokenValidationParameters.IssuerSigningKey)))),
+            ValidIssuer = LoadValues.LoadValue("ISSUER", configuration) ?? configuration["JwtConfig:Issuer"] ??
+                throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidateIssuer)),
+            ValidAudience = LoadValues.LoadValue("AUDIENCE", configuration) ?? configuration["JwtConfig:Audience"] ??
+                throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidAudience)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                LoadValues.LoadValue("KEY", configuration) ?? configuration["JwtConfig:KEY"] ??
+                throw new ValueNotFoundException(nameof(TokenValidationParameters.IssuerSigningKey)))),
         };
         options.SaveToken = true;
-    }).
-    AddGoogle(googleOptions =>
+    }).AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = LoadValues.LoadEnv("CLIENT_ID") ?? configuration["OAuth:Google:ClientId"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientId));
-        googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET",configuration) ?? configuration["OAuth:Google:ClientSecret"] ??throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
-    }); ;
+        googleOptions.ClientId = LoadValues.LoadEnv("CLIENT_ID") ?? configuration["OAuth:Google:ClientId"] ??
+            throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+        googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET", configuration) ??
+                                     configuration["OAuth:Google:ClientSecret"] ??
+                                     throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+    });
+;
 builder.Services.AddAuthorization();
+
 #endregion
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -87,6 +97,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 #endregion
+
 app.Run();
-public partial class Program { } // added to solve Can't find <'TeamcollaborationHub\TeamCollaborationHub.server.IntegrationTest\bin\Debug\net8.0\testhost.deps.json'> problem 
+
+public partial class Program
+{
+} // added to solve Can't find <'TeamcollaborationHub\TeamCollaborationHub.server.IntegrationTest\bin\Debug\net8.0\testhost.deps.json'> problem 

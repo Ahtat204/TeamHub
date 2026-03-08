@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Exceptions;
-
-
 namespace TeamcollborationHub.server.Middlewares;
 
 public class IpBasedRateLimiter
@@ -11,9 +9,9 @@ public class IpBasedRateLimiter
     private readonly LuaScript _luaScript;
     private readonly IDatabase _redisDatabase;
     private readonly RequestDelegate _next;
-    private readonly int MaxRequests;
+    private readonly int _maxRequests;
     private readonly IConfiguration _configuration;
-    private readonly int expiry = 60;
+    private const int Expiry = 60;
 
     public IpBasedRateLimiter(ILogger<IpBasedRateLimiter> logger,
         LuaScript luaScript,
@@ -24,7 +22,7 @@ public class IpBasedRateLimiter
         _redisDatabase = redisDatabase;
         _next = next;
         _configuration = configuration;
-        MaxRequests= _configuration.GetValue<int>("maxReq");
+        _maxRequests= _configuration.GetValue<int>("maxReq");
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -35,9 +33,9 @@ public class IpBasedRateLimiter
         }
         var ip = context.Connection.RemoteIpAddress?.ToString() ??
                  throw new NotFoundException<string>("Unable to determine client IP address.");
-        RedisKey[] redisKey = {ip};
+        RedisKey[] redisKey = [ip];
         string script = _luaScript.ExecutableScript;
-        var res =(long) await _redisDatabase.ScriptEvaluateAsync(script, redisKey,[MaxRequests,expiry]);
+        var res =(long) await _redisDatabase.ScriptEvaluateAsync(script, redisKey,[_maxRequests,Expiry]);
         if (res == 1)
         {
             context.Response.StatusCode = StatusCodes.Status429TooManyRequests;

@@ -12,12 +12,12 @@ using HttpRequestMessage = System.Net.Http.HttpRequestMessage;
 
 namespace TeamCollaborationHub.server.IntegrationTest;
 
+[TestCaseOrderer(" TeamCollaborationHub.server.IntegrationTest.TestDependencies.LineNumberOrder","TeamcollborationHub.server.dll")]
 public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
 {
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
-
     private readonly User _user = new()
     {
         Name = "John Doe",
@@ -233,6 +233,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
+    [Fact]
     public async Task RateLimitTest()
     {
         

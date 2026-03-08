@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
+using TeamcollborationHub.server.Middlewares;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
@@ -93,6 +94,7 @@ if (app.Environment.IsDevelopment())
 }
 #region Middlewares
 app.UseExceptionHandler();
+app.UseIpBasedRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

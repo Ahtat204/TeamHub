@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Exceptions;
 
-namespace TeamcollborationHub.server.Exceptions;
+namespace TeamcollborationHub.server.Middlewares;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {

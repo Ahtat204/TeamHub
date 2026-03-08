@@ -24,12 +24,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
+    options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ?? LoadValues.LoadValue("sqlserverconnectionstring",configuration)??
                          throw new InvalidOperationException(
-                             "Connection string 'sqlserverconnectionstring' not found.")));
+                             "SQL Server Connection string Wasn not found.")));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = configuration.GetConnectionString("RedisConnectionString");
+    options.Configuration = configuration.GetConnectionString("RedisConnectionString") ?? LoadValues.LoadValue("RedisConnectionString",configuration)??
+        throw new InvalidOperationException(
+            "Redis Connection string  wasn't found .");
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
 

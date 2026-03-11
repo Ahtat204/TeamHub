@@ -26,6 +26,9 @@ public static class LoadValues
         }
         return LoadEnv(key);
     }
-    
-    
+
+    public static bool IsTesting(this IWebHostEnvironment hostEnvironment)
+    {
+        return hostEnvironment.IsEnvironment("Testing");
+    }
 }

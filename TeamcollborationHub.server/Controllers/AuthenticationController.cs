@@ -1,6 +1,6 @@
-﻿using TeamcollborationHub.server.Entities.Dto;
-using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using Microsoft.AspNetCore.Mvc;
+using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Caching;

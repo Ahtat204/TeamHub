@@ -2,19 +2,15 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Exceptions;
 
-namespace TeamcollborationHub.server.Exceptions;
+namespace TeamcollborationHub.server.Middlewares;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         logger.LogError(exception, "Error:{Message}",exception.Message);
-        if (exception is NotFoundException<User>)
-        {
-        
-        }
-
         switch (exception)
         {
             case ValueNotFoundException :

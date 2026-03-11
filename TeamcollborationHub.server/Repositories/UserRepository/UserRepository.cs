@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <param name="user">a user Object to be inserted in database</param>
     /// <returns>return the created user , good for testing </returns>
-    public async Task<User> CreateUser(User user)
+    public async Task<User?> CreateUser(User user)
     {
         
         _context.Users.Add(user);

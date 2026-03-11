@@ -13,30 +13,29 @@ using HttpRequestMessage = System.Net.Http.HttpRequestMessage;
 namespace TeamCollaborationHub.server.IntegrationTest;
 
 [ TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer", "TeamCollaborationHub.server.IntegrationTest")]
-public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
+public class IntegrationTest : BaseIntegrationTestFixture
 {
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
-    private readonly User _user ;
-    private readonly User _userTest ;
-    public AuthenticationIntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
+    private readonly User _user = new()
+    {
+        Name = "John Doe",
+        Email = "test@test.com",
+        Password = "password123",
+    };
+    private readonly User _userTest = new ()
+    {
+        Name = "Lahcen ahtat",
+        Email = "lahce28ahtat@gmail.com",
+        Password = "HiHI235417162",
+    };
+
+    public IntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
-        _userTest = new User()
-        {
-            Name = "Lahcen ahtat",
-            Email = "lahce28ahtat@gmail.com",
-            Password = "HiHI235417162",
-        };
-        _user = new()
-        {
-            Name = "John Doe",
-            Email = "test@test.com",
-            Password = "password123",
-        };
     }
 
     #region DatabaseTests
@@ -44,12 +43,18 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task InsertUserTest()
     {
+        User createuserTest = new()
+        {
+            Name = "John Doe",
+            Email = "test1@test.com",
+            Password = "password123",
+        };
         Assert.NotNull(_userRepository);
-        var result = await _userRepository.CreateUser(_user);
+        var result = await _userRepository.CreateUser(createuserTest);
         Assert.NotNull(result);
         var response = await _userRepository.GetUserByEmail(result.Email);
         Assert.NotNull(response);
-        Assert.Equal(_user.Email, response.Email);
+        Assert.Equal(createuserTest.Email, response.Email);
     }
 
 
@@ -57,7 +62,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     public async Task DeleteUserTest()
     {
         Assert.NotNull(_userRepository);
-        var user= await _userRepository.CreateUser(_user);
+        await _userRepository.CreateUser(_user);
         var response = await _userRepository.deleteUser(_user.Email);
         var getUserResponse = await _userRepository.GetUserByEmail(_user.Email);
         Assert.NotNull(response);
@@ -142,7 +147,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RegisterExistingUserTest_ShouldReturnBadRequest()
     {
-        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
+        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen26@gmail.com", "123assword", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
@@ -150,7 +155,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         };
 
         var registerResponseMessage = await Client.SendAsync(registerPosHttpRequestMessage);
-        CreateUserDto? usersignUpRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
+        CreateUserDto? usersignUpRequest = new CreateUserDto("lahcen27@gmail.com", "123assword", "lahcen22");
         string secondRequest = JsonSerializer.Serialize(usersignUpRequest);
         var SecondRequest = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
@@ -167,7 +172,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task LoginUserTest()
     {
-        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen28@gmail.com", "123password", "lahcen22");
+        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen21@gmail.com", "123password", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
@@ -182,7 +187,8 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         };
         var response = await Client.SendAsync(postRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(response.Content.ToString());
+        Assert.NotNull(response);
+        Assert.NotNull(response.Content);
         Assert.NotEmpty(response.Content.ToString());
     }
 
@@ -190,7 +196,7 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RefreshTokenTest()
     {
-        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
+        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen20@gmail.com", "123assword", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {

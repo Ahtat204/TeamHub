@@ -111,12 +111,12 @@ public class AuthenticationService(
     public async Task<User?> UpdateUser(User user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var checkuser = await authenticationRepository.GetUserByEmail(user.Email);
-        if (checkuser is null) throw new NotFoundException<User>("because email does not exist");
-        checkuser.Email = user.Email.Trim().ToLower();
-        checkuser.Password =checkuser.Password==user.Password?user.Password:passwordHashingService.Hash(user.Password);
-        checkuser.Name = user.Name.Trim();
-        return await authenticationRepository.UpdateUser(checkuser);
+        var checkUser = await authenticationRepository.GetUserByEmail(user.Email);
+        if (checkUser is null) throw new NotFoundException<User>("because email does not exist");
+        checkUser.Email = user.Email.Trim().ToLower();
+        checkUser.Password =checkUser.Password==user.Password?user.Password:passwordHashingService.Hash(user.Password);
+        checkUser.Name = user.Name.Trim();
+        return await authenticationRepository.UpdateUser(checkUser);
     }
 
     /// <summary>

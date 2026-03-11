@@ -20,6 +20,7 @@ DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration
     .AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
+
 #region DependencyInjection
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -92,8 +93,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 #region Middlewares
+
 app.UseExceptionHandler();
+if (app.Environment.IsTesting())
+{
+    app.Use(async (context, next) =>
+    {
+        context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse("127.0.0.1");
+        await next();
+    });
+}
 app.UseIpBasedRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();

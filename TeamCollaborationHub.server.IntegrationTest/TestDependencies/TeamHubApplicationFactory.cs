@@ -1,6 +1,8 @@
+using System.Net;
 using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -47,21 +49,6 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
                 services.AddDbContext<TdbContext>(options => { options.UseSqlServer(SqlServerContainer.GetConnectionString()); });
             });
             builder.UseEnvironment("Testing");
-            builder.Configure(app =>
-                {
-                    app.Use(async (context, next) =>
-                    {
-                        context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse("127.0.0.1");
-                        
-                        await next();
-                    });
-                    app.UseIpBasedRateLimiter();
-                }
-                
-                );
-            
-
-
         }
         public async Task InitializeAsync()
         {

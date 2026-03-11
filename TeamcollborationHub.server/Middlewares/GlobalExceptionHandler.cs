@@ -11,11 +11,6 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         logger.LogError(exception, "Error:{Message}",exception.Message);
-        if (exception is NotFoundException<User>)
-        {
-        
-        }
-
         switch (exception)
         {
             case ValueNotFoundException :

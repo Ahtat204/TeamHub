@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Exceptions;
 namespace TeamcollborationHub.server.Middlewares;
@@ -22,7 +23,7 @@ public class IpBasedRateLimiter
         _redisDatabase = redisDatabase;
         _next = next;
         _configuration = configuration;
-        _maxRequests= _configuration.GetValue<int>("maxReq");
+        _maxRequests= _configuration.GetValue<int>("maxReq") ;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -31,8 +32,8 @@ public class IpBasedRateLimiter
         {
             throw new ValueProviderException("service wasn't properly configured");
         }
-        var ip = context.Connection.RemoteIpAddress?.ToString() ??
-                 throw new NotFoundException<string>("Unable to determine client IP address.");
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? 
+                 throw new NotFoundException<IPAddress>("Unable to determine client IP address.");
         RedisKey[] redisKey = [ip];
         string script = _luaScript.ExecutableScript;
         var res =(long) await _redisDatabase.ScriptEvaluateAsync(script, redisKey,[_maxRequests,Expiry]);
@@ -43,7 +44,6 @@ public class IpBasedRateLimiter
             _logger.LogWarning("Rate limit exceeded for IP: {IP}", ip);
             return;
         }
-        _logger.LogInformation("the request was {request} and response is {response}",context.Request.Body,context.Response.Body );
         await _next(context);
     }
 }

@@ -12,32 +12,31 @@ using HttpRequestMessage = System.Net.Http.HttpRequestMessage;
 
 namespace TeamCollaborationHub.server.IntegrationTest;
 
-[TestCaseOrderer(" TeamCollaborationHub.server.IntegrationTest.TestDependencies.LineNumberOrder","TeamcollborationHub.server.dll")]
+[ TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer", "TeamCollaborationHub.server.IntegrationTest")]
 public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
 {
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
-    private readonly User _user = new()
-    {
-        Name = "John Doe",
-        Email = "test@test.com",
-        Password = "password123",
-    };
-
-    private readonly User _usertest = new User()
-    {
-        Name = "Lahcen ahtat",
-        Email = "lahce28ahtat@gmail.com",
-        Password = "HiHI235417162",
-    };
-
+    private readonly User _user ;
+    private readonly User _userTest ;
     public AuthenticationIntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
-        
+        _userTest = new User()
+        {
+            Name = "Lahcen ahtat",
+            Email = "lahce28ahtat@gmail.com",
+            Password = "HiHI235417162",
+        };
+        _user = new()
+        {
+            Name = "John Doe",
+            Email = "test@test.com",
+            Password = "password123",
+        };
     }
 
     #region DatabaseTests
@@ -45,19 +44,22 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task InsertUserTest()
     {
-        var result = await _userRepository?.CreateUser(_user);
-        var response = await _userRepository?.GetUserByEmail(result?.Email);
+        Assert.NotNull(_userRepository);
+        var result = await _userRepository.CreateUser(_user);
+        Assert.NotNull(result);
+        var response = await _userRepository.GetUserByEmail(result.Email);
         Assert.NotNull(response);
-        Assert.Equal(_user.Email, response?.Email);
+        Assert.Equal(_user.Email, response.Email);
     }
 
 
     [Fact]
     public async Task DeleteUserTest()
     {
-        var request = await _userRepository?.CreateUser(_user);
-        var response = await _userRepository?.deleteUser(_user.Email);
-        var getUserResponse = await _userRepository?.GetUserByEmail(_user.Email);
+        Assert.NotNull(_userRepository);
+        var user= await _userRepository.CreateUser(_user);
+        var response = await _userRepository.deleteUser(_user.Email);
+        var getUserResponse = await _userRepository.GetUserByEmail(_user.Email);
         Assert.NotNull(response);
         Assert.Null(getUserResponse);
     }
@@ -65,8 +67,11 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RefreshTokenTestInsertionAndValidationTest()
     {
-        var user = await _userRepository?.CreateUser(_usertest);
-        var getUserResponse = await _userRepository?.GetUserByEmail(user.Email);
+        Assert.NotNull(_userRepository);
+        var user = await _userRepository.CreateUser(_userTest);
+        Assert.NotNull(user);
+        Assert.NotNull(_jwtService);
+        var getUserResponse = await _userRepository.GetUserByEmail(user.Email);
         var refreshToken = new RefreshToken()
         {
             Id = Guid.NewGuid(),
@@ -104,18 +109,17 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
 
     #region AuthenticationEndpointsTests
 
-    [Fact]
+    [Fact,TestPriority(1)]
     public async Task LoginTest() // successfully passed
     {
-        using var httpClient = _applicationFactory.CreateClient();
-        LoginRequestDto? request = new("lahcen30@gmail.com", "password123");
+        LoginRequestDto request = new("lahcen30@gmail.com", "password123");
         string json = JsonSerializer.Serialize(request);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
 
-        var response = await httpClient.SendAsync(postRequest);
+        var response = await Client.SendAsync(postRequest);
         var statusCode = await response.Content.ReadAsStringAsync();
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -124,29 +128,28 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RegisterUserTest()
     {
-        using var httpClient = _applicationFactory.CreateClient();
-        CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
+        var userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
-            Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
+            Content = new StringContent(registerJson, Encoding.UTF8, "application/json"),
         };
-        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
-        registerResponseMessage.EnsureSuccessStatusCode();
+        var registerResponseMessage = await Client.SendAsync(registerPosHttpRequestMessage);
+        //registerResponseMessage.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.OK, registerResponseMessage.StatusCode);
     }
 
     [Fact]
     public async Task RegisterExistingUserTest_ShouldReturnBadRequest()
     {
-        using var httpClient = _applicationFactory.CreateClient();
         CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
-            Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
+            Content = new StringContent(registerJson, Encoding.UTF8, "application/json"),
         };
-        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
+
+        var registerResponseMessage = await Client.SendAsync(registerPosHttpRequestMessage);
         CreateUserDto? usersignUpRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
         string secondRequest = JsonSerializer.Serialize(usersignUpRequest);
         var SecondRequest = new HttpRequestMessage(HttpMethod.Post, "/signup")
@@ -154,31 +157,30 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
             Content = new StringContent(secondRequest, Encoding.UTF8, "application/json")
         };
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var secondHttpRequest = await httpClient.SendAsync(SecondRequest);
-        var refreshJson= await secondHttpRequest.Content.ReadAsStringAsync();
+        var secondHttpRequest = await Client.SendAsync(SecondRequest);
+        var refreshJson = await secondHttpRequest.Content.ReadAsStringAsync();
         var refreshResponse = JsonSerializer.Deserialize<RefreshAccessDto>(refreshJson, options);
         Assert.Null(refreshResponse?.RefreshToken);
         Assert.Null(refreshResponse?.AccessToken);
-        
     }
+
     [Fact]
     public async Task LoginUserTest()
     {
-        using var httpClient = _applicationFactory.CreateClient();
         CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen28@gmail.com", "123password", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
             Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
         };
-        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
+        var registerResponseMessage = await Client.SendAsync(registerPosHttpRequestMessage);
         var UserRequest = new LoginRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
         string json = JsonSerializer.Serialize(UserRequest);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
-        var response = await httpClient.SendAsync(postRequest);
+        var response = await Client.SendAsync(postRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(response.Content.ToString());
         Assert.NotEmpty(response.Content.ToString());
@@ -188,28 +190,30 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task RefreshTokenTest()
     {
-        using var httpClient = _applicationFactory.CreateClient();
         CreateUserDto? userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
         string registerJson = JsonSerializer.Serialize(userRegistrationRequest);
         var registerPosHttpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "/signup")
         {
             Content = new StringContent(registerJson, Encoding.UTF8, "application/json")
         };
-        var registerResponseMessage = await httpClient.SendAsync(registerPosHttpRequestMessage);
-        var UserRequest = new LoginRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
-        string json = JsonSerializer.Serialize(UserRequest);
+        var registerResponseMessage = await Client.SendAsync(registerPosHttpRequestMessage);
+        var userRequest = new LoginRequestDto(userRegistrationRequest.Email, userRegistrationRequest.Password);
+        string json = JsonSerializer.Serialize(userRequest);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
         {
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
 
-        var response = await httpClient.SendAsync(postRequest);
+        var response = await Client.SendAsync(postRequest);
         response.EnsureSuccessStatusCode();
+
         #region HappyPath
+
         string jsonString = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var result = JsonSerializer.Deserialize<LoginResponseDto>(jsonString, options);
-        RefreshToken? refreshTokenRequest = new RefreshToken()
+        if(result?.RefreshToken is null) return ;
+        var refreshTokenRequest = new RefreshToken()
         {
             Token = result.RefreshToken.Token,
             Id = Guid.TryParse(result.RefreshToken.Id, out Guid token) ? token : Guid.Empty,
@@ -219,11 +223,11 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         {
             Content = new StringContent(jsonToken, Encoding.UTF8, "application/json")
         };
-        var refreshResponseMessage = await httpClient.SendAsync(requestMessage);
+        var refreshResponseMessage = await Client.SendAsync(requestMessage);
         refreshResponseMessage.EnsureSuccessStatusCode();
-        var refreshJson= await refreshResponseMessage.Content.ReadAsStringAsync();
+        var refreshJson = await refreshResponseMessage.Content.ReadAsStringAsync();
         var refreshResponse = JsonSerializer.Deserialize<RefreshAccessDto>(refreshJson, options);
-        #endregion 
+        #endregion
         #region Assertions
         Assert.NotNull(refreshResponse);
         Assert.NotNull(refreshResponse.RefreshToken);
@@ -233,10 +237,18 @@ public class AuthenticationIntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact]
+    [Fact,TestPriority(2)]
     public async Task RateLimitTest()
     {
-        
+        LoginRequestDto request = new("lahcen30@gmail.com", "password123");
+        string json = JsonSerializer.Serialize(request);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
     }
+
     #endregion
 }

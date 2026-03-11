@@ -16,6 +16,7 @@ using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 
 
+
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration
@@ -29,9 +30,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("sqlserverconnectionstring") ??
+    options.UseSqlServer(LoadValues.LoadValue("sqlserverconnectionstring",configuration)??configuration.GetConnectionString("sqlserverconnectionstring") ?? 
                          throw new InvalidOperationException(
-                             "Connection string 'sqlserverconnectionstring' not found.")));
+                             "SQL Server Connection string wasn't not found.")));
 builder.Services.AddSingleton<IDatabase>(sp =>
 {
     var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
@@ -39,8 +40,10 @@ builder.Services.AddSingleton<IDatabase>(sp =>
 });
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = configuration.GetConnectionString("RedisConnectionString");
-    options.InstanceName = LoadValues.LoadValue("RedisInstanceName", configuration) ?? "DefaultInstance";
+    options.Configuration = LoadValues.LoadValue("RedisConnectionString",configuration)??configuration.GetConnectionString("RedisConnectionString") ?? 
+        throw new InvalidOperationException(
+            "Redis Connection string  wasn't found .");
+    options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
 builder.Services.AddSingleton(
     LuaScript.Prepare(

@@ -27,13 +27,14 @@ public class GetProjectContributorByIdHandlerTest
         var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count());
+        Assert.That(result.Count(), Is.EqualTo(1));
         var projectResult = result.First();
-        Assert.AreEqual(project.Id, projectResult.Id);
-        Assert.AreEqual(project.Name, projectResult.Name);
-        Assert.AreEqual(1, projectResult.contributor.Count());
+        Assert.That(projectResult.Id, Is.EqualTo(project.Id));
+        Assert.That(projectResult.Name, Is.EqualTo(project.Name));
+        Assert.That(projectResult.contributor, Is.Not.Null);
+        Assert.That(projectResult.contributor.Count(), Is.EqualTo(1));
         var contributorResult = projectResult.contributor.First();
-        Assert.AreEqual(contributor.Id, contributorResult.Id);
-        Assert.AreEqual(contributor.Name, contributorResult.Name);
+        Assert.That(contributorResult.Id, Is.EqualTo(contributor.Id));
+        Assert.That(contributorResult.Name, Is.EqualTo(contributor.Name));
     }
 }

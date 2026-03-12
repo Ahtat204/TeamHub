@@ -13,10 +13,7 @@ public class GetAllProjectsHandlerTest
     [Test]
     public void GetAllProjects_ShouldReturnListOfProjects()
     {
-        // Arrange
-        var options = new DbContextOptionsBuilder<TdbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
+        var options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase").Options;
         using var context = new TdbContext(options);
         context.Projects.AddRange(
             new Project { Id = 1, Name = "Project 1" },
@@ -24,11 +21,9 @@ public class GetAllProjectsHandlerTest
         );
         context.SaveChanges();
         var handler = new GetAllProjectsQueryHandler(context);
-        // Act
-        var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
-        // Assert
+        var result = handler.Handle(new(), CancellationToken.None).Result;
         Assert.IsNotNull(result);
-        Assert.AreEqual(2, result.Count());
+        Assert.That(result.Count(), Is.EqualTo(2));
         Assert.IsTrue(result.Any(p => p.Name == "Project 1"));
         Assert.IsTrue(result.Any(p => p.Name == "Project 2"));
     }

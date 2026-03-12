@@ -12,7 +12,6 @@ public class GetAllProjectContributorsHandlerTest
     [Test]
     public void GetAllProjectContributors_ShouldReturnListOfContributors()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<TdbContext>()
             .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
@@ -25,15 +24,15 @@ public class GetAllProjectContributorsHandlerTest
         );
         context.SaveChanges();
         var handler = new GetAllProjectsQueryHandler(context);
-        // Act
         var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
-        // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count());
+        Assert.That(result.Count(), Is.EqualTo(1));
         var projectResult = result.First();
-        Assert.AreEqual(project.Id, projectResult.Id);
-        Assert.AreEqual(project.Name, projectResult.Name);
-        Assert.AreEqual(2, projectResult.contributor.Count());
+        Assert.That(projectResult.Id, Is.EqualTo(project.Id));
+        Assert.That(projectResult.Name, Is.EqualTo(project.Name));
+        Assert.IsNotNull(projectResult);
+        Assert.IsNotNull(projectResult.contributor);
+        Assert.That(projectResult.contributor, Has.Count.EqualTo(2));
         Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 1"));
         Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 2"));
     }

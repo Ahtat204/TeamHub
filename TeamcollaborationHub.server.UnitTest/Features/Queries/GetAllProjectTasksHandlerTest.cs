@@ -30,11 +30,11 @@ public class GetAllProjectTasksHandlerTest
         var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Count());
+        Assert.That(result.Count(), Is.EqualTo(1));
         var projectResult = result.First();
-        Assert.AreEqual(project.Id, projectResult.Id);
-        Assert.AreEqual(project.Name, projectResult.Name);
-        Assert.AreEqual(2, projectResult.Tasks.Count());
+        Assert.That(projectResult.Id, Is.EqualTo(project.Id));
+        Assert.That(projectResult.Name, Is.EqualTo(project.Name));
+        Assert.That(projectResult.Tasks.Count(), Is.EqualTo(2));
         Assert.IsTrue(projectResult.Tasks.Any(t => t.Title == "Task 1"));
         Assert.IsTrue(projectResult.Tasks.Any(t => t.Title== "Task 2"));
     }

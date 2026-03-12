@@ -12,13 +12,10 @@ using TeamcollborationHub.server.Services.Caching;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
-// DotEnv.Load();
-// Add services to the container.
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddSwaggerGen();

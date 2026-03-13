@@ -10,14 +10,19 @@ namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
 
 public class GetAllProjectTasksHandlerTest
 {
+    private DbContextOptions<TdbContext>? _options;
+
+    [SetUp]
+    public void Setup()
+    {
+        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+            .Options;
+    }
     [Test]
     public void GetAllProjectTasks_ShouldReturnListOfProjectTasks()
     {
-        // Arrange
-        var options = new DbContextOptionsBuilder<TdbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
-        using var context = new TdbContext(options);
+        Assert.NotNull(_options);
+        using var context = new TdbContext(_options);
         var project = new Project { Id = 1, Name = "Project 1" };
         context.Projects.Add(project);
         context.Tasks.AddRange(
@@ -26,16 +31,28 @@ public class GetAllProjectTasksHandlerTest
         );
         context.SaveChanges();
         var handler = new GetAllProjectsQueryHandler(context);
-        // Act
         var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
-        // Assert
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(1));
         var projectResult = result.First();
         Assert.That(projectResult.Id, Is.EqualTo(project.Id));
         Assert.That(projectResult.Name, Is.EqualTo(project.Name));
-        Assert.That(projectResult.Tasks.Count(), Is.EqualTo(2));
+        Assert.That(projectResult.Tasks,Is.Not.Null);
+        Assert.That(projectResult.Tasks, Has.Count.EqualTo(2));
         Assert.IsTrue(projectResult.Tasks.Any(t => t.Title == "Task 1"));
-        Assert.IsTrue(projectResult.Tasks.Any(t => t.Title== "Task 2"));
+        Assert.That(projectResult.Tasks.Any(t => t.Title== "Task 2"), Is.True);
+        context.Database.EnsureDeleted();
+    }
+
+    [Test]
+    public void GetProjectContributorById_ShouldReturnEmptyListOfTasks()
+    {
+        Assert.NotNull(_options);
+        using var context = new TdbContext(_options);
+        var handler = new GetAllProjectsQueryHandler(context);
+        var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
+        Assert.IsNotNull(result);
+        Assert.That(result.Count(), Is.EqualTo(0));
+        
     }
 }

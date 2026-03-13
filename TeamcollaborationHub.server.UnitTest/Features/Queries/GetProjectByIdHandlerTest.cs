@@ -9,13 +9,19 @@ namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
 [TestFixture]
 public class GetProjectByIdHandlerTest
 {
+    private DbContextOptions<TdbContext>? _options;
+
+    [SetUp]
+    public void Setup()
+    {
+        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+            .Options;
+    }
     [Test]
     public void GetProjectById_ShouldReturnProject()
     {
-        var options = new DbContextOptionsBuilder<TdbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
-        using var context = new TdbContext(options);
+        Assert.That(_options, Is.Not.Null);
+        using var context = new TdbContext(_options);
         var project = new Project { Id = 1, Name = "Project 1" };
         context.Projects.Add(project);
         context.SaveChanges();
@@ -34,8 +40,8 @@ public class GetProjectByIdHandlerTest
     [Test]
     public void GetProjectById_ShouldThrowNotFoundException()
     {
-        var options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase").Options;
-        using var context = new TdbContext(options);
+        Assert.That(_options, Is.Not.Null);
+        using var context = new TdbContext(_options);
         var handler = new GetProjectByIdQueryHandler(context);
         Assert.That(()=>handler.Handle(new(1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
     }

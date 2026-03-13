@@ -10,7 +10,7 @@ public class GetProjectTaskByIdQueryHandler(TdbContext db) : IRequestHandler<Get
     public async Task<ProjectTask> Handle(GetProjectTaskByIdQuery request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request, nameof(request));
-        var result = await db.Tasks.FindAsync(new object?[] { request.Id, cancellationToken }, cancellationToken: cancellationToken).ConfigureAwait(false);
+        var result = await db.Tasks.FindAsync([request.Id], cancellationToken: cancellationToken).ConfigureAwait(false);
         if (result is null) throw new NotFoundException<ProjectTask>();
         return result;
     }

@@ -12,9 +12,7 @@ using TeamcollborationHub.server.Services.Caching;
 using TeamcollborationHub.server.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(typeof(Program).Assembly);

@@ -1,10 +1,9 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 
-namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
+namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
 [TestFixture]
 public class GetAllProjectsHandlerTest
@@ -46,6 +45,7 @@ public class GetAllProjectsHandlerTest
         var result = handler.Handle(new(), CancellationToken.None).Result;
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(0));
+        context.Database.EnsureDeleted();
         
     }
 }

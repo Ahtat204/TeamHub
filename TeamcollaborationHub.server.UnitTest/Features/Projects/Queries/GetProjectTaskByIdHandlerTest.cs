@@ -2,12 +2,11 @@
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
 
-namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
+namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
-[TestFixture]
+[TestFixture,TestOf(typeof(GetProjectTaskByIdQueryHandler))]
 public class GetProjectTaskByIdHandlerTest
 {
     private DbContextOptions<TdbContext>? _options;

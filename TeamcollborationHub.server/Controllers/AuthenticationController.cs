@@ -9,7 +9,7 @@ namespace TeamcollborationHub.server.Controllers;
 public class AuthenticationController(IAuthenticationService authenticationService) : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-    [HttpPost("/login")] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
+    [HttpPost("/login")] //TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version,whatever happens,
     [Produces("application/json")]//TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     [ProducesResponseType(StatusCodes.Status200OK)]//TODO:when merging into main , a merge conflict will occur here, remember to use this instead of the main version
     public async Task<ActionResult<User>> Login([FromBody] UserRequestDto? userCridentials)

@@ -2,9 +2,8 @@
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 
-namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
+namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
 [TestFixture]
 

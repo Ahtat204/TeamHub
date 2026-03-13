@@ -7,7 +7,7 @@ public class PasswordHashing : IPasswordHashingService
     private const int SaltSize = 16; // 128 bit
     private const int HashSize = 32; // 256 bit
     private const int Iterations = 100000;
-    private static readonly HashAlgorithmName _hashAlgorithm = HashAlgorithmName.SHA256;
+    private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
 
     public string Hash(string password)
     {
@@ -17,7 +17,7 @@ public class PasswordHashing : IPasswordHashingService
             password,
             salt,
             Iterations,
-            _hashAlgorithm,
+            HashAlgorithm,
             HashSize
         );
         return $"{Convert.ToHexString(salt)}-{Convert.ToHexString(hash)}";
@@ -33,7 +33,7 @@ public class PasswordHashing : IPasswordHashingService
             password,
             salt,
             Iterations,
-            _hashAlgorithm,
+            HashAlgorithm,
             HashSize
         );
 

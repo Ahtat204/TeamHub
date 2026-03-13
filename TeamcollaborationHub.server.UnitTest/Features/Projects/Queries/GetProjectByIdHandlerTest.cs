@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
 
-namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
+namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
 [TestFixture]
 public class GetProjectByIdHandlerTest

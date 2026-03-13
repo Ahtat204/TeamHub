@@ -10,7 +10,7 @@ public class AddContributorToProjectCommandHandler(TdbContext db) : IRequestHand
     public async Task<User?> Handle(AddContributorToProjectCommand request, CancellationToken cancellationToken)
     {
         var result = db.Users.FirstOrDefault(u => u.Id == request.UserId);
-        if (result is null) throw new NotFoundException<User>();
+        if (result is null) throw new NotFoundException<User>(); 
         db.Users.Add(result);
         await db.SaveChangesAsync(cancellationToken);
         return result;

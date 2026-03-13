@@ -1,12 +1,10 @@
+using System.Reflection;
 using System.Text;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
-using System.Text;
 using dotenv.net;
 using TeamcollborationHub.server.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -14,12 +12,9 @@ using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Middlewares;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Endpoints;
-using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
-using TeamcollborationHub.server.Services.Caching;
 using TeamcollborationHub.server.Services.Security;
 
 
@@ -35,7 +30,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddMediatR(typeof(Program).Assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(LoadValues.LoadValue("sqlserverconnectionstring",configuration)??configuration.GetConnectionString("sqlserverconnectionstring") ?? 
@@ -99,7 +94,7 @@ builder.Services.AddAuthorization();
 #endregion
 
 var app = builder.Build();
-app.MapEndpoints();
+//app.MapEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

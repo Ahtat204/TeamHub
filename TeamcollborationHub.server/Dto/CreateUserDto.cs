@@ -2,6 +2,12 @@
 
 namespace TeamcollborationHub.server.Dto;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="Email"></param>
+/// <param name="Password"></param>
+/// <param name="UserName"></param>
 public record CreateUserDto(
     [EmailAddress, Required] string Email,
     string Password,

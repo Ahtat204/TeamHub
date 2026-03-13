@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+using Moq;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Security;
 
 namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthentication;
@@ -12,48 +12,79 @@ namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthe
 [TestOf(typeof(AuthenticationService))]
 public class AuthenticationServiceTest
 {
+    private readonly AuthenticationService _authenticationService;
+    private readonly Mock<IPasswordHashingService> _passwordHashingService;
+    private readonly Mock<IUserRepository> _authenticationRepository;
+    private readonly IJwtService _jwtService;
+    private readonly LoginRequestDto _userRequestDto;
+    private readonly User _newUser;
+    private readonly CreateUserDto _newUserDto;
 
-    private Mock<IPasswordHashingService> _passwordHashingMock;
-    private Mock<IUserRepository> _authRepoMock;
-    private Mock<IJwtService> _jwtServiceMock;
-    private AuthenticationService _authService;
 
-    [SetUp]
-    public void Setup()
+    public AuthenticationServiceTest()
     {
-        _passwordHashingMock = new Mock<IPasswordHashingService>();
-        _authRepoMock = new Mock<IUserRepository>();
-        _jwtServiceMock = new Mock<IJwtService>();
-
-        _authService = new AuthenticationService(
-            _passwordHashingMock.Object,
-            _authRepoMock.Object,
-            _jwtServiceMock.Object
-        );
+        _jwtService = new JwtService();
+        _passwordHashingService = new Mock<IPasswordHashingService>();
+        _authenticationRepository = new Mock<IUserRepository>();
+        _authenticationService =
+            new AuthenticationService(_passwordHashingService.Object, _authenticationRepository.Object);
+        _userRequestDto = new LoginRequestDto("lahcen28ahtat@gmail", "pass3453");
+        _newUser = new User
+        {
+            Email = "lahcen28ahtat@gmail",
+            Password = "pass3453"
+        };
+        _newUserDto = new CreateUserDto(Email: "lahcen28ahtat@gmail", Password: "pass3453", UserName: "lahcen");
     }
+
+    /// <summary>
+    /// Tests that a valid authentication request returns a user.
+    /// </summary>
+    /// <remarks>
+    /// The test assumes:
+    /// - A user exists with the given email.
+    /// - The password hashing service successfully validates the password.
+    /// The authentication service is expected to return the corresponding user.
+    /// </remarks>
     [Test]
-    public async Task AuthenticateUser_Success_ReturnsAuthenticationResponse()
+    public void AuthenticateUserTest_ShouldReturnUser()
     {
-        // Arrange
-        var email = "test@example.com";
-        var password = "Password123!";
-        var user = new User { Email = email, Password = "hashedPassword", Name = "Test User" };
-        var token = "token";
-        var expiry = DateTime.UtcNow.AddHours(1);
-        int expiryDate = (int)expiry.Subtract(DateTime.UnixEpoch).TotalSeconds;
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(_newUser);
+        _passwordHashingService.Setup(ph => ph.VerifyPassword(_userRequestDto.Password, _newUser.Password))
+            .Returns(true);
+        var result = _authenticationService.AuthenticateUser(_userRequestDto);
+        var user = result.Result;
+        Assert.IsNotNull(user);
+        Assert.That(user.Email, Is.EqualTo("lahcen28ahtat@gmail"));
+    }
 
-        _authRepoMock.Setup(r => r.GetUserByEmail(email)).ReturnsAsync(user);
-        _passwordHashingMock.Setup(h => h.VerifyPassword(password, user.Password)).Returns(true);
-        _jwtServiceMock.Setup(j => j.GenerateTokenResponse(user, out expiryDate)).Returns(token);
+    [Test]
+    public void CreateUserTest_shouldReturnNewUser()
+    {
+        User? nullUser = null;
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(nullUser);
+        _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns(_newUser.Password);
+        _authenticationRepository.Setup(repo => repo.CreateUser(_newUser)).ReturnsAsync(_newUser);
+        var result = _authenticationService.CreateUser(_newUserDto);
+        Assert.IsNotNull(result.Result);
+    }
 
-        var requestDto = new UserRequestDto(Email: email, Password: password);
-
-        // Act
-        var result = await _authService.AuthenticateUser(requestDto);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.That(result.email, Is.EqualTo(email));
-        Assert.That(result.AccessToken, Is.EqualTo(token));
+    /// <summary>
+    /// Tests the generation of refresh tokens.
+    /// </summary>
+    /// <remarks>
+    /// The test ensures that:
+    /// - Generated refresh tokens are not null.
+    /// - Consecutive refresh tokens are unique.
+    /// This validates the randomness of the token generation process.
+    /// </remarks>
+    [Test]
+    public void TestRefreshTokenGeneration()
+    {
+        var token = _jwtService.GenerateRefreshToken();
+        var token2 = _jwtService.GenerateRefreshToken();
+        Assert.IsNotNull(token);
+        Assert.IsNotNull(token2);
+        Assert.That(token2, Is.Not.EqualTo(token));
     }
 }

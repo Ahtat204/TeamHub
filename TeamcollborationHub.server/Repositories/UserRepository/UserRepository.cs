@@ -3,15 +3,18 @@ using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Repositories.UserRepository;
+
 /// <summary>
 /// class Responsible for handling authentication-related database operations on the User Entity
 /// </summary>
 public class UserRepository : IUserRepository
 {
+    
     /// <summary>
     /// an instance of TDBContext to interact with the database
     /// </summary>
     private readonly TdbContext _context;
+
     /// <summary>
     /// a Constructor that injects an instance of TDBContext
     /// </summary>
@@ -23,21 +26,23 @@ public class UserRepository : IUserRepository
 
     public UserRepository()
     {
-
     }
+
     /// <summary>
     ///  an asynchronous method responsible for creating a new user in the database
     /// </summary>
     /// <param name="user">a user Object to be inserted in database</param>
     /// <returns>return the created user , good for testing </returns>
-    public async Task<User> CreateUser(User user)
+    public async Task<User?> CreateUser(User user)
     {
-        _context.Add(user);
+        
+        _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;
     }
+
     /// <summary>
-    /// an asynchronous method for searching a user by email in the database,relying on the fact that the email is unique
+    /// an asynchronous method for searching a user by email in the database
     /// </summary>
     /// <param name="email">the email of the targeted <code>User</code>></param>
     /// <returns>returns the user associated with the email if found</returns>
@@ -45,6 +50,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
     }
+
     /// <summary>
     /// for fast lookup , a method for searching by an id
     /// </summary>
@@ -54,6 +60,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.FindAsync<User>(id);
     }
+
     /// <summary>
     /// method returns all the users in the database
     /// </summary>
@@ -62,6 +69,7 @@ public class UserRepository : IUserRepository
     {
         return _context.Set<User>();
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -75,6 +83,15 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
         return user;
     }
+
+    public async Task<User> deleteUser(string email)
+    {
+        var result =await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        _context.Users.Remove(result);
+        await _context.SaveChangesAsync();
+        return result;
+    }
+
     /// <summary>
     /// 
     /// </summary>

@@ -11,7 +11,6 @@ namespace TeamcollaborationHub.server.UnitTest.Services.Caching;
 [TestOf(typeof(RedisCachingService))]
 public class RedisCachingServiceTest
 {
-
     private Project _project;
     private IDistributedCache _cache;
     RedisCachingService _redisCachingService;
@@ -32,7 +31,7 @@ public class RedisCachingServiceTest
     [Test]
     public void GetProjectFromCacheTest()
     {
-        var id = 1;
+        var id = "1";
         _redisCachingService.SetProjectInCache(id.ToString(), _project);
         var result = _redisCachingService.GetProjectFromCache(id);
         Assert.That(result, Is.Not.Null);

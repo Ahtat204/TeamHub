@@ -2,10 +2,9 @@
 
 namespace TeamcollborationHub.server.Services.Caching;
 
-public interface ICachingService
+public interface ICachingService<T,TKey>
 {
-    Entities.Project? GetProjectFromCache(int projectId);
-
-    void SetProjectInCache(string key, Project project);
+    T? GetProjectFromCache(TKey projectId);
+    void SetProjectInCache(TKey key, T project);
+    public void EvictProjectFromCache(TKey key);
 }
-

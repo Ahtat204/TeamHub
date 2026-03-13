@@ -2,90 +2,138 @@
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Security;
 
 namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
-public class AuthenticationService : IAuthenticationService
+/// <summary>
+/// Provides user authentication and account management operations.
+/// </summary>
+/// <remarks>
+/// This service encapsulates business rules related to:
+/// - User authentication
+/// - User registration
+/// - User updates
+/// - User deletion
+/// 
+/// Security-sensitive operations such as password hashing and verification
+/// are delegated to specialized services.
+/// </remarks>
+public class AuthenticationService(
+    IPasswordHashingService passwordHashingService,
+    IUserRepository authenticationRepository
+   ) : IAuthenticationService
 {
-    private readonly IPasswordHashingService _passwordHashingService;
-    private readonly IUserRepository _userRepository;
-    private readonly IJwtService _jwtservice;
-
-    public AuthenticationService(IConfiguration configuration,
-        IPasswordHashingService passwordHashingService,
-        IUserRepository userRepository,
-        IJwtService jwtservice)
+    /// <summary>
+    /// Authenticates a user using login credentials.
+    /// </summary>
+    /// <param name="userRequest">
+    /// The login request containing the user's email and password.
+    /// </param>
+    /// <returns>
+    /// The authenticated <see cref="User"/> if credentials are valid.
+    /// </returns>
+    /// <exception cref="NotFoundException{User}">
+    /// Thrown when the user does not exist or the password is incorrect.
+    /// </exception>
+    /// <remarks>
+    /// The email is normalized before lookup.
+    /// Password verification is performed using the password hashing service.
+    /// </remarks>
+    public async Task<User?> AuthenticateUser(LoginRequestDto userRequest)
     {
-        _passwordHashingService = passwordHashingService;
-        _userRepository = userRepository;
-        _jwtservice = jwtservice;
-    }
-
-    public AuthenticationService(PasswordHashing passwordHashing, IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-        _passwordHashingService = passwordHashing;
-    }
-
-    public AuthenticationService(IPasswordHashingService passwordHashing, IUserRepository userRepository, IJwtService jwtservice)
-    {
-        _passwordHashingService = passwordHashing;
-        _userRepository = userRepository;
-        _jwtservice = jwtservice;
+        var email=userRequest.Email.Trim().ToLower();
+        var user = await authenticationRepository.GetUserByEmail(email);
+        if (user is null) throw new NotFoundException<User>();
+        var verified = passwordHashingService.VerifyPassword(userRequest.Password, user.Password);
+        if (!verified) throw new NotFoundException<User>("due to incorrect password");
+        return user;
     }
 
     /// <summary>
-    /// for testing purposes
+    /// Creates a new user account.
     /// </summary>
-    /// <param name="passwordHashing"></param>
-    /// <param name="passwordHashingService"></param>
-    /// <param name="authenticationRepository"></param>
-    /// <exception cref="NotImplementedException"></exception>
-
-
-    public async Task<AuthenticationResponse?> AuthenticateUser(UserRequestDto UserRequest)
-    {
-        var email = UserRequest.Email.Trim().ToLower();
-        var User = await _userRepository.GetUserByEmail(email);
-        if (User is null) throw new NotFoundException<User>();
-        var verified = _passwordHashingService.VerifyPassword(UserRequest.Password, User.Password);
-        if (!verified) throw new NotFoundException<User>("due to incorrect password");
-        var accesstoken = _jwtservice.GenerateTokenResponse(User, out var tokenExpiryDate) ??
-                          throw new Exception("Invalid credentials password");
-        return new(
-            email: email, AccessToken: accesstoken, ExpiryDate: tokenExpiryDate);
-    }
-
-    public async Task<User?> CreateUser(CreateUserDto? user)
+    /// <param name="user">
+    /// The data required to create a new user.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="User"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when the provided user data is null.
+    /// </exception>
+    /// <exception cref="Exception">
+    /// Thrown when a user with the same email already exists.
+    /// </exception>
+    /// <remarks>
+    /// The password is hashed before persistence.
+    /// The email and username are normalized before storage.
+    /// </remarks>
+    public async Task<User> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var emailexist = await _userRepository.GetUserByEmail(user.Email);
-        if (emailexist is not null) throw new Exception("this email already exist");
-        var hashedPassword = _passwordHashingService.Hash(user.Password);
-        var SavedUser = new User
+        var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
+        if (emailexist is not null) throw new AlreadyExistsException<string>(user.Email);
+        var hashedPassword = passwordHashingService.Hash(user.Password);
+        var savedUser = new User
         {
             Email = user.Email.Trim().ToLower(),
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        return await _userRepository.CreateUser(SavedUser);
+        var result= await authenticationRepository.CreateUser(savedUser);
+        return result ?? new User
+        {
+            Name = user.UserName,
+            Email = user.Email,
+        };
     }
-
+    /// <summary>
+    /// Updates an existing user account.
+    /// </summary>
+    /// <param name="user">
+    /// The user entity containing updated values.
+    /// </param>
+    /// <returns>
+    /// The updated <see cref="User"/> if the update succeeds;
+    /// otherwise, <c>null</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when the provided user is null.
+    /// </exception>
+    /// <exception cref="NotFoundException{User}">
+    /// Thrown when no user exists with the specified email.
+    /// </exception>
+    /// <remarks>
+    /// If the password has changed, it is re-hashed before persistence.
+    /// Email and name values are normalized prior to update.
+    /// </remarks>
     public async Task<User?> UpdateUser(User user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var checkuser = await _userRepository.GetUserByEmail(user.Email);
-        if (checkuser is null) throw new NotFoundException<User>("because email does not exist");
-        checkuser.Email = user.Email.Trim().ToLower();
-        checkuser.Password = checkuser.Password == user.Password ? user.Password : _passwordHashingService.Hash(user.Password);
-        checkuser.Name = user.Name.Trim();
-        return await _userRepository.UpdateUser(checkuser);
+        var checkUser = await authenticationRepository.GetUserByEmail(user.Email);
+        if (checkUser is null) throw new NotFoundException<User>("because email does not exist");
+        checkUser.Email = user.Email.Trim().ToLower();
+        checkUser.Password =checkUser.Password==user.Password?user.Password:passwordHashingService.Hash(user.Password);
+        checkUser.Name = user.Name.Trim();
+        return await authenticationRepository.UpdateUser(checkUser);
     }
 
+    /// <summary>
+    /// Deletes a user account by identifier.
+    /// </summary>
+    /// <param name="id">
+    /// The unique identifier of the user to delete.
+    /// </param>
+    /// <returns>
+    /// The deleted <see cref="User"/> if found;
+    /// otherwise, <c>null</c>.
+    /// </returns>
+    /// <remarks>
+    /// This operation delegates deletion responsibility to the user repository.
+    /// </remarks>
     public async Task<User?> DeleteUser(int id)
     {
-        return await _userRepository.deleteUser(id);
+        return await authenticationRepository.deleteUser(id);
     }
 }

@@ -15,14 +15,14 @@ public class CreateProjectCommandHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase("TestDatabase")
             .Options;
     }
 
     [Test]
     public void CreatesProject_ShouldReturnTheCreatedProject()
     {
-        Assert.NotNull(_options);
+        Assert.That(_options, Is.Not.Null);
         var project = new Project
         {
             Deadline = DateTime.Today,
@@ -32,12 +32,15 @@ public class CreateProjectCommandHandlerTest
             status = ProjectStatus.InProgress
         };
         var context = new TdbContext(_options);
-        var handler=new CreateProjectCommandHandler(context);
-       var result = handler.Handle(new CreateProjectCommand("Project 1","do I know you",[],ProjectStatus.Started,DateTime.Today),CancellationToken.None).Result;
-       Assert.NotNull(result);
-       Assert.That(result.Id, Is.EqualTo(1));
-       Assert.That(result.Name, Is.EqualTo("Project 1"));
-       Assert.That(result.Description, Is.EqualTo("do I know you"));
-       context.Database.EnsureDeleted();
+        var handler = new CreateProjectCommandHandler(context);
+        var result = handler
+            .Handle(new CreateProjectCommand("Project 1", "do I know you", [], ProjectStatus.Started, DateTime.Today),
+                CancellationToken.None).Result;
+        Assert.NotNull(result);
+        Assert.That(result.Id, Is.EqualTo(1));
+        Assert.That(result.Name, Is.EqualTo("Project 1"));
+        Assert.That(result.Description, Is.EqualTo("do I know you"));
+        context.Database.EnsureDeleted();
     }
+    
 }

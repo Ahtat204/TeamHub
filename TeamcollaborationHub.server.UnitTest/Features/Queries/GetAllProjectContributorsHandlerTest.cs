@@ -9,12 +9,18 @@ namespace TeamcollaborationHub.server.UnitTest.Features.Queries;
 
 public class GetAllProjectContributorsHandlerTest
 {
+    DbContextOptions<TdbContext>? options;
+
+    [SetUp]
+    public void Setup()
+    {
+        options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+            .Options;
+    }
     [Test]
     public void GetAllProjectContributors_ShouldReturnListOfContributors()
     {
-        var options = new DbContextOptionsBuilder<TdbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
+        Assert.NotNull(options);
         using var context = new TdbContext(options);
         var project = new Project { Id = 1, Name = "Project 1" };
         context.Projects.Add(project);
@@ -35,5 +41,16 @@ public class GetAllProjectContributorsHandlerTest
         Assert.That(projectResult.contributor, Has.Count.EqualTo(2));
         Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 1"));
         Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 2"));
+        context.Database.EnsureDeleted();
+    }
+
+    [Test]
+    public void GetAllProjectContributors_ShouldReturnEmptyListOfContributors()
+    {
+        using var context = new TdbContext(options);
+        var handler = new GetAllProjectsQueryHandler(context);
+        var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
+        Assert.IsNotNull(result);
+        Assert.That(result.Count(), Is.EqualTo(0));
     }
 }

@@ -30,6 +30,7 @@ public class GetProjectTaskByIdHandlerTest
         Assert.IsNotNull(result);
         Assert.That(1, Is.EqualTo(result.Id));
         Assert.That(result.Title, Is.EqualTo("Task 1"));
+        context.Database.EnsureDeleted();
     }
 
     [Test]
@@ -42,5 +43,6 @@ public class GetProjectTaskByIdHandlerTest
         var handler = new GetProjectTaskByIdQueryHandler(context);
         //var result = handler.Handle(new GetProjectTaskByIdQuery(2), CancellationToken.None).Result;
         Assert.That(()=>handler.Handle(new(2), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<ProjectTask>>());
+        context.Database.EnsureDeleted();
     }
 }

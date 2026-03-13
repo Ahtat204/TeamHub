@@ -53,6 +53,7 @@ public class GetAllProjectTasksHandlerTest
         var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(0));
+        context.Database.EnsureDeleted();
         
     }
 }

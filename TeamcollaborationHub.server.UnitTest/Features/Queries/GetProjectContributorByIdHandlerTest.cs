@@ -37,6 +37,7 @@ public class GetProjectContributorByIdHandlerTest
         var projectResult = result.First();
         Assert.That(projectResult.Id, Is.EqualTo(project.Id));
         Assert.That(projectResult.Name, Is.EqualTo(contributor.Name));
+        context.Database.EnsureDeleted();
     }
 
     [Test]
@@ -51,6 +52,7 @@ public class GetProjectContributorByIdHandlerTest
         var result= handler.Handle(new GetAllProjectContributorsQuery(project.Id), CancellationToken.None).Result;
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.Empty);
+        context.Database.EnsureDeleted();
         
     }
 }

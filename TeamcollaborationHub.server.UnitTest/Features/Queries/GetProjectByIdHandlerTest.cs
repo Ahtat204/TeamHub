@@ -35,6 +35,7 @@ public class GetProjectByIdHandlerTest
             Assert.That(result.Id, Is.EqualTo(project.Id));
             Assert.That(result.Name, Is.EqualTo(project.Name));
         });
+        context.Database.EnsureDeleted();
     }
 
     [Test]
@@ -44,5 +45,6 @@ public class GetProjectByIdHandlerTest
         using var context = new TdbContext(_options);
         var handler = new GetProjectByIdQueryHandler(context);
         Assert.That(()=>handler.Handle(new(1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
+        context.Database.EnsureDeleted();
     }
 }

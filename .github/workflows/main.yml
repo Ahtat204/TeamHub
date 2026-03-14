@@ -42,7 +42,7 @@ jobs:
           export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
           export KEY=$${{ secrets.KEY }}
           export ASPNETCORE_ENVIRONMENT=Production
-          dotnet build --configuration Release --no-restore
+          dotnet build --configuration Release 
 
       - name: Run Tests 🧪
         run: dotnet test  --verbosity normal

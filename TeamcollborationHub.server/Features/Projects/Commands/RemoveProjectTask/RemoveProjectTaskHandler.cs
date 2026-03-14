@@ -8,6 +8,9 @@ public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemovePro
 {
     public async Task Handle(RemoveProjectTaskCommand request, CancellationToken cancellationToken)
     {
-        var result = await db.Tasks.Where(t => t.Id == request.TaskId).ExecuteDeleteAsync(cancellationToken: cancellationToken);
+        var target =  db.Tasks.FirstOrDefault(t => t.Id == request.TaskId);
+        if (target is null) return;
+        db.Remove(target);
+        await db.SaveChangesAsync(cancellationToken);
     }
 }

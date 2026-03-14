@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿global using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
@@ -22,7 +22,6 @@ public class RemoveContributorFromProjectCommandHandlerTest
     [Test]
     public void RemoveContributorFromProject()
     {
-        
         Assert.That(_options,Is.Not.Null);
         var context = new TdbContext(_options);
         Project project = new()

@@ -19,8 +19,6 @@ public sealed class TdbContext : DbContext
         if (Database.GetService<IDatabaseCreator>() is not RelationalDatabaseCreator databasecreator) return;
         if(!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
         if(!databasecreator.HasTables()) databasecreator.CreateTables();
-
-
     }
 
     public TdbContext()

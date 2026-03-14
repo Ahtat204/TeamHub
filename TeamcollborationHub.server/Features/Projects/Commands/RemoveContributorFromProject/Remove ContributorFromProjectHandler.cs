@@ -15,8 +15,9 @@ public class RemoveContributorFromProjectCommandHandler(TdbContext db) : IReques
             {
                 result.ProjectId = null;
                 result.project = null;
+                result.project = null;
+                await db.SaveChangesAsync(cancellationToken);
             }
         }
-        await db.SaveChangesAsync(cancellationToken);
     }
 }

@@ -16,9 +16,9 @@ public class Project
     public required string Name { get; init; }
     [StringLength(300)]
     public string Description { get; init; } = string.Empty;
-    public ICollection<User>? contributor { get; init; }
-    public ProjectStatus? status { get; init; } = ProjectStatus.NotStarted;
-    public ICollection<Comment>? comments { get; init; }
+    public ICollection<User>? Contributors { get; init; }
+    public ProjectStatus? Status { get; init; } = ProjectStatus.NotStarted;
+    public ICollection<Comment>? Comments { get; init; }
     public ICollection<ProjectTask>? Tasks { get; init; }
     [DataType(DataType.Date)] public DateTime? CreatedDateTime { get; set; }
     [DataType(DataType.Date)] public DateTime? LastModifiedDateTime { get; set; }

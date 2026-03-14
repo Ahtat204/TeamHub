@@ -36,11 +36,11 @@ public sealed class TdbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Project>().HasMany(p => p.contributor).WithOne(u => u.project)
+        modelBuilder.Entity<Project>().HasMany(p => p.Contributors).WithOne(u => u.project)
             .HasForeignKey(u => u.ProjectId);
         modelBuilder.Entity<Project>().HasMany(p => p.Tasks).WithOne(t => t.project).HasForeignKey(t => t.projectId);
-        modelBuilder.Entity<Project>().HasMany(p => p.comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
-        modelBuilder.Entity<Project>().Property(o => o.status).HasConversion<string>();
+        modelBuilder.Entity<Project>().HasMany(p => p.Comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
+        modelBuilder.Entity<Project>().Property(o => o.Status).HasConversion<string>();
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
     }
 }

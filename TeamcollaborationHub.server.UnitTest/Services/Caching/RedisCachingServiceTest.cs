@@ -25,7 +25,7 @@ public class RedisCachingServiceTest
             Id = 1,
             Name = "Test Project",
             Description = "This is a test project",
-            status = ProjectStatus.Completed
+            Status = ProjectStatus.Completed
         };
     }
     [Test]

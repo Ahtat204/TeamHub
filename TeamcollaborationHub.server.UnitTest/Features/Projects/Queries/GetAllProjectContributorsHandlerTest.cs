@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TeamcollborationHub.server.Configuration;
+﻿using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 
@@ -37,10 +36,10 @@ public class GetAllProjectContributorsHandlerTest
         Assert.That(projectResult.Id, Is.EqualTo(project.Id));
         Assert.That(projectResult.Name, Is.EqualTo(project.Name));
         Assert.IsNotNull(projectResult);
-        Assert.IsNotNull(projectResult.contributor);
-        Assert.That(projectResult.contributor, Has.Count.EqualTo(2));
-        Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 1"));
-        Assert.IsTrue(projectResult.contributor.Any(c => c.Name == "Contributor 2"));
+        Assert.IsNotNull(projectResult.Contributors);
+        Assert.That(projectResult.Contributors, Has.Count.EqualTo(2));
+        Assert.IsTrue(projectResult.Contributors.Any(c => c.Name == "Contributor 1"));
+        Assert.IsTrue(projectResult.Contributors.Any(c => c.Name == "Contributor 2"));
         context.Database.EnsureDeleted();
     }
 

@@ -12,7 +12,6 @@ using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Middlewares;
 using TeamcollborationHub.server.Repositories.UserRepository;
-using TeamcollborationHub.server.Endpoints;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Security;
@@ -94,7 +93,7 @@ builder.Services.AddAuthorization();
 #endregion
 
 var app = builder.Build();
-//app.MapEndpoints();
+//app.MapEndpoints(); TODO:Don't forget this ,this top priority ,without this line (without "//") ,CQRS is just a folder structure 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

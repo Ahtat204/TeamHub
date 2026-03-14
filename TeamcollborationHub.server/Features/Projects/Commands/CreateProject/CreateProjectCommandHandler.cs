@@ -14,7 +14,7 @@ public class CreateProjectCommandHandler(TdbContext dbContext) : IRequestHandler
             Name = request.Name,
             Description = request.Description,
             Deadline = request.Deadline,
-            status = request.ProjectStatus
+            Status = request.ProjectStatus
         };
         dbContext.Projects.Add(project);
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -139,12 +139,10 @@ public class AuthenticationController(
     {
         if (refreshToken?.Token is null) return BadRequest("no refresh token found");
         var found =await jwtService.ValidateRefreshToken(refreshToken.Token);
-        
         if (found is  null)
         {
             return NotFound("Invalid refresh token");
         }
-        
         RefreshToken newRefreshToken = new()
         {
             Token = jwtService.GenerateRefreshToken(),

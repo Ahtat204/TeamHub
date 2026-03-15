@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TeamcollborationHub.server.Dto;
 
-public record UserRequestDto(
+public sealed record UserRequestDto(
     [EmailAddress, Required(ErrorMessage = "Email is Required")] string Email,
     [Category("Security")
      , Description("User's password.")

@@ -1,6 +1,6 @@
 ﻿namespace TeamcollborationHub.server.Dto;
 
-public record AuthenticationResponse(
+public sealed record AuthenticationResponse(
     string email,
     string AccessToken,
     int ExpiryDate

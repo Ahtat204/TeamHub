@@ -8,6 +8,7 @@ using TeamcollborationHub.server.Helpers;
 using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using TeamcollborationHub.server.Endpoints;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Middlewares;
@@ -35,17 +36,17 @@ builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(LoadValues.LoadValue("sqlserverconnectionstring",configuration)??configuration.GetConnectionString("sqlserverconnectionstring") ?? 
                          throw new InvalidOperationException(
                              "SQL Server Connection string wasn't not found.")));
-builder.Services.AddSingleton<IDatabase>(sp =>
-{
-    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
-    return multiplexer.GetDatabase(); // cheap pass-through
-});
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = LoadValues.LoadValue("RedisConnectionString",configuration)??configuration.GetConnectionString("RedisConnectionString") ?? 
         throw new InvalidOperationException(
             "Redis Connection string  wasn't found .");
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
+});
+builder.Services.AddSingleton<IDatabase>(sp =>
+{
+    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>()??throw new ArgumentNullException(nameof(IConnectionMultiplexer));
+    return multiplexer.GetDatabase();
 });
 builder.Services.AddSingleton(
     LuaScript.Prepare(
@@ -93,7 +94,7 @@ builder.Services.AddAuthorization();
 #endregion
 
 var app = builder.Build();
-//app.MapEndpoints(); TODO:Don't forget this ,this top priority ,without this line (without "//") ,CQRS is just a folder structure 
+app.MapEndpoints();// TODO:Don't forget this ,this top priority ,without this line (without "//") ,CQRS is just a folder structure 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

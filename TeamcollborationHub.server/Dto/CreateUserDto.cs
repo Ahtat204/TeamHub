@@ -8,7 +8,7 @@ namespace TeamcollborationHub.server.Dto;
 /// <param name="Email"></param>
 /// <param name="Password"></param>
 /// <param name="UserName"></param>
-public record CreateUserDto(
+public sealed record CreateUserDto(
     [EmailAddress, Required] string Email,
     string Password,
     [StringLength(20, MinimumLength = 4), RegularExpression(@"^[a-zA-Z0-9_]+$",

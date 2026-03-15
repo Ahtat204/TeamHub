@@ -19,9 +19,9 @@ public static class ProjectEndpoints
     {
         #region GetRequests
 
-        app.MapGet("api/projects", async (GetAllProjectsQuery get, IMediator mediator) =>
+        app.MapGet("api/projects", async (IMediator mediator) =>
         {
-            var result = await mediator.Send(get);
+            var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
         });
         app.MapGet("api/projects/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
@@ -71,13 +71,12 @@ public static class ProjectEndpoints
         });
 
         #endregion
-
         #region DeleteRequests
 
-        app.MapDelete("api/projects/contributor/{id:int}",
-            async (IMediator mediator, RemoveContributorFromProjectCommand removeContributor) =>
+        app.MapDelete("api/projects/{projectid:int}/contributor/{id:int}",
+            async (IMediator mediator, int ID, int id) =>
             {
-                await mediator.Send(removeContributor);
+                await mediator.Send(new RemoveContributorFromProjectCommand(ID, id));
                 return Results.NoContent();
             });
         app.MapDelete("api/projects/task/{id:int}", async (IMediator mediator, [FromQuery] int id) =>

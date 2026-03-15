@@ -23,9 +23,11 @@ DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration
     .AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
-
+string sqlserver = LoadValues.LoadValue("sqlserverconnectionstring", configuration) ??
+                configuration.GetConnectionString("sqlserverconnectionstring") ??
+                throw new InvalidOperationException("SQL Server Connection string wasn't not found.");
+string redis=LoadValues.LoadValue("RedisConnectionString",configuration)??configuration.GetConnectionString("RedisConnectionString") ?? throw new InvalidOperationException("Redis Connection string  wasn't found .");
 #region DependencyInjection
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
@@ -33,19 +35,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
-    options.UseSqlServer(LoadValues.LoadValue("sqlserverconnectionstring",configuration)??configuration.GetConnectionString("sqlserverconnectionstring") ?? 
-                         throw new InvalidOperationException(
-                             "SQL Server Connection string wasn't not found.")));
+    options.UseSqlServer( sqlserver));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = LoadValues.LoadValue("RedisConnectionString",configuration)??configuration.GetConnectionString("RedisConnectionString") ?? 
-        throw new InvalidOperationException(
-            "Redis Connection string  wasn't found .");
+    options.Configuration = redis;
     options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
 });
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
+{
+    EndPoints = { $"{redis}" },
+    Ssl = false,
+    AbortOnConnectFail = false,
+}));
 builder.Services.AddSingleton<IDatabase>(sp =>
 {
-    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>()??throw new ArgumentNullException(nameof(IConnectionMultiplexer));
+    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
     return multiplexer.GetDatabase();
 });
 builder.Services.AddSingleton(

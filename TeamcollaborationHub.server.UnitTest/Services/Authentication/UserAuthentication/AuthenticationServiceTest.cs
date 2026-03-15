@@ -8,14 +8,6 @@ using TeamcollborationHub.server.Services.Security;
 
 namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthentication;
 
-/// <summary>
-/// Unit tests for <see cref="AuthenticationService"/>.
-/// </summary>
-/// <remarks>
-/// This test suite verifies authentication-related behaviors such as
-/// user login, user creation, and refresh token generation.
-/// External dependencies are mocked to ensure isolation of the service logic.
-/// </remarks>
 [TestFixture]
 [TestOf(typeof(AuthenticationService))]
 public class AuthenticationServiceTest
@@ -66,17 +58,6 @@ public class AuthenticationServiceTest
         Assert.That(user.Email, Is.EqualTo("lahcen28ahtat@gmail"));
     }
 
-
-    /// <summary>
-    /// Tests that a new user is created when no existing user
-    /// is found with the same email address.
-    /// </summary>
-    /// <remarks>
-    /// This test validates that:
-    /// - The repository returns no user for the given email.
-    /// - The password is hashed before persistence.
-    /// - The created user is returned by the service.
-    /// </remarks>
     [Test]
     public void CreateUserTest_shouldReturnNewUser()
     {

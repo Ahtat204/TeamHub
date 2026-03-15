@@ -11,8 +11,6 @@ env:
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
-
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -25,16 +23,26 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore Dependencies
+      - name: Cache NuGet packages
+        id: cache-nuget
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        if: steps.cache-nuget.outputs.cache-hit != 'true'
         run: dotnet restore
 
       - name: Build Project
-        run:  |
+        run: |
           export CLIENT_ID=${{ secrets.CLIENT_ID }}
           export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
           export KEY=$${{ secrets.KEY }}
           export ASPNETCORE_ENVIRONMENT=Production
-          dotnet build --configuration Release --no-restore
+          dotnet build --configuration Release 
 
       - name: Run Tests 🧪
         run: dotnet test  --verbosity normal

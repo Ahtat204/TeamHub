@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
@@ -42,6 +41,18 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 httpContext.Response.ContentType = "application/problem+json";
                 await httpContext.Response.WriteAsJsonAsync(prob, cancellationToken);
                 return true;
+            case NotFoundException<Project>:
+                var probl = new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "the project does not exist",
+                    Detail = "The project does not exist."
+                };
+                httpContext.Response.StatusCode = probl.Status.Value;
+                httpContext.Response.ContentType = "application/problem+json";
+                await httpContext.Response.WriteAsJsonAsync(probl, cancellationToken);
+                return true;
+                
         }
      
         return true;

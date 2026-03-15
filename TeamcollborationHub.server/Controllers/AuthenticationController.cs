@@ -54,7 +54,9 @@ public class AuthenticationController(
     /// - A refresh token is generated and persisted
     /// - The refresh token is associated with the authenticated user
     /// </remarks>
-    [HttpPost("/login")]
+    [HttpPost("/login")] 
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto? userCridentials)
     {
         if (userCridentials is null) return BadRequest("Invalid user data");
@@ -93,7 +95,9 @@ public class AuthenticationController(
     /// This endpoint delegates validation and persistence logic
     /// to the authentication service.
     /// </remarks>
-    [HttpPost("/signup")]
+    [HttpPost("/signup")] 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
     {
         if (user is null) return BadRequest("Invalid user data");
@@ -135,12 +139,10 @@ public class AuthenticationController(
     {
         if (refreshToken?.Token is null) return BadRequest("no refresh token found");
         var found =await jwtService.ValidateRefreshToken(refreshToken.Token);
-        
         if (found is  null)
         {
             return NotFound("Invalid refresh token");
         }
-        
         RefreshToken newRefreshToken = new()
         {
             Token = jwtService.GenerateRefreshToken(),

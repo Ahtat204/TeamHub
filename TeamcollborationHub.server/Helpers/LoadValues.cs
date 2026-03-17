@@ -7,16 +7,7 @@ namespace TeamcollborationHub.server.Helpers;
 
 public static class LoadValues
 {
-    public static string? LoadEnv(string key)
-    {
-        if(EnvReader.HasValue(key))
-        {
-            return EnvReader.GetStringValue(key);
-        }
-        var result = Environment.GetEnvironmentVariable(key);
-        return result;
-    }
-    
+    public static string? LoadEnv(string key) => EnvReader.HasValue(key) ? EnvReader.GetStringValue(key) : Environment.GetEnvironmentVariable(key);
     public static string? LoadValue(string key, IConfiguration configuration)
     {
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -26,9 +17,5 @@ public static class LoadValues
         }
         return LoadEnv(key);
     }
-
-    public static bool IsTesting(this IWebHostEnvironment hostEnvironment)
-    {
-        return hostEnvironment.IsEnvironment("Testing");
-    }
+    public static bool IsTesting(this IWebHostEnvironment hostEnvironment)=>hostEnvironment.IsEnvironment("Testing");
 }

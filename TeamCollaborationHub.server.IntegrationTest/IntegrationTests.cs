@@ -27,12 +27,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Password = "password123",
     };
 
-    private readonly User contributor = new User()
-    {
-        Name = "JlalalaDoe",
-        Email = "ahtat203@test.com",
-        Password = "password123",
-    };
     private readonly User _userTest = new()
     {
         Name = "Lahcen ahtat",
@@ -40,12 +34,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Password = "HiHI235417162",
     };
 
-    private readonly Project? _project = new()
-    {
-        Name = "Project 1",
-        Description = "namedeed",
-        
-    };
+
     public IntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
@@ -132,30 +121,54 @@ public class IntegrationTest : BaseIntegrationTestFixture
     [Fact]
     public async Task CreateProject()
     {
-        Assert.NotNull(_project);
-        context.Projects.Add(_project);
-         await context.SaveChangesAsync();
-        var result =await context.Projects.FirstOrDefaultAsync();
+        Project project = new()
+        {
+            Name = "Project 1",
+            Description = "namedeed",
+        };
+        Assert.NotNull(project);
+        context.Projects.Add(project);
+        await context.SaveChangesAsync();
+        var result = await context.Projects.FirstOrDefaultAsync();
         Assert.NotNull(result);
-        _project.Id = result.Id;
-        Assert.Equal(_project.Name, result.Name);
+        project.Id = result.Id;
+        Assert.Equal(project.Name, result.Name);
     }
 
 
     [Fact]
-    public async Task UpdateProjectTest_AddUserToProject()
+    public async Task AddContributorToProject()
     {
-        Assert.NotNull(_project);
-        Assert.NotNull(_userRepository);
-        await _userRepository.CreateUser(contributor);
-        var user=await _userRepository.GetUserByEmail(contributor.Email);
-        Assert.NotNull(user);
-        /*var result=
-        var updatedProject= context.Projects.Include(project => project.Contributors).FirstOrDefault();
+        Project project = new()
+        {
+            Name = "TeamHub",
+            Description = "ASP.NET Core Web API",
+        };
+        Assert.NotNull(project);
+        Assert.NotNull(project);
+        context.Projects.Add(project);
+        User contributor = new User()
+        {
+            Name = "JlalalaDoe",
+            Email = "ahtat203@test.com",
+            Password = "password123",
+            project = project
+        };
+        await context.AddAsync(contributor);
+        await context.SaveChangesAsync();
+        var updatedProject = context.Projects.Include(pr => pr.Contributors).FirstOrDefault(pr => pr.Id == project.Id);
         Assert.NotNull(updatedProject);
         Assert.NotNull(updatedProject.Contributors);
-        Assert.NotEmpty(updatedProject.Contributors);*/
+        Assert.NotEmpty(updatedProject.Contributors);
+        Assert.Equal(contributor.Email, updatedProject.Contributors.First().Email);
     }
+
+    [Fact]
+    public async Task RemoveContributorFromProject()
+    {
+        //  Assert.NotNull(project);
+    }
+
     #endregion
 
     #region AuthenticationEndpointsTests

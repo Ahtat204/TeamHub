@@ -9,6 +9,7 @@ public abstract class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicat
    private readonly TeamHubApplicationFactory<Program, TdbContext> AppFactory;
    protected readonly IServiceScope scope;
    protected HttpClient Client { get; }
+   protected TdbContext context { get; private set; }
    
 
    protected BaseIntegrationTestFixture(TeamHubApplicationFactory<Program, TdbContext> appFactory)
@@ -16,7 +17,7 @@ public abstract class BaseIntegrationTestFixture : IClassFixture<TeamHubApplicat
       AppFactory =appFactory ?? throw new ArgumentNullException(nameof(appFactory));
       Client=appFactory.CreateClient();
       scope = AppFactory.Services.CreateScope();
-      var context=scope.ServiceProvider.GetRequiredService<TdbContext>();
+      context=scope.ServiceProvider.GetRequiredService<TdbContext>();
       context.Database.EnsureCreated();
       
    }

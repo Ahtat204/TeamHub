@@ -10,7 +10,7 @@ namespace TeamcollborationHub.server.Entities;
 [Table("Project")]
 public class Project
 {
-    [Key] public int Id { get; init; }
+    [Key] public int Id { get; set; }
     [Required]
     [StringLength(50)]
     public required string Name { get; init; }

@@ -8,8 +8,8 @@ using TeamcollborationHub.server.Repositories.UserRepository;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Dto;
+using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-
 namespace TeamCollaborationHub.server.IntegrationTest;
 
 [TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer",
@@ -194,6 +194,30 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Null(updatedProject);
     }
 
+    [Fact]
+    public async Task AddProjectTask()
+    {
+        Project pro = new()
+        {
+            Deadline = DateTime.Today,
+            Name = "Solar System",
+            Description = "do I know you?,if no,this is a Physics simulation(not this, the C++ repo)",
+            Status = ProjectStatus.InProgress
+        };
+        ProjectTask projectTask = new()
+        {
+            project = pro,
+            Title = "nothing , just a Metric Tensor(the Riemann's)",
+            Description = "do I know you",
+            projectId = pro.Id,
+        };
+        await context.Projects.AddAsync(pro);
+        await context.Tasks.AddAsync(projectTask);
+        await context.SaveChangesAsync();
+        var fetchedtask = context.Tasks.FirstOrDefault(t => t.project == pro);
+        Assert.NotNull(fetchedtask);
+        Assert.Equal(fetchedtask.Title, projectTask.Title);
+    }
     #endregion
 
     #region AuthenticationEndpointsTests

@@ -20,14 +20,14 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
     {
        
         
-        private static readonly MsSqlContainer SqlServerContainer = new MsSqlBuilder()
+        protected static readonly MsSqlContainer SqlServerContainer = new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
             .WithPassword("Password1").WithName("sql_server_container").WithEnvironment("ACCEPT_EULA","sa")
             .WithPortBinding(1433).WithCleanUp(true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1433))
             .Build();
 
-        private static readonly RedisContainer _redisContainer= new RedisBuilder()
+        public static readonly RedisContainer _redisContainer= new RedisBuilder()
             .WithImage("redis:latest")
             .Build();
         protected override void ConfigureWebHost(IWebHostBuilder builder)

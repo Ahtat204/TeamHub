@@ -133,6 +133,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result);
         project.Id = result.Id;
         Assert.Equal(project.Name, result.Name);
+
     }
 
 
@@ -157,16 +158,40 @@ public class IntegrationTest : BaseIntegrationTestFixture
         await context.AddAsync(contributor);
         await context.SaveChangesAsync();
         var updatedProject = context.Projects.Include(pr => pr.Contributors).FirstOrDefault(pr => pr.Id == project.Id);
+        await context.SaveChangesAsync();
         Assert.NotNull(updatedProject);
         Assert.NotNull(updatedProject.Contributors);
         Assert.NotEmpty(updatedProject.Contributors);
         Assert.Equal(contributor.Email, updatedProject.Contributors.First().Email);
+
     }
 
     [Fact]
     public async Task RemoveContributorFromProject()
     {
-        //  Assert.NotNull(project);
+        Project project = new()
+        {
+            Name = "ShootTrainner",
+            Description = "Unreal Engine C++ Game",
+        };
+        Assert.NotNull(project);
+        Assert.NotNull(project);
+        context.Projects.Add(project);
+        User contributor = new User()
+        {
+            Name = "JlalalaDoe",
+            Email = "lahcen203@test.com",
+            Password = "password123",
+            project = project
+        };
+        await context.AddAsync(contributor);
+        contributor.project = null;
+        contributor.ProjectId = null;
+        context.Users.Add(contributor);
+        await context.SaveChangesAsync();
+        await context.SaveChangesAsync();
+        var updatedProject = context.Users.FirstOrDefault(u => u.project == project);
+        Assert.Null(updatedProject);
     }
 
     #endregion

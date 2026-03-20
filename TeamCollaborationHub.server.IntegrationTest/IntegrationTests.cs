@@ -396,4 +396,15 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
+
+    #region ProjectEndpointsTests
+
+    [Fact]
+    public async Task CreateProjectTest()
+    {
+        
+    }
+    
+
+    #endregion
 }

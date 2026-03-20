@@ -1,8 +1,5 @@
-using System.Net;
 using DotNet.Testcontainers.Builders;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Testcontainers.Redis;
 using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Middlewares;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using Testcontainers.MsSql;
 
@@ -20,14 +16,14 @@ namespace TeamCollaborationHub.server.IntegrationTest.TestDependencies;
     {
        
         
-        protected static readonly MsSqlContainer SqlServerContainer = new MsSqlBuilder()
+        static readonly MsSqlContainer SqlServerContainer = new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
             .WithPassword("Password1").WithName("sql_server_container").WithEnvironment("ACCEPT_EULA","sa")
             .WithPortBinding(1433).WithCleanUp(true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(1433))
             .Build();
 
-        public static readonly RedisContainer _redisContainer= new RedisBuilder()
+        static readonly RedisContainer _redisContainer= new RedisBuilder()
             .WithImage("redis:latest")
             .Build();
         protected override void ConfigureWebHost(IWebHostBuilder builder)

@@ -16,6 +16,6 @@ public class ProjectTask
 
     [DataType(DataType.Date)] public DateTime DueDate { get; init; }
     public DateTime StartedDate { get; set; } = DateTime.Now;
-    public Project project { get; init; }
+    public Project project { get; set; }
     [Required] public int projectId { get; set; }
 }

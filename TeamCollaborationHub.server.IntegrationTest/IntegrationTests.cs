@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+
 namespace TeamCollaborationHub.server.IntegrationTest;
 
 [TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer",
@@ -133,7 +134,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result);
         project.Id = result.Id;
         Assert.Equal(project.Name, result.Name);
-
     }
 
 
@@ -163,7 +163,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(updatedProject.Contributors);
         Assert.NotEmpty(updatedProject.Contributors);
         Assert.Equal(contributor.Email, updatedProject.Contributors.First().Email);
-
     }
 
     [Fact]
@@ -218,6 +217,34 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(fetchedtask);
         Assert.Equal(fetchedtask.Title, projectTask.Title);
     }
+
+    [Fact]
+    public async Task RemoveProjectTask()
+    {
+        Project pro = new()
+        {
+            Deadline = DateTime.Today,
+            Name = "Physics Informed Neural Networks",
+            Description = "the Intersection of DL and Partial Differential Equation",
+            Status = ProjectStatus.Started
+        };
+        ProjectTask projectTask = new()
+        {
+            project = pro,
+            Title = "I'm not a python addict,if I'd implement PINNs,I'd use LibTorch",
+            Description = "do I know you",
+            projectId = pro.Id,
+        };
+        await context.Projects.AddAsync(pro);
+        context.SaveChanges();
+        var taskResult = context.Tasks.AddAsync(projectTask).Result.Entity;
+        context.SaveChanges();
+        context.Tasks.Remove(taskResult);
+        await context.SaveChangesAsync();
+        var fetchedtask = context.Tasks.FirstOrDefault(t => t.Id == taskResult.Id);
+        Assert.Null(fetchedtask);
+    }
+
     #endregion
 
     #region AuthenticationEndpointsTests

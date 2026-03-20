@@ -249,7 +249,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
 
     #region AuthenticationEndpointsTests
 
-    [Fact, TestPriority(1)]
+    [Fact, TestPriority(0)]
     public async Task LoginTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -399,10 +399,13 @@ public class IntegrationTest : BaseIntegrationTestFixture
 
     #region ProjectEndpointsTests
 
-    [Fact]
-    public async Task CreateProjectTest()
+    
+    [Fact, TestPriority(1)]
+    public async Task GetProjectsTest()
     {
-        
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
     }
     
 

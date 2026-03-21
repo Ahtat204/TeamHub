@@ -40,8 +40,9 @@ public class AuthenticationService(
     /// The email is normalized before lookup.
     /// Password verification is performed using the password hashing service.
     /// </remarks>
-    public async Task<User?> AuthenticateUser(LoginRequestDto userRequest)
+    public async Task<User?> AuthenticateUser(LoginRequestDto? userRequest)
     {
+        ArgumentNullException.ThrowIfNull(userRequest);
         var email = userRequest.Email.Trim().ToLower();
         var user = await authenticationRepository.GetUserByEmail(email);
         if (user is null) throw new NotFoundException<User>();
@@ -72,8 +73,8 @@ public class AuthenticationService(
     public async Task<User> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
-        if (emailexist is not null) throw new AlreadyExistsException<string>(user.Email);
+        var found = await authenticationRepository.GetUserByEmail(user.Email);
+        if (found is not null) throw new AlreadyExistsException<string>(user.Email);
         var hashedPassword = passwordHashingService.Hash(user.Password);
         var savedUser = new User
         {

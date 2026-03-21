@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Helpers;
 
 namespace TeamcollborationHub.server.Services.Authentication.Jwt;
+
 /// <summary>
 /// Provides JWT access token and refresh token functionality.
 /// </summary>
@@ -21,7 +23,12 @@ namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 public class JwtService : IJwtService
 {
     private readonly IConfiguration _configuration;
-    private readonly TdbContext context;
+    private readonly string? _issuer;
+    private readonly string? _audience;
+    private readonly string? _key;
+    private readonly string? _tokenValidityInMinutes; 
+    private readonly TdbContext _context;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="JwtService"/> class
     /// using application configuration and database context.
@@ -30,13 +37,17 @@ public class JwtService : IJwtService
     /// Application configuration containing JWT issuer, audience,
     /// signing key, and token duration settings.
     /// </param>
-    /// <param name="_context">
+    /// <param name="context">
     /// Database context used for refresh token persistence and validation.
     /// </param>
-    public JwtService(IConfiguration configuration, TdbContext _context)
+    public JwtService(IConfiguration configuration, TdbContext context)
     {
         _configuration = configuration;
-        context = _context;
+        _context = context;
+        _key = _configuration["JwtConfig:Key"];
+        _issuer = _configuration["JwtConfig:Issuer"];
+        _audience = _configuration["JwtConfig:Audience"];
+        _tokenValidityInMinutes=_configuration["JwtConfig:DurationInMinutes"];
     }
 
     /// <summary>
@@ -49,8 +60,9 @@ public class JwtService : IJwtService
     /// </remarks>
     public JwtService()
     {
-
+      
     }
+
     /// <summary>
     /// Generates a signed JWT access token for the specified user.
     /// </summary>
@@ -69,11 +81,7 @@ public class JwtService : IJwtService
     /// </remarks>
     public string? GenerateTokenResponse(User user, out int exipryDuration)
     {
-        var issuer = _configuration["JwtConfig:Issuer"];
-        var audience = _configuration["JwtConfig:Audience"];
-        var key = _configuration["JwtConfig:Key"];
-        var tokenValidityInMinutes = _configuration["JwtConfig:DurationInMinutes"];
-        var tokenExpiryDate = DateTime.UtcNow.AddMinutes(double.Parse(tokenValidityInMinutes ?? "60"));
+        var tokenExpiryDate = DateTime.UtcNow.AddMinutes(double.Parse(_tokenValidityInMinutes ?? "60"));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([
@@ -82,9 +90,9 @@ public class JwtService : IJwtService
                 new Claim(ClaimTypes.Name, user.Name)
             ]),
             Expires = tokenExpiryDate,
-            Issuer = issuer,
-            Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)),
+            Issuer = _issuer,
+            Audience = _audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_key!)),
                 SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandles = new JwtSecurityTokenHandler();
@@ -122,7 +130,7 @@ public class JwtService : IJwtService
     /// </remarks>
     public async Task<RefreshToken?> ValidateRefreshToken(string refreshToken)
     {
-        return await context.RefreshTokens.Where(t => t.Token == refreshToken).FirstOrDefaultAsync();
+        return await _context.RefreshTokens.Where(t => t.Token == refreshToken).FirstOrDefaultAsync();
     }
 
     /// <summary>
@@ -140,8 +148,8 @@ public class JwtService : IJwtService
     /// </remarks>
     public async Task<string?> SaveRefreshToken(RefreshToken refreshToken)
     {
-        var result = context.RefreshTokens.Add(refreshToken).Entity;
-        await context.SaveChangesAsync();
+        var result = _context.RefreshTokens.Add(refreshToken).Entity;
+        await _context.SaveChangesAsync();
         return result.Token;
     }
 
@@ -159,6 +167,6 @@ public class JwtService : IJwtService
     /// This method relies on a navigation relationship between
     /// refresh tokens and users.
     /// </remarks>
-    public async Task<User?> GetUserByRefreshToken(Guid id) => await context.RefreshTokens.Where(re => re.Id == id)
+    public async Task<User?> GetUserByRefreshToken(Guid id) => await _context.RefreshTokens.Where(re => re.Id == id)
         .Select(u => u.User).FirstOrDefaultAsync();
 }

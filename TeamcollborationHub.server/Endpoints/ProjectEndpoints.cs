@@ -24,12 +24,12 @@ public static class ProjectEndpoints
             var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
         }); //tested
-        app.MapGet("api/projects/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}", async ( int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetProjectByIdQuery(id));
             return Results.Ok(result);
         });
-        app.MapGet("api/projects/{id:int}/contributors", async ([FromQuery] int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);

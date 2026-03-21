@@ -402,7 +402,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     #region ProjectEndpointsTests
 
 
-    [Fact, TestPriority(2)]
+    [Fact, TestPriority(3)]
     public async Task GetProjectsTest()
     {
         var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
@@ -410,7 +410,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response);
     }
 
-    [Fact, TestPriority(1)]
+    [Fact, TestPriority(2)]
     public async Task CreateProjects()
     {
         CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
@@ -440,6 +440,17 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Fact, TestPriority(1)]
+    public async Task GetProjectByIdTest()
+    {
+        var prorandom = context.Projects.FirstOrDefault();
+        Assert.NotNull(prorandom);
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/projects/{prorandom.Id}");
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
     #endregion
 }

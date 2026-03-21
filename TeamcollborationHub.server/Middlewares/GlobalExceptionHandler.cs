@@ -9,16 +9,16 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Error:{Message}",exception.Message);
+        logger.LogError(exception, "Error:{Message}", exception.Message);
         switch (exception)
         {
-            case ValueNotFoundException :
+            case ValueNotFoundException:
                 var issue = new ProblemDetails
                 {
                     Status = StatusCodes.Status404NotFound,
                     Title = "value was not found",
                 };
-                await Console.Error.WriteLineAsync(issue.Status+issue.Title+issue.Detail);
+                await Console.Error.WriteLineAsync(issue.Status + issue.Title + issue.Detail);
                 return true;
             case NotFoundException<User>:
                 var problem = new ProblemDetails
@@ -52,9 +52,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 httpContext.Response.ContentType = "application/problem+json";
                 await httpContext.Response.WriteAsJsonAsync(probl, cancellationToken);
                 return true;
-                
+
         }
-     
+
         return true;
     }
 }

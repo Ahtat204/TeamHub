@@ -23,7 +23,7 @@ public class IpBasedRateLimiter
         _redisDatabase = redisDatabase;
         _next = next;
         _configuration = configuration;
-        _maxRequests= _configuration.GetValue<int>("maxReq") ;
+        _maxRequests = _configuration.GetValue<int>("maxReq");
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -32,11 +32,11 @@ public class IpBasedRateLimiter
         {
             throw new ValueProviderException("service wasn't properly configured");
         }
-        var ip = context.Connection.RemoteIpAddress?.ToString() ?? 
+        var ip = context.Connection.RemoteIpAddress?.ToString() ??
                  throw new NotFoundException<IPAddress>("Unable to determine client IP address.");
         RedisKey[] redisKey = [ip];
         string script = _luaScript.ExecutableScript;
-        var res =(long) await _redisDatabase.ScriptEvaluateAsync(script, redisKey,[_maxRequests,Expiry]);
+        var res = (long)await _redisDatabase.ScriptEvaluateAsync(script, redisKey, [_maxRequests, Expiry]);
         if (res == 1)
         {
             context.Response.StatusCode = StatusCodes.Status429TooManyRequests;

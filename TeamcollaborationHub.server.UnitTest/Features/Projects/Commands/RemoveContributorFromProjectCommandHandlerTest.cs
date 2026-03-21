@@ -6,7 +6,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFro
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Commands;
 
-[TestFixture,TestOf(typeof(RemoveContributorFromProjectCommandHandler))]
+[TestFixture, TestOf(typeof(RemoveContributorFromProjectCommandHandler))]
 public class RemoveContributorFromProjectCommandHandlerTest
 {
     private DbContextOptions<TdbContext>? _options;
@@ -22,7 +22,7 @@ public class RemoveContributorFromProjectCommandHandlerTest
     [Test]
     public void RemoveContributorFromProject()
     {
-        Assert.That(_options,Is.Not.Null);
+        Assert.That(_options, Is.Not.Null);
         var context = new TdbContext(_options);
         Project project = new()
         {
@@ -32,7 +32,7 @@ public class RemoveContributorFromProjectCommandHandlerTest
             Description = "do I know you",
             Status = ProjectStatus.InProgress
         };
-        User contributor = new ()
+        User contributor = new()
         {
             Id = 4,
             Email = "lahcen28ahtat@gmail",
@@ -46,7 +46,7 @@ public class RemoveContributorFromProjectCommandHandlerTest
         var handler = new RemoveContributorFromProjectCommandHandler(context);
         var result = handler.Handle(new RemoveContributorFromProjectCommand(project.Id, contributor.Id),
             CancellationToken.None);
-        var check = context.Users.FirstOrDefault(p => p.ProjectId == project.Id && p.Id==contributor.Id);
+        var check = context.Users.FirstOrDefault(p => p.ProjectId == project.Id && p.Id == contributor.Id);
         Assert.That(check, Is.Null);
         context.Database.EnsureDeleted();
     }

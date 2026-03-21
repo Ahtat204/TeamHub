@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Commands;
 
-[TestFixture,TestOf(typeof(CreateProjectCommandHandler))]
+[TestFixture, TestOf(typeof(CreateProjectCommandHandler))]
 public class CreateProjectCommandHandlerTest
 {
     private DbContextOptions<TdbContext>? _options;
@@ -30,5 +30,5 @@ public class CreateProjectCommandHandlerTest
         Assert.That(result.Description, Is.EqualTo("do I know you"));
         context.Database.EnsureDeleted();
     }
-    
+
 }

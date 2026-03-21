@@ -49,7 +49,7 @@ public class JwtService : IJwtService
     /// </remarks>
     public JwtService()
     {
-        
+
     }
     /// <summary>
     /// Generates a signed JWT access token for the specified user.

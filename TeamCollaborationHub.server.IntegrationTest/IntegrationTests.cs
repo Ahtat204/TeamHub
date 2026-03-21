@@ -1,14 +1,16 @@
-﻿using System.Net;
+﻿using System.Collections.ObjectModel;
+using System.Net;
 using System.Text;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TeamCollaborationHub.server.IntegrationTest.TestDependencies;
 using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Repositories.UserRepository;
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Dto;
+using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
+using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
+using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 
 namespace TeamCollaborationHub.server.IntegrationTest;
@@ -382,7 +384,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(2)]
+    [Fact, TestPriority(3)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -399,15 +401,45 @@ public class IntegrationTest : BaseIntegrationTestFixture
 
     #region ProjectEndpointsTests
 
-    
-    [Fact, TestPriority(1)]
+
+    [Fact, TestPriority(2)]
     public async Task GetProjectsTest()
     {
         var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
     }
-    
 
+    [Fact, TestPriority(1)]
+    public async Task CreateProjects()
+    {
+        CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
+            {
+                new User {
+
+        Name = "John Doe",
+        Email = "test@test.com",
+        Password = "password123"
+                },
+                new User{
+
+        Name = "John Doe",
+        Email = "nottesting@test.com",
+        Password = "password123"
+                }
+            },
+            Description: "namedeed",
+            ProjectStatus: ProjectStatus.Started,
+            Deadline: DateTime.Today);
+
+        string json = JsonSerializer.Serialize(request);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/projects")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
     #endregion
 }

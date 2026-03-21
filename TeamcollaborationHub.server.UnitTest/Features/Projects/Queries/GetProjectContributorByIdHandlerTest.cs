@@ -13,11 +13,11 @@ public class GetProjectContributorByIdHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
-       
+
     }
-    
+
     [Test]
     public void GetProjectContributorById_ShouldReturnContributor()
     {
@@ -46,11 +46,11 @@ public class GetProjectContributorByIdHandlerTest
         var project = new Project { Id = 2, Name = "Project 1" };
         context.Projects.Add(project);
         context.SaveChanges();
-        var handler=new GetAllProjectContributorsQueryHandler(context);
-        var result= handler.Handle(new GetAllProjectContributorsQuery(project.Id), CancellationToken.None).Result;
+        var handler = new GetAllProjectContributorsQueryHandler(context);
+        var result = handler.Handle(new GetAllProjectContributorsQuery(project.Id), CancellationToken.None).Result;
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.Empty);
         context.Database.EnsureDeleted();
-        
+
     }
 }

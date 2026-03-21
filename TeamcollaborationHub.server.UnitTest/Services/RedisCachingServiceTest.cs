@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Services.Caching;
 
-namespace TeamcollaborationHub.server.UnitTest.Services.Caching;
+namespace TeamcollaborationHub.server.UnitTest.Services;
 
 [TestFixture]
 [TestOf(typeof(RedisCachingService))]

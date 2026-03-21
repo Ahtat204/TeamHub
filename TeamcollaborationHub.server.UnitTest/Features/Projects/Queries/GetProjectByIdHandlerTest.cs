@@ -13,7 +13,7 @@ public class GetProjectByIdHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
     }
     [Test]
@@ -43,7 +43,7 @@ public class GetProjectByIdHandlerTest
         Assert.That(_options, Is.Not.Null);
         using var context = new TdbContext(_options);
         var handler = new GetProjectByIdQueryHandler(context);
-        Assert.That(()=>handler.Handle(new(1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
+        Assert.That(() => handler.Handle(new(1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
         context.Database.EnsureDeleted();
     }
 }

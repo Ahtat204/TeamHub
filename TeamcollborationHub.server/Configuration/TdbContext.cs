@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using TeamcollborationHub.server.Entities;
@@ -17,8 +16,8 @@ public sealed class TdbContext : DbContext
     public TdbContext(DbContextOptions<TdbContext> options) : base(options)
     {
         if (Database.GetService<IDatabaseCreator>() is not RelationalDatabaseCreator databasecreator) return;
-        if(!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
-        if(!databasecreator.HasTables()) databasecreator.CreateTables();
+        if (!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
+        if (!databasecreator.HasTables()) databasecreator.CreateTables();
     }
 
     public TdbContext()

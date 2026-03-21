@@ -1,6 +1,6 @@
 ﻿using TeamcollborationHub.server.Services.Security;
 
-namespace TeamcollaborationHub.server.UnitTest.Services.Security;
+namespace TeamcollaborationHub.server.UnitTest.Services;
 
 [TestFixture]
 [TestOf(typeof(PasswordHashing))]

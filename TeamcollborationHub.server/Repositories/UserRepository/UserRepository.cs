@@ -9,7 +9,7 @@ namespace TeamcollborationHub.server.Repositories.UserRepository;
 /// </summary>
 public class UserRepository : IUserRepository
 {
-    
+
     /// <summary>
     /// an instance of TDBContext to interact with the database
     /// </summary>
@@ -35,7 +35,7 @@ public class UserRepository : IUserRepository
     /// <returns>return the created user , good for testing </returns>
     public async Task<User?> CreateUser(User user)
     {
-        
+
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;
@@ -86,7 +86,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> deleteUser(string email)
     {
-        var result =await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        var result = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         _context.Users.Remove(result);
         await _context.SaveChangesAsync();
         return result;

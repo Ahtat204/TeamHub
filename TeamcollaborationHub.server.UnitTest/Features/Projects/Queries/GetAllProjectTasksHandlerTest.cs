@@ -12,7 +12,7 @@ public class GetAllProjectTasksHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
     }
     [Test]
@@ -34,10 +34,10 @@ public class GetAllProjectTasksHandlerTest
         var projectResult = result.First();
         Assert.That(projectResult.Id, Is.EqualTo(project.Id));
         Assert.That(projectResult.Name, Is.EqualTo(project.Name));
-        Assert.That(projectResult.Tasks,Is.Not.Null);
+        Assert.That(projectResult.Tasks, Is.Not.Null);
         Assert.That(projectResult.Tasks, Has.Count.EqualTo(2));
         Assert.IsTrue(projectResult.Tasks.Any(t => t.Title == "Task 1"));
-        Assert.That(projectResult.Tasks.Any(t => t.Title== "Task 2"), Is.True);
+        Assert.That(projectResult.Tasks.Any(t => t.Title == "Task 2"), Is.True);
         context.Database.EnsureDeleted();
     }
 
@@ -51,6 +51,6 @@ public class GetAllProjectTasksHandlerTest
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(0));
         context.Database.EnsureDeleted();
-        
+
     }
 }

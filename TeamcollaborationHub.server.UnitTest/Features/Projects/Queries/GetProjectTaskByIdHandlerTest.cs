@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
-[TestFixture,TestOf(typeof(GetProjectTaskByIdQueryHandler))]
+[TestFixture, TestOf(typeof(GetProjectTaskByIdQueryHandler))]
 public class GetProjectTaskByIdHandlerTest
 {
     private DbContextOptions<TdbContext>? _options;
@@ -40,7 +40,7 @@ public class GetProjectTaskByIdHandlerTest
         context.SaveChanges();
         var handler = new GetProjectTaskByIdQueryHandler(context);
         //var result = handler.Handle(new GetProjectTaskByIdQuery(2), CancellationToken.None).Result;
-        Assert.That(()=>handler.Handle(new(2), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<ProjectTask>>());
+        Assert.That(() => handler.Handle(new(2), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<ProjectTask>>());
         context.Database.EnsureDeleted();
     }
 }

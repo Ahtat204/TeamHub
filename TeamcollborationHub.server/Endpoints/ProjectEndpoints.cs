@@ -23,7 +23,7 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
-        });
+        }); //tested
         app.MapGet("api/projects/{id:int}", async ([FromQuery] int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetProjectByIdQuery(id));
@@ -53,7 +53,7 @@ public static class ProjectEndpoints
         #endregion
         #region PostRequests
 
-        app.MapPost("api/projects/", async (CreateProjectCommand projectCommand, IMediator mediator) =>
+        app.MapPost("api/projects", async (CreateProjectCommand projectCommand, IMediator mediator) =>
         {
             var result = await mediator.Send(projectCommand);
             return Results.Created($"api/projects/{result}", result);

@@ -42,7 +42,7 @@ public class AuthenticationService(
     /// </remarks>
     public async Task<User?> AuthenticateUser(LoginRequestDto userRequest)
     {
-        var email=userRequest.Email.Trim().ToLower();
+        var email = userRequest.Email.Trim().ToLower();
         var user = await authenticationRepository.GetUserByEmail(email);
         if (user is null) throw new NotFoundException<User>();
         var verified = passwordHashingService.VerifyPassword(userRequest.Password, user.Password);
@@ -81,7 +81,7 @@ public class AuthenticationService(
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        var result= await authenticationRepository.CreateUser(savedUser);
+        var result = await authenticationRepository.CreateUser(savedUser);
         return result ?? new User
         {
             Name = user.UserName,
@@ -114,7 +114,7 @@ public class AuthenticationService(
         var checkUser = await authenticationRepository.GetUserByEmail(user.Email);
         if (checkUser is null) throw new NotFoundException<User>("because email does not exist");
         checkUser.Email = user.Email.Trim().ToLower();
-        checkUser.Password =checkUser.Password==user.Password?user.Password:passwordHashingService.Hash(user.Password);
+        checkUser.Password = checkUser.Password == user.Password ? user.Password : passwordHashingService.Hash(user.Password);
         checkUser.Name = user.Name.Trim();
         return await authenticationRepository.UpdateUser(checkUser);
     }

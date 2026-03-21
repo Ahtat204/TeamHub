@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Commands;
 
-[TestFixture,TestOf(typeof(RemoveProjectTaskHandler))]
+[TestFixture, TestOf(typeof(RemoveProjectTaskHandler))]
 public class RemoveProjectTaskHandlerTest
 {
 
@@ -38,13 +38,13 @@ public class RemoveProjectTaskHandlerTest
             project = pro,
             Description = "do I know you",
             projectId = pro.Id,
-            
+
         };
         context.Projects.Add(pro);
         context.Tasks.Add(projectTask);
         context.SaveChanges();
         var handler = new RemoveProjectTaskHandler(context);
-        var result=handler.Handle(new RemoveProjectTaskCommand(projectTask.Id), CancellationToken.None);
+        var result = handler.Handle(new RemoveProjectTaskCommand(projectTask.Id), CancellationToken.None);
         var task = context.Tasks.SingleOrDefault(t => t.Id == projectTask.Id);
         Assert.That(task, Is.Null);
         context.Database.EnsureDeleted();

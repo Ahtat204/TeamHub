@@ -1,8 +1,8 @@
 ﻿namespace TeamcollborationHub.server.Dto;
 
-public  sealed record LoginResponseDto(
+public sealed record LoginResponseDto(
     string email,
     string? AccessToken,
     int ExpiryDate,
-    RefreshTokenDto? RefreshToken=null
+    RefreshTokenDto? RefreshToken = null
 );

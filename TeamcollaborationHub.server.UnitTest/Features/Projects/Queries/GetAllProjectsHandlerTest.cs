@@ -13,13 +13,13 @@ public class GetAllProjectsHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
     }
     [Test]
     public void GetAllProjects_ShouldReturnListOfProjects()
     {
-       
+
         using var context = new TdbContext(_options);
         context.Projects.AddRange(
             new Project { Id = 1, Name = "Project 1" },
@@ -45,6 +45,6 @@ public class GetAllProjectsHandlerTest
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(0));
         context.Database.EnsureDeleted();
-        
+
     }
 }

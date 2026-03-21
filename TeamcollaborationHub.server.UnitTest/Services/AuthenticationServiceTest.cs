@@ -1,12 +1,12 @@
-﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
-using Moq;
+﻿using Moq;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 using TeamcollborationHub.server.Services.Security;
 
-namespace TeamcollaborationHub.server.UnitTest.Services.Authentication.UserAuthentication;
+namespace TeamcollaborationHub.server.UnitTest.Services;
 
 [TestFixture]
 [TestOf(typeof(AuthenticationService))]

@@ -13,7 +13,7 @@ public class GetAllProjectContributorsHandlerTest
     [SetUp]
     public void Setup()
     {
-        _options=new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
+        _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
     }
     [Test]

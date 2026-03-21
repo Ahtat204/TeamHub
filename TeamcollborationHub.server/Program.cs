@@ -1,20 +1,20 @@
 using System.Reflection;
 using System.Text;
+using dotenv.net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using TeamcollborationHub.server.Configuration;
-using dotenv.net;
-using TeamcollborationHub.server.Helpers;
-using TeamcollborationHub.server.Services.Caching;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Endpoints;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
+using TeamcollborationHub.server.Helpers;
 using TeamcollborationHub.server.Middlewares;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
+using TeamcollborationHub.server.Services.Caching;
 using TeamcollborationHub.server.Services.Security;
 
 
@@ -26,7 +26,7 @@ var configuration = builder.Configuration
 string sqlserver = LoadValues.LoadValue("sqlserverconnectionstring", configuration) ??
                 configuration.GetConnectionString("sqlserverconnectionstring") ??
                 throw new InvalidOperationException("SQL Server Connection string wasn't not found.");
-string redis=LoadValues.LoadValue("RedisConnectionString",configuration)??configuration.GetConnectionString("RedisConnectionString") ?? throw new InvalidOperationException("Redis Connection string  wasn't found .");
+string redis = LoadValues.LoadValue("RedisConnectionString", configuration) ?? configuration.GetConnectionString("RedisConnectionString") ?? throw new InvalidOperationException("Redis Connection string  wasn't found .");
 #region DependencyInjection
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -35,11 +35,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TdbContext>(options =>
-    options.UseSqlServer( sqlserver));
+    options.UseSqlServer(sqlserver));
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redis;
-    options.InstanceName = LoadValues.LoadValue("RedisInstanceName",configuration) ?? "DefaultInstance";
+    options.InstanceName = LoadValues.LoadValue("RedisInstanceName", configuration) ?? "DefaultInstance";
 });
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
 {

@@ -1,9 +1,8 @@
-﻿using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-using TeamcollborationHub.server.Services.Caching;
+using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 
 namespace TeamcollborationHub.server.Controllers;
 
@@ -54,7 +53,7 @@ public class AuthenticationController(
     /// - A refresh token is generated and persisted
     /// - The refresh token is associated with the authenticated user
     /// </remarks>
-    [HttpPost("/login")] 
+    [HttpPost("/login")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto? userCridentials)
@@ -71,9 +70,9 @@ public class AuthenticationController(
             UserId = result.Id,
             Id = Guid.NewGuid(),
         };
-       // refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
+        // refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
         await jwtService.SaveRefreshToken(refreshToken);
-        return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken,refreshToken.Id.ToString())));
+        return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken, refreshToken.Id.ToString())));
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public class AuthenticationController(
     /// This endpoint delegates validation and persistence logic
     /// to the authentication service.
     /// </remarks>
-    [HttpPost("/signup")] 
+    [HttpPost("/signup")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<RegisterUserDto>> SignUp([FromBody] CreateUserDto? user)
@@ -138,8 +137,8 @@ public class AuthenticationController(
     public async Task<ActionResult<RefreshAccessDto>> Refresh([FromBody] RefreshTokenDto? refreshToken)
     {
         if (refreshToken?.Token is null) return BadRequest("no refresh token found");
-        var found =await jwtService.ValidateRefreshToken(refreshToken.Token);
-        if (found is  null)
+        var found = await jwtService.ValidateRefreshToken(refreshToken.Token);
+        if (found is null)
         {
             return NotFound("Invalid refresh token");
         }
@@ -150,9 +149,9 @@ public class AuthenticationController(
             UserId = found.UserId,
             Id = Guid.NewGuid(),
         };
-        var user=await jwtService.GetUserByRefreshToken(found.Id);
-        var accessToken=jwtService.GenerateTokenResponse(user, out var date);
-        var result=await jwtService.SaveRefreshToken(newRefreshToken);
-        return Ok(new RefreshAccessDto(accessToken,newRefreshToken.Token));
+        var user = await jwtService.GetUserByRefreshToken(found.Id);
+        var accessToken = jwtService.GenerateTokenResponse(user, out var date);
+        var result = await jwtService.SaveRefreshToken(newRefreshToken);
+        return Ok(new RefreshAccessDto(accessToken, newRefreshToken.Token));
     }
 }

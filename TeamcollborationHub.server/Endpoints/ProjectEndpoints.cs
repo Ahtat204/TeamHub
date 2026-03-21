@@ -33,7 +33,7 @@ public static class ProjectEndpoints
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);
         });
-        app.MapGet("api/{id:int}/task", async ( int id, IMediator mediator) =>
+        app.MapGet("api/{id:int}/task", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectTasksQuery(id));
             return Results.Ok(result);

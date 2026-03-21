@@ -23,8 +23,8 @@ public class GetAllProjectTasksHandlerTest
         var project = new Project { Id = 1, Name = "Project 1" };
         context.Projects.Add(project);
         context.Tasks.AddRange(
-            new ProjectTask { Id = 1, Title = "Task 1", projectId = project.Id },
-            new ProjectTask { Id = 2, Title = "Task 2", projectId = project.Id }
+            new ProjectTask { Id = 20, Title = "Task 1", projectId = project.Id },
+            new ProjectTask { Id = 30, Title = "Task 2", projectId = project.Id }
         );
         context.SaveChanges();
         var handler = new GetAllProjectsQueryHandler(context);

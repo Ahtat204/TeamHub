@@ -20,10 +20,11 @@ public class GetAllProjectsHandlerTest
     public void GetAllProjects_ShouldReturnListOfProjects()
     {
 
+        Assert.NotNull(_options);
         using var context = new TdbContext(_options);
         context.Projects.AddRange(
-            new Project { Id = 1, Name = "Project 1" },
-            new Project { Id = 2, Name = "Project 2" }
+            new Project { Id = 200, Name = "Project 1" },
+            new Project { Id = 300, Name = "Project 2" }
         );
         context.SaveChanges();
         var handler = new GetAllProjectsQueryHandler(context);

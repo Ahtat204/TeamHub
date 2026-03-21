@@ -1,5 +1,6 @@
 ﻿using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
@@ -28,18 +29,13 @@ public class GetAllProjectContributorsHandlerTest
             new User { Id = 2, Name = "Contributor 2", ProjectId = project.Id }
         );
         context.SaveChanges();
-        var handler = new GetAllProjectsQueryHandler(context);
-        var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
+        var handler = new GetAllProjectContributorsQueryHandler(context);
+        var result = handler.Handle(new GetAllProjectContributorsQuery(1), CancellationToken.None).Result;
         Assert.IsNotNull(result);
-        Assert.That(result.Count(), Is.EqualTo(1));
+        Assert.That(result.Count(), Is.EqualTo(2));
         var projectResult = result.First();
-        Assert.That(projectResult.Id, Is.EqualTo(project.Id));
-        Assert.That(projectResult.Name, Is.EqualTo(project.Name));
         Assert.IsNotNull(projectResult);
-        Assert.IsNotNull(projectResult.Contributors);
-        Assert.That(projectResult.Contributors, Has.Count.EqualTo(2));
-        Assert.IsTrue(projectResult.Contributors.Any(c => c.Name == "Contributor 1"));
-        Assert.IsTrue(projectResult.Contributors.Any(c => c.Name == "Contributor 2"));
+        Assert.That(projectResult.Name, Contains.Substring("Contributor"));
         context.Database.EnsureDeleted();
     }
 
@@ -47,8 +43,8 @@ public class GetAllProjectContributorsHandlerTest
     public void GetAllProjectContributors_ShouldReturnEmptyListOfContributors()
     {
         using var context = new TdbContext(_options);
-        var handler = new GetAllProjectsQueryHandler(context);
-        var result = handler.Handle(new GetAllProjectsQuery(), CancellationToken.None).Result;
+        var handler = new GetAllProjectContributorsQueryHandler(context);
+        var result = handler.Handle(new GetAllProjectContributorsQuery(1), CancellationToken.None).Result;
         Assert.IsNotNull(result);
         Assert.That(result.Count(), Is.EqualTo(0));
         context.Database.EnsureDeleted();

@@ -6,7 +6,7 @@ namespace TeamcollaborationHub.server.UnitTest.Services;
 [TestOf(typeof(PasswordHashing))]
 public class PasswordHashingTest
 {
-    private PasswordHashing _passwordHashing = new();
+    private readonly PasswordHashing _passwordHashing = new();
 
     [Test]
     public void HashPassword()
@@ -27,7 +27,7 @@ public class PasswordHashingTest
         Assert.That(verify, Is.True);
     }
     [Test]
-    public void VerifyTwoIdenticalPasswordsDontHaveDifferentHash()
+    public void VerifyTwoIdenticalPasswordsHaveDifferentHash()
     {
         var password1 = "password";
         var password2 = "password";

@@ -384,7 +384,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(3)]
+    [Fact, TestPriority(4)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -401,8 +401,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
 
     #region ProjectEndpointsTests
 
-
-    [Fact, TestPriority(3)]
+    [Fact, TestPriority(4)]
     public async Task GetProjectsTest()
     {
         var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
@@ -410,22 +409,22 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response);
     }
 
-    [Fact, TestPriority(2)]
+    [Fact, TestPriority(3)]
     public async Task CreateProjects()
     {
         CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
             {
-                new User {
-
-        Name = "John Doe",
-        Email = "test@test.com",
-        Password = "password123"
+                new User
+                {
+                    Name = "John Doe",
+                    Email = "test@test.com",
+                    Password = "password123"
                 },
-                new User{
-
-        Name = "John Doe",
-        Email = "nottesting@test.com",
-        Password = "password123"
+                new User
+                {
+                    Name = "John Doe",
+                    Email = "nottesting@test.com",
+                    Password = "password123"
                 }
             },
             Description: "namedeed",
@@ -442,7 +441,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
-    [Fact, TestPriority(1)]
+    [Fact, TestPriority(3)]
     public async Task GetProjectByIdTest()
     {
         var prorandom = context.Projects.FirstOrDefault();
@@ -452,5 +451,33 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
+    [Fact, TestPriority(2)]
+    public async Task GetAllProjectContributorsTest()
+    {
+        var prorandom = context.Projects.FirstOrDefault();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        User contributor = new ()
+        {
+            Name = "JlalalaDoe",
+            Email = "atat203@test.com",
+            Password = "password123",
+            project = prorandom
+        };
+        await context.AddAsync(contributor);
+        await context.SaveChangesAsync();
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/contributors");
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.NotNull(response.Content);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<IEnumerable<User>>(jsonString, options);
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+    }
+
     #endregion
 }

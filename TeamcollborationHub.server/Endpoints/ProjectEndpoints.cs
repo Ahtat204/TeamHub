@@ -16,7 +16,6 @@ namespace TeamcollborationHub.server.Endpoints;
 
 public static class ProjectEndpoints
 {
-    
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         #region GetRequests
@@ -54,7 +53,6 @@ public static class ProjectEndpoints
 
         #endregion
         #region PostRequests
-//TODO:need to refactor the handlers used here to return new Updated Project entity so it can be updated in the cache 
         app.MapPost("api/projects", async (CreateProjectCommand projectCommand, IMediator mediator,ICachingService<Project, string> cachingService) =>
         {
             var result = await mediator.Send(projectCommand);

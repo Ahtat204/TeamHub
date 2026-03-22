@@ -65,7 +65,6 @@ public class TeamHubApplicationFactory<T, TP> : WebApplicationFactory<T>, IAsync
     }
     public async Task InitializeAsync()
     {
-
         await SqlServerContainer.StartAsync();
         await _redisContainer.StartAsync();
     }

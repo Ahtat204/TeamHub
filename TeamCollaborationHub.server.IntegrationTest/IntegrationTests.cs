@@ -9,6 +9,7 @@ using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
+using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
@@ -23,29 +24,23 @@ public class IntegrationTest : BaseIntegrationTestFixture
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
-   
-
     private readonly User _user = new()
     {
         Name = "John Doe",
         Email = "test@test.com",
         Password = "password123",
     };
-
     private readonly User _userTest = new()
     {
         Name = "Lahcen ahtat",
         Email = "lahce28ahtat@gmail.com",
         Password = "HiHI235417162",
     };
-
-
     public IntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
-       
     }
 
     #region UserTableTests
@@ -241,9 +236,9 @@ public class IntegrationTest : BaseIntegrationTestFixture
             projectId = pro.Id,
         };
         await context.Projects.AddAsync(pro);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         var taskResult = context.Tasks.AddAsync(projectTask).Result.Entity;
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         context.Tasks.Remove(taskResult);
         await context.SaveChangesAsync();
         var fetchedtask = context.Tasks.FirstOrDefault(t => t.Id == taskResult.Id);
@@ -463,7 +458,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var prorandom = context.Projects.FirstOrDefault();
         await context.SaveChangesAsync();
         Assert.NotNull(prorandom);
-        User contributor = new ()
+        User contributor = new()
         {
             Name = "JlalalaDoe",
             Email = "atat203@test.com",
@@ -482,6 +477,32 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var result = JsonSerializer.Deserialize<IEnumerable<User>>(jsonString, options);
         Assert.NotNull(result);
         Assert.NotEmpty(result);
+    }
+
+    [Fact, TestPriority(1)]
+    public async Task AddContributorToProjectTest()
+    {
+        var prorandom = context.Projects.FirstOrDefault();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        User contributor = new()
+        {
+            Email = "len28ahtat@gmail",
+            Password = "pass3453",
+            Name = "Jack Reacher"
+        };
+        var user = context.Add(contributor).Entity;
+        await context.SaveChangesAsync();
+        Assert.NotNull(user);
+
+        AddContributorToProjectCommand updateProjectcommand = new AddContributorToProjectCommand(prorandom.Id, user.Id);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/contributors")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(updateProjectcommand), Encoding.UTF8, "application/json")
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
     #endregion

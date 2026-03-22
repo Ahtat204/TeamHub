@@ -10,15 +10,15 @@ public class AddContributorToProjectCommandHandler(TdbContext db) : IRequestHand
 {
     public async Task<Project> Handle(AddContributorToProjectCommand request, CancellationToken cancellationToken) // since EFcore.InMemory Doesn't support ExecuteUpdateAsync , this function will not be tested , can't just use another updating approach , because this the optimal and modern one
     {
-        var result = await db.Projects.FromSqlInterpolated(
+        var result = db.Projects.FromSqlInterpolated(
                 $@"
-        UPDATE [User]
+        UPDATE [user]
         SET ProjectId = {request.ProjectId}
         WHERE Id = {request.UserId};
 
-        SELECT * FROM Projects WHERE ProjectId = {request.ProjectId};
+        SELECT * FROM Project WHERE Id = {request.ProjectId};
     ")
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            .AsEnumerable().First();
         await db.SaveChangesAsync(cancellationToken);
         if (result is null) throw new NotFoundException<Project>();
         return result;

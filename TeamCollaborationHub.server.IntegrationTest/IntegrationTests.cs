@@ -387,7 +387,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(4)]
+    [Fact, TestPriority(5)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -410,6 +410,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
+        Assert.NotNull(response.Content);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact, TestPriority(3)]

@@ -34,6 +34,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ICachingService<Project, string>, RedisCachingService>();
+builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
+builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(sqlserver));
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -56,12 +62,6 @@ builder.Services.AddSingleton(
     LuaScript.Prepare(
         "local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
 );
-builder.Services.AddScoped<ICachingService<Project, string>, RedisCachingService>();
-builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
-builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddAuthentication(opt =>
     {
         opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

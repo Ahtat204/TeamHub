@@ -2,6 +2,7 @@ using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -49,7 +50,16 @@ public class TeamHubApplicationFactory<T, TP> : WebApplicationFactory<T>, IAsync
             );
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TdbContext>));
             if (descriptor is not null) { services.Remove(descriptor); }
-            services.AddDbContext<TdbContext>(options => { options.UseSqlServer(SqlServerContainer.GetConnectionString()); });
+            var connectionString = new SqlConnectionStringBuilder
+            {
+                DataSource = $"127.0.0.1,{SqlServerContainer.GetMappedPublicPort(1433)}",
+                UserID = "sa",
+                Password = "Password1",
+                InitialCatalog = "master",
+                TrustServerCertificate = true,
+                MultipleActiveResultSets = true // Enable MARS
+            }.ConnectionString;
+            services.AddDbContext<TdbContext>(options => { options.UseSqlServer(connectionString); });
         });
         builder.UseEnvironment("Testing");
     }

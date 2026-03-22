@@ -61,22 +61,26 @@ public static class ProjectEndpoints
             cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/{result}", result);
         });
+        //TODO:I'm aware that this shouldn't a Post request  
         app.MapPost("api/projects/contributors",
-            async (AddContributorToProjectCommand addContributor, IMediator mediator) =>
+            async (AddContributorToProjectCommand addContributor, IMediator mediator,ICachingService<Project,string> cachingService) =>
             {
                 var result = await mediator.Send(addContributor);
+                cachingService.SetProjectInCache(result.Id.ToString(), result);
                 return Results.Created($"api/projects/contributors{result}", result);
             });
-        app.MapPost("api/projects/tasks", async (AddProjectTaskCommand addProject, IMediator mediator) =>
+        // but this is a post request of course
+        app.MapPost("api/projects/tasks", async (AddProjectTaskCommand addProject, IMediator mediator,ICachingService<Project,string> cachingService) =>
         {
             var result = await mediator.Send(addProject);
+            cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/tasks/{result}", result);
         });
 
         #endregion
         #region DeleteRequests
 
-        app.MapDelete("api/projects/{projectid:int}/contributor/{id:int}",
+        app.MapDelete("api/projects/{projectid:int}/contributor/{id:int}", 
             async (IMediator mediator, int projectid, int id) =>
             {
                 await mediator.Send(new RemoveContributorFromProjectCommand(projectid, id));

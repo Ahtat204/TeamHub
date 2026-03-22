@@ -32,7 +32,7 @@ public class RedisCachingServiceTest
     public void GetProjectFromCacheTest()
     {
         var id = "1";
-        _redisCachingService.SetProjectInCache(id.ToString(), _project);
+        _redisCachingService.SetProjectInCache(id, _project);
         var result = _redisCachingService.GetProjectFromCache(id);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo(_project.Id));

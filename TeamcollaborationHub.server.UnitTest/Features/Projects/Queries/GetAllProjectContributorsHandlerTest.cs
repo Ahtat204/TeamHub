@@ -42,6 +42,7 @@ public class GetAllProjectContributorsHandlerTest
     [Test]
     public void GetAllProjectContributors_ShouldReturnEmptyListOfContributors()
     {
+        Assert.NotNull(_options);
         using var context = new TdbContext(_options);
         var handler = new GetAllProjectContributorsQueryHandler(context);
         var result = handler.Handle(new GetAllProjectContributorsQuery(1), CancellationToken.None).Result;

@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using TeamcollborationHub.server.Configuration;
+using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Helpers;
 using TeamcollborationHub.server.Repositories.UserRepository;
+using TeamcollborationHub.server.Services.Caching;
 using Testcontainers.MsSql;
 using Testcontainers.Redis;
 
@@ -31,6 +34,10 @@ public class TeamHubApplicationFactory<T, TP> : WebApplicationFactory<T>, IAsync
         builder.ConfigureTestServices(services =>
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = _redisContainer.GetConnectionString();
+            });
             services.AddSingleton<IDatabase>(sp =>
             {
                 var multiplexer = ConnectionMultiplexer.ConnectAsync(_redisContainer.GetConnectionString()).Result;

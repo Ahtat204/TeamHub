@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
 using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
@@ -9,11 +10,13 @@ using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
+using TeamcollborationHub.server.Services.Caching;
 
 namespace TeamcollborationHub.server.Endpoints;
 
 public static class ProjectEndpoints
 {
+    
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         #region GetRequests
@@ -23,9 +26,9 @@ public static class ProjectEndpoints
             var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
         }); //tested
-        app.MapGet("api/projects/{id:int}", async ( int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}", async ( int id, IMediator mediator,ICachingService<Project, string> cachingService) =>
         {
-            var result = await mediator.Send(new GetProjectByIdQuery(id));
+            Project result = cachingService.GetProjectFromCache(id.ToString()) ?? await mediator.Send(new GetProjectByIdQuery(id));
             return Results.Ok(result);
         });
         app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
@@ -51,10 +54,11 @@ public static class ProjectEndpoints
 
         #endregion
         #region PostRequests
-
-        app.MapPost("api/projects", async (CreateProjectCommand projectCommand, IMediator mediator) =>
+//TODO:need to refactor the handlers used here to return new Updated Project entity so it can be updated in the cache 
+        app.MapPost("api/projects", async (CreateProjectCommand projectCommand, IMediator mediator,ICachingService<Project, string> cachingService) =>
         {
             var result = await mediator.Send(projectCommand);
+            cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/{result}", result);
         });
         app.MapPost("api/projects/contributors",

@@ -13,6 +13,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 
+
 namespace TeamCollaborationHub.server.IntegrationTest;
 
 [TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer",
@@ -22,6 +23,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
+   
 
     private readonly User _user = new()
     {
@@ -43,6 +45,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
+       
     }
 
     #region UserTableTests

@@ -16,7 +16,7 @@ public class Project
     public required string Name { get; init; }
     [StringLength(300)]
     public string Description { get; init; } = string.Empty;
-    public ICollection<User>? Contributors { get; init; }
+    public ICollection<User>? Contributors { get; set; }
     public ProjectStatus? Status { get; init; } = ProjectStatus.NotStarted;
     public ICollection<Comment>? Comments { get; init; }
     public ICollection<ProjectTask>? Tasks { get; init; }

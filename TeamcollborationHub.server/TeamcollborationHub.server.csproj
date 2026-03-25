@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.0.0" />
+        <PackageReference Include="Dapper" Version="2.1.72" />
         <PackageReference Include="dotenv.net" Version="4.0.0" />
         <PackageReference Include="MediatR" Version="14.0.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />

@@ -9,10 +9,12 @@ public class AddProjectTaskCommandHandler(TdbContext db) : IRequestHandler<AddPr
 {
     public async Task<Project> Handle(AddProjectTaskCommand request, CancellationToken cancellationToken)
     {
-        var result = db.Projects.FirstOrDefault(pr => pr.Id == request.ProjectId);
+        if (request.task is null) throw new ArgumentNullException(nameof(ProjectTask));
+        var result = db.Projects.FirstOrDefault(pr => pr.Id == request.ProjectId) ??
+                     throw new NotFoundException<Project>();
         if (result is null) throw new NotFoundException<Project>();
         request.task.projectId = result.Id;
-        result.Tasks?.Add(request.task);
+        db.Tasks.Add(request.task);
         await db.SaveChangesAsync(cancellationToken);
         return await Task.FromResult(result);
     }

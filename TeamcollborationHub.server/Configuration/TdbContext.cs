@@ -23,7 +23,6 @@ public sealed class TdbContext : DbContext
     public TdbContext()
     {
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -503,6 +503,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<Project>(jsonString, options);
+        Assert.NotNull(result);
     }
 
     #endregion

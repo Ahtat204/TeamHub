@@ -61,7 +61,7 @@ public static class ProjectEndpoints
             cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/{result}", result);
         });
-        //TODO:I'm aware that this shouldn't a Post request  
+        //I'm aware that this shouldn't a Post request  
         app.MapPost("api/projects/contributors",
             async (AddContributorToProjectCommand addContributor, IMediator mediator,ICachingService<Project,string> cachingService) =>
             {

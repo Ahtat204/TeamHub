@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
@@ -10,12 +11,14 @@ public class AddProjectTaskCommandHandler(TdbContext db) : IRequestHandler<AddPr
     public async Task<Project> Handle(AddProjectTaskCommand request, CancellationToken cancellationToken)
     {
         if (request.task is null) throw new ArgumentNullException(nameof(ProjectTask));
-        var result = db.Projects.FirstOrDefault(pr => pr.Id == request.ProjectId) ??
+        var result = await db.Projects.FirstOrDefaultAsync(pr => pr.Id == request.ProjectId,cancellationToken: cancellationToken) ??
                      throw new NotFoundException<Project>();
         if (result is null) throw new NotFoundException<Project>();
         request.task.projectId = result.Id;
+        request.task.project = result;
         db.Tasks.Add(request.task);
         await db.SaveChangesAsync(cancellationToken);
-        return await Task.FromResult(result);
+        var updatedProject=await db.Projects.FirstOrDefaultAsync(pr => pr.Id == request.ProjectId,cancellationToken: cancellationToken) ?? throw new NotFoundException<Project>();
+        return await Task.FromResult(updatedProject);
     }
 }

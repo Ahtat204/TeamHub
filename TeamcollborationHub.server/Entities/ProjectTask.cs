@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace TeamcollborationHub.server.Entities;
 
@@ -16,6 +17,8 @@ public class ProjectTask
 
     [DataType(DataType.Date)] public DateTime DueDate { get; init; }
     public DateTime StartedDate { get; set; } = DateTime.Now;
+
+    [JsonIgnore]
     public Project project { get; set; }
     [Required] public int projectId { get; set; }
 }

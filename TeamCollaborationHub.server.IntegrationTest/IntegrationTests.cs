@@ -10,6 +10,7 @@ using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
+using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
@@ -385,7 +386,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(7)]
+    [Fact, TestPriority(8)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -401,6 +402,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     #endregion
 
     #region ProjectEndpointsTests
+
     #region GetRequests
 
     [Fact, TestPriority(4)]
@@ -418,8 +420,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
     {
         var prorandom = context.Projects.FirstOrDefault();
         Assert.NotNull(prorandom);
-        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/projects/{prorandom.Id}");
-        var response = await Client.SendAsync(postRequest);
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"/api/projects/{prorandom.Id}");
+        var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -439,8 +441,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
         };
         await context.AddAsync(contributor);
         await context.SaveChangesAsync();
-        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/contributors");
-        var response = await Client.SendAsync(postRequest);
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/contributors");
+        var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -451,7 +453,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotEmpty(result);
     }
 
-    [Fact,TestPriority(5)]
+    [Fact, TestPriority(5)]
     public async Task GetAllProjectTasks()
     {
         var prorandom = context.Projects.FirstOrDefault();
@@ -461,13 +463,12 @@ public class IntegrationTest : BaseIntegrationTestFixture
         {
             Title = "LEqualsTPlusV",
             Description = "LagrangianIsEqualToKineticEnergyPlusPotentialEnergy",
-            projectId = prorandom.Id
-,
+            projectId = prorandom.Id,
         };
         await context.AddAsync(newTask);
         await context.SaveChangesAsync();
-        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/tasks");
-        var response = await Client.SendAsync(postRequest);
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/tasks");
+        var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -478,25 +479,27 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotEmpty(result);
     }
 
-    [Fact,TestPriority(6)]
+    [Fact, TestPriority(6)]
     public async Task GetProjectTaskByIdTest()
     {
         var prorandom = context.Projects.Include(project => project.Tasks).FirstOrDefault();
         await context.SaveChangesAsync();
         Assert.NotNull(prorandom);
         Assert.NotNull(prorandom.Tasks);
-        var task=prorandom.Tasks.FirstOrDefault();
+        var task = prorandom.Tasks.FirstOrDefault();
         Assert.NotNull(task);
-        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/project/tasks/{task.Id}");
-        var response = await Client.SendAsync(postRequest); 
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/project/tasks/{task.Id}");
+        var response = await Client.SendAsync(getrequest);
         var jsonString = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var result = JsonSerializer.Deserialize<ProjectTask>(jsonString, options);
         Assert.NotNull(result);
-        
     }
+
     #endregion
+
     #region PostRequests
+
     [Fact, TestPriority(3)]
     public async Task CreateProjects()
     {
@@ -559,6 +562,40 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var result = JsonSerializer.Deserialize<Project>(jsonString, options);
         Assert.NotNull(result);
     }
-#endregion
+
+    [Fact, TestPriority(7)]
+    public async Task AddTaskToProjectTest()
+    {
+        var prorandom = await context.Projects.FirstOrDefaultAsync();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        ProjectTask newTask = new()
+        {
+            Title = "PINN",
+            Description = "PhysicsInformedNeuralNetwors",
+        };
+        var addTaskToProject = new AddProjectTaskCommand(prorandom.Id, newTask);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/tasks")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(addTaskToProject), Encoding.UTF8,
+                "application/json")
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<Project>(jsonString, options);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Tasks);
+        Assert.NotEmpty(result.Tasks);
+        var tasks = result.Tasks.ToList();
+        var task = tasks.FirstOrDefault(t => t.Title == newTask.Title);
+        Assert.NotNull(task);
+    }
+    
+
+    #endregion
+
     #endregion
 }

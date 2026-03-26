@@ -24,18 +24,21 @@ public class IntegrationTest : BaseIntegrationTestFixture
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
+
     private readonly User _user = new()
     {
         Name = "John Doe",
         Email = "test@test.com",
         Password = "password123",
     };
+
     private readonly User _userTest = new()
     {
         Name = "Lahcen ahtat",
         Email = "lahce28ahtat@gmail.com",
         Password = "HiHI235417162",
     };
+
     public IntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
@@ -382,7 +385,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(5)]
+    [Fact, TestPriority(6)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -398,47 +401,16 @@ public class IntegrationTest : BaseIntegrationTestFixture
     #endregion
 
     #region ProjectEndpointsTests
+    #region GetRequests
 
     [Fact, TestPriority(4)]
-    public async Task GetProjectsTest()
+    public async Task GetAllProjectsTest()
     {
         var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact, TestPriority(3)]
-    public async Task CreateProjects()
-    {
-        CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
-            {
-                new User
-                {
-                    Name = "John Doe",
-                    Email = "test@test.com",
-                    Password = "password123"
-                },
-                new User
-                {
-                    Name = "John Doe",
-                    Email = "nottesting@test.com",
-                    Password = "password123"
-                }
-            },
-            Description: "namedeed",
-            ProjectStatus: ProjectStatus.Started,
-            Deadline: DateTime.Today);
-
-        string json = JsonSerializer.Serialize(request);
-        var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/projects")
-        {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
-        };
-        var response = await Client.SendAsync(postRequest);
-        Assert.NotNull(response);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
     [Fact, TestPriority(3)]
@@ -479,6 +451,66 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotEmpty(result);
     }
 
+    [Fact,TestPriority(5)]
+    public async Task GetAllProjectTasks()
+    {
+        var prorandom = context.Projects.FirstOrDefault();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        ProjectTask newTask = new()
+        {
+Title = "LEqualsTPlusV",
+Description = "LagrangianIsEqualToKineticEnergyPlusPotentialEnergy"
+,projectId = prorandom.Id
+,
+        };
+        await context.AddAsync(newTask);
+        await context.SaveChangesAsync();
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/tasks");
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.NotNull(response.Content);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<IEnumerable<ProjectTask>>(jsonString, options);
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+    }
+    #endregion
+    #region PostRequests
+    [Fact, TestPriority(3)]
+    public async Task CreateProjects()
+    {
+        CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
+            {
+                new User
+                {
+                    Name = "John Doe",
+                    Email = "test@test.com",
+                    Password = "password123"
+                },
+                new User
+                {
+                    Name = "John Doe",
+                    Email = "nottesting@test.com",
+                    Password = "password123"
+                }
+            },
+            Description: "namedeed",
+            ProjectStatus: ProjectStatus.Started,
+            Deadline: DateTime.Today);
+
+        string json = JsonSerializer.Serialize(request);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/projects")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
     [Fact, TestPriority(1)]
     public async Task AddContributorToProjectTest()
     {
@@ -498,7 +530,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
         AddContributorToProjectCommand updateProjectcommand = new AddContributorToProjectCommand(prorandom.Id, user.Id);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/contributors")
         {
-            Content = new StringContent(JsonSerializer.Serialize(updateProjectcommand), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(updateProjectcommand), Encoding.UTF8,
+                "application/json")
         };
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
@@ -508,6 +541,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var result = JsonSerializer.Deserialize<Project>(jsonString, options);
         Assert.NotNull(result);
     }
-
+#endregion
     #endregion
 }

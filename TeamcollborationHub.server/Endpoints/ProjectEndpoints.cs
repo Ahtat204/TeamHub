@@ -19,23 +19,25 @@ public static class ProjectEndpoints
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         #region GetRequests
-
+        //tested
         app.MapGet("api/projects", async (IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
-        }); //tested
+        }); 
+        //tested
         app.MapGet("api/projects/{id:int}", async ( int id, IMediator mediator,ICachingService<Project, string> cachingService) =>
         {
             Project result = cachingService.GetProjectFromCache(id.ToString()) ?? await mediator.Send(new GetProjectByIdQuery(id));
             return Results.Ok(result);
         });
+        //tested
         app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);
         });
-        app.MapGet("api/{id:int}/task", async (int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}/tasks", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectTasksQuery(id));
             return Results.Ok(result);

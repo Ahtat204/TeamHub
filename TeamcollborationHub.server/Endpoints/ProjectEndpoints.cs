@@ -41,17 +41,17 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(new GetAllProjectTasksQuery(id));
             return Results.Ok(result);
-        }); //fetch all Task of a specific project
+        }); //tested
         app.MapGet("api/project/tasks/{id:int}", async ( int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetProjectTaskByIdQuery(id));
             return Results.Ok(result);
-        });
+        });//tested
         app.MapGet("api/projects/contributors/{id:int}", async ( int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);
-        });
+        });//tested
 
         #endregion
         #region PostRequests

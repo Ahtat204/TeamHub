@@ -385,7 +385,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(6)]
+    [Fact, TestPriority(7)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -459,9 +459,9 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(prorandom);
         ProjectTask newTask = new()
         {
-Title = "LEqualsTPlusV",
-Description = "LagrangianIsEqualToKineticEnergyPlusPotentialEnergy"
-,projectId = prorandom.Id
+            Title = "LEqualsTPlusV",
+            Description = "LagrangianIsEqualToKineticEnergyPlusPotentialEnergy",
+            projectId = prorandom.Id
 ,
         };
         await context.AddAsync(newTask);
@@ -476,6 +476,24 @@ Description = "LagrangianIsEqualToKineticEnergyPlusPotentialEnergy"
         var result = JsonSerializer.Deserialize<IEnumerable<ProjectTask>>(jsonString, options);
         Assert.NotNull(result);
         Assert.NotEmpty(result);
+    }
+
+    [Fact,TestPriority(6)]
+    public async Task GetProjectTaskByIdTest()
+    {
+        var prorandom = context.Projects.Include(project => project.Tasks).FirstOrDefault();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        Assert.NotNull(prorandom.Tasks);
+        var task=prorandom.Tasks.FirstOrDefault();
+        Assert.NotNull(task);
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, $"api/project/tasks/{task.Id}");
+        var response = await Client.SendAsync(postRequest); 
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<ProjectTask>(jsonString, options);
+        Assert.NotNull(result);
+        
     }
     #endregion
     #region PostRequests

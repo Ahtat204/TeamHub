@@ -1,11 +1,13 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
+using TeamcollborationHub.server.Features.Projects.Commands.AddProjectComment;
 using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
+using TeamcollborationHub.server.Features.Projects.Commands.SetProjectDeadline;
+using TeamcollborationHub.server.Features.Projects.Commands.SetProjectStartDate;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
@@ -87,6 +89,12 @@ public static class ProjectEndpoints
             return Results.Created($"api/projects/tasks/{result}", result);
         }).RequireAuthorization();
 
+        app.MapPost("api/projects/{id:int}/comments",
+            async (IMediator mediator, AddProjectCommentCommand commentCommand) =>
+            {
+                var result = await mediator.Send(commentCommand);
+                return Results.Created($"api/projects/comments/{result}", result);
+            });
         #endregion
 
         #region DeleteRequests
@@ -106,6 +114,15 @@ public static class ProjectEndpoints
 
         #endregion
 
+        #region UpdateRequests
+
+        app.MapPut("api/projects/{id:int}", async (int id, IMediator mediator, DateTime deadline) =>
+        {
+            var result = await mediator.Send(new SetProjectDeadlineCommand(id,deadline));
+            return Results.Ok(result);
+        });
+        
+        #endregion
         return app;
     }
 }

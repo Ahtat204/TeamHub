@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
 using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
@@ -25,7 +26,7 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(new GetAllProjectsQuery());
             return Results.Ok(result);
-        });
+        }).RequireAuthorization();
         //tested
         app.MapGet("api/projects/{id:int}",
             async (int id, IMediator mediator, ICachingService<Project, string> cachingService) =>
@@ -33,40 +34,41 @@ public static class ProjectEndpoints
                 Project result = cachingService.GetProjectFromCache(id.ToString()) ??
                                  await mediator.Send(new GetProjectByIdQuery(id));
                 return Results.Ok(result);
-            });
+            }).RequireAuthorization();
         //tested
         app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);
-        });
+        }).RequireAuthorization();
         app.MapGet("api/projects/{id:int}/tasks", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectTasksQuery(id));
             return Results.Ok(result);
-        }); //tested
+        }).RequireAuthorization(); //tested
         app.MapGet("api/project/tasks/{id:int}", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetProjectTaskByIdQuery(id));
             return Results.Ok(result);
-        }); //tested
+        }).RequireAuthorization(); //tested
         app.MapGet("api/projects/contributors/{id:int}", async (int id, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
             return Results.Ok(result);
-        }); //tested
+        }).RequireAuthorization(); //tested
 
         #endregion
 
         #region PostRequests
 
+        
         app.MapPost("api/projects", async (CreateProjectCommand projectCommand, IMediator mediator,
             ICachingService<Project, string> cachingService) =>
         {
             var result = await mediator.Send(projectCommand);
             cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/{result}", result);
-        });
+        }).RequireAuthorization();
         //I'm aware that this shouldn't a Post request  
         app.MapPost("api/projects/contributors",
             async (AddContributorToProjectCommand addContributor, IMediator mediator,
@@ -75,7 +77,7 @@ public static class ProjectEndpoints
                 var result = await mediator.Send(addContributor);
                 cachingService.SetProjectInCache(result.Id.ToString(), result);
                 return Results.Created($"api/projects/contributors{result}", result);
-            });
+            }).RequireAuthorization();
         // but this is a post request of course
         app.MapPost("api/projects/tasks", async (AddProjectTaskCommand addProject, IMediator mediator,
             ICachingService<Project, string> cachingService) =>
@@ -83,7 +85,7 @@ public static class ProjectEndpoints
             var result = await mediator.Send(addProject);
             cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Created($"api/projects/tasks/{result}", result);
-        });
+        }).RequireAuthorization();
 
         #endregion
 
@@ -94,13 +96,13 @@ public static class ProjectEndpoints
             {
                 await mediator.Send(new RemoveContributorFromProjectCommand(projectid, id));
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
         app.MapDelete("api/projects/{projectId:int}/tasks/{id:int}",
             async (IMediator mediator, int projectId, int id) =>
             {
                 await mediator.Send(new RemoveProjectTaskCommand(projectId, id));
                 return Results.NoContent();
-            });
+            }).RequireAuthorization();
 
         #endregion
 

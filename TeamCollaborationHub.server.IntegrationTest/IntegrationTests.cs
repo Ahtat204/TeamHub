@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
+    private  string? token; 
     private readonly User _user = new()
     {
         Name = "John Doe",
@@ -40,6 +42,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
+        token = _jwtService?.GenerateTokenResponse(_user,out var date);
     }
     #region UserTableTests
 
@@ -260,7 +263,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
 
-    [Fact]
+    [Fact,TestPriority(1)]
     public async Task RegisterUserTest()
     {
         var userRegistrationRequest = new CreateUserDto("lahcen25@gmail.com", "123assword", "lahcen22");
@@ -274,7 +277,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Equal(HttpStatusCode.OK, registerResponseMessage.StatusCode);
     }
 
-    [Fact]
+    [Fact,TestPriority(2)]
     public async Task RegisterExistingUserTest_ShouldReturnBadRequest()
     {
         var userRegistrationRequest = new CreateUserDto("lahcen26@gmail.com", "123assword", "lahcen22");
@@ -299,7 +302,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Null(refreshResponse?.AccessToken);
     }
 
-    [Fact]
+    [Fact,TestPriority(3)]
     public async Task LoginUserTest()
     {
         var userRegistrationRequest = new CreateUserDto("lahcen21@gmail.com", "123password", "lahcen22");
@@ -321,10 +324,14 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response.Content);
         var body = await response.Content.ReadAsStringAsync();
         Assert.NotEmpty(body);
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var refreshResponse = JsonSerializer.Deserialize<LoginResponseDto>(body, options);
+        Assert.NotNull(refreshResponse);
+        Assert.NotNull(refreshResponse.AccessToken);
     }
 
 
-    [Fact]
+    [Fact,TestPriority(4)]
     public async Task RefreshTokenTest()
     {
         var userRegistrationRequest = new CreateUserDto("lahcen20@gmail.com", "123assword", "lahcen22");
@@ -378,45 +385,40 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(10)]
-    public async Task RateLimitTest()
-    {
-        LoginRequestDto request = new("lahcen30@gmail.com", "password123");
-        string json = JsonSerializer.Serialize(request);
-        var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
-        {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
-        };
-        var response = await Client.SendAsync(postRequest);
-        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
-    }
-
     #endregion
+
     #region ProjectEndpointsTests
+
     #region GetRequests
 
-    [Fact, TestPriority(4)]
+    [Fact, TestPriority(5)]
     public async Task GetAllProjectsTest()
     {
-        var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects");
+        var postRequest = new HttpRequestMessage(HttpMethod.Get, "/api/projects")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact, TestPriority(3)]
+    [Fact, TestPriority(6)]
     public async Task GetProjectByIdTest()
     {
         var prorandom = context.Projects.FirstOrDefault();
         Assert.NotNull(prorandom);
-        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"/api/projects/{prorandom.Id}");
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"/api/projects/{prorandom.Id}")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact, TestPriority(2)]
+    [Fact, TestPriority(7)]
     public async Task GetAllProjectContributorsTest()
     {
         var prorandom = context.Projects.FirstOrDefault();
@@ -431,7 +433,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         };
         await context.AddAsync(contributor);
         await context.SaveChangesAsync();
-        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/contributors");
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/contributors")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
@@ -443,7 +448,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotEmpty(result);
     }
 
-    [Fact, TestPriority(5)]
+    [Fact, TestPriority(8)]
     public async Task GetAllProjectTasks()
     {
         var prorandom = context.Projects.FirstOrDefault();
@@ -457,7 +462,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         };
         await context.AddAsync(newTask);
         await context.SaveChangesAsync();
-        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/tasks");
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/projects/{prorandom.Id}/tasks")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(getrequest);
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
@@ -469,7 +477,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotEmpty(result);
     }
 
-    [Fact, TestPriority(6)]
+    [Fact, TestPriority(9)]
     public async Task GetProjectTaskByIdTest()
     {
         var prorandom = context.Projects.Include(project => project.Tasks).FirstOrDefault();
@@ -478,7 +486,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(prorandom.Tasks);
         var task = prorandom.Tasks.FirstOrDefault();
         Assert.NotNull(task);
-        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/project/tasks/{task.Id}");
+        var getrequest = new HttpRequestMessage(HttpMethod.Get, $"api/project/tasks/{task.Id}")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(getrequest);
         var jsonString = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -487,9 +498,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
+
     #region PostRequests
 
-    [Fact, TestPriority(3)]
+    [Fact, TestPriority(10)]
     public async Task CreateProjects()
     {
         var request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
@@ -512,16 +524,18 @@ public class IntegrationTest : BaseIntegrationTestFixture
             Deadline: DateTime.Today);
 
         string json = JsonSerializer.Serialize(request);
+        Assert.NotNull(token);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/projects")
         {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
+            Content = new StringContent(json, Encoding.UTF8, "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
         };
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
-    [Fact, TestPriority(1)]
+    [Fact, TestPriority(11)]
     public async Task AddContributorToProjectTest()
     {
         var prorandom = context.Projects.FirstOrDefault();
@@ -541,7 +555,9 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/contributors")
         {
             Content = new StringContent(JsonSerializer.Serialize(updateProjectcommand), Encoding.UTF8,
-                "application/json")
+                
+                "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
         };
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
@@ -552,7 +568,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result);
     }
 
-    [Fact, TestPriority(7)]
+    [Fact, TestPriority(12)]
     public async Task AddTaskToProjectTest()
     {
         var prorandom = await context.Projects.FirstOrDefaultAsync();
@@ -566,8 +582,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var addTaskToProject = new AddProjectTaskCommand(prorandom.Id, newTask);
         var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/tasks")
         {
-            Content = new StringContent(JsonSerializer.Serialize(addTaskToProject), Encoding.UTF8,
-                "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(addTaskToProject), Encoding.UTF8, "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
         };
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
@@ -584,9 +600,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
+
     #region DeleteRequests
 
-    [Fact,TestPriority(8)]
+    [Fact,TestPriority(13)]
     public async Task DeleteProjectTaskByIdTest()
     {
         var prorandom = context.Projects.Include(u=>u.Tasks).FirstOrDefault();
@@ -596,7 +613,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var task = prorandom.Tasks.FirstOrDefault(t=>t.projectId == prorandom.Id);
         await context.SaveChangesAsync();
         Assert.NotNull(task);
-        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/tasks/{task.Id}");
+        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/tasks/{task.Id}")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(deleteRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -605,7 +625,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Null(taskFound);
     }
 
-    [Fact, TestPriority(9)]
+    [Fact, TestPriority(14)]
     public async Task DeleteContributorTaskByIdTest()
     {
         var prorandom = await context.Projects.Include(u=>u.Contributors).FirstOrDefaultAsync();
@@ -615,7 +635,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var user = prorandom.Contributors.FirstOrDefault(t=>t.ProjectId == prorandom.Id);
         Assert.NotNull( user);
         await context.SaveChangesAsync();
-        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/contributors/{user.Id}");
+        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/contributors/{user.Id}")
+        {
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
         var response = await Client.SendAsync(deleteRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -624,6 +647,22 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Null(result);
         
     }
+
     #endregion
+
     #endregion
+
+    [Fact, TestPriority(15)]
+    public async Task RateLimitTest()
+    {
+        LoginRequestDto request = new("lahcen30@gmail.com", "password123");
+        string json = JsonSerializer.Serialize(request);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, "/login")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer",token) }
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+    }
 }

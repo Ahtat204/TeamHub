@@ -15,7 +15,7 @@ public class AddContributorToProjectCommandHandler(TdbContext db)
     {
         var user = await db.Users.FindAsync([request.UserId,cancellationToken], cancellationToken)
                    ?? throw new NotFoundException<User>();
-//TODO:still thinking how to avoid this 2-queries approach ,a better Idea would be Dapper,but I'd have to configure it in the tests too
+//TODO:still thinking how to avoid this bad 2-queries approach ,a better Idea would be Dapper,but I'd have to configure it in the tests too
         user.ProjectId = request.ProjectId;
         await db.SaveChangesAsync(cancellationToken);
         var project = await db.Projects

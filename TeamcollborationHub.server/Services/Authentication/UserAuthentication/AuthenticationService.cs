@@ -70,7 +70,7 @@ public class AuthenticationService(
     /// The password is hashed before persistence.
     /// The email and username are normalized before storage.
     /// </remarks>
-    public async Task<User> CreateUser(CreateUserDto user)
+    public async Task<User?> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
         var found = await authenticationRepository.GetUserByEmail(user.Email);

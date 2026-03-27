@@ -18,7 +18,6 @@ public class AddProjectTaskCommandHandler(TdbContext db) : IRequestHandler<AddPr
         request.task.project = result;
         db.Tasks.Add(request.task);
         await db.SaveChangesAsync(cancellationToken);
-        var updatedProject=await db.Projects.FirstOrDefaultAsync(pr => pr.Id == request.ProjectId,cancellationToken: cancellationToken) ?? throw new NotFoundException<Project>();
-        return await Task.FromResult(updatedProject);
+        return await Task.FromResult(result);
     }
 }

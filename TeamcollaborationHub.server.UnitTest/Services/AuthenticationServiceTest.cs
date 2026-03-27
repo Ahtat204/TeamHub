@@ -1,6 +1,7 @@
 ﻿using Moq;
 using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
+using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 using TeamcollborationHub.server.Services.Authentication.UserAuthentication;
@@ -47,26 +48,46 @@ public class AuthenticationServiceTest
     /// The authentication service is expected to return the corresponding user.
     /// </remarks>
     [Test]
-    public void AuthenticateUserTest_ShouldReturnUser()
+    public async Task AuthenticateUserTest_ShouldReturnUser()
     {
         _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(_newUser);
         _passwordHashingService.Setup(ph => ph.VerifyPassword(_userRequestDto.Password, _newUser.Password))
             .Returns(true);
-        var result = _authenticationService.AuthenticateUser(_userRequestDto);
-        var user = result.Result;
+        var user = await _authenticationService.AuthenticateUser(_userRequestDto);
         Assert.IsNotNull(user);
         Assert.That(user.Email, Is.EqualTo("lahcen28ahtat@gmail"));
     }
 
     [Test]
-    public void CreateUserTest_shouldReturnNewUser()
+    public void AuthenticateUserTest_ShouldThrowNotFoundException()
+    {
+        User? nullUser = null;
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(nullUser);
+        Assert.That(()=> _authenticationService.AuthenticateUser(_userRequestDto),Throws.Exception.TypeOf<NotFoundException<User>>());
+    }
+
+    [Test]
+    public void AuthenticateUserTest_ShouldThrowException()
+    {
+        var wrongUser = new User()
+        {
+            Email = "lahcen28ahtat@gmail",
+            Password = "pass345345171NSYU2"
+        };
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(wrongUser);
+        _passwordHashingService.Setup(ph => ph.VerifyPassword(_userRequestDto.Password, wrongUser.Password))
+            .Returns(false);
+        Assert.That(()=> _authenticationService.AuthenticateUser(_userRequestDto),Throws.Exception.TypeOf<NotFoundException<User>>());
+    }
+    [Test]
+    public async Task CreateUserTest_shouldReturnNewUser()
     {
         User? nullUser = null;
         _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(nullUser);
         _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns(_newUser.Password);
         _authenticationRepository.Setup(repo => repo.CreateUser(_newUser)).ReturnsAsync(_newUser);
-        var result = _authenticationService.CreateUser(_newUserDto);
-        Assert.IsNotNull(result.Result);
+        var result =await _authenticationService.CreateUser(_newUserDto);
+        Assert.IsNotNull(result);
     }
 
     /// <summary>

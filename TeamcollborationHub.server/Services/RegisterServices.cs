@@ -36,7 +36,7 @@ services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingSer
 services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 services.AddScoped<IAuthenticationService, AuthenticationService>();
 services.AddScoped<IUserRepository, UserRepository>();
-services.AddSingleton<IJwtService, JwtService>();
+services.AddSingleton<ITokenService, TokenService>();
 services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(sqlserver));
 services.AddStackExchangeRedisCache(options =>

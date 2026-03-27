@@ -23,7 +23,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
 {
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
-    private readonly IJwtService? _jwtService;
+    private readonly ITokenService? _jwtService;
     private  string? token; 
     private readonly User _user = new()
     {
@@ -41,7 +41,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
-        _jwtService = scope.ServiceProvider.GetService<IJwtService>();
+        _jwtService = scope.ServiceProvider.GetService<ITokenService>();
         token = _jwtService?.GenerateTokenResponse(_user,out var date);
     }
     #region UserTableTests

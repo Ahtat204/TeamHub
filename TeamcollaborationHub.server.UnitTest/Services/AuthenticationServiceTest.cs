@@ -15,7 +15,7 @@ public class AuthenticationServiceTest
     private readonly AuthenticationService _authenticationService;
     private readonly Mock<IPasswordHashingService> _passwordHashingService;
     private readonly Mock<IUserRepository> _authenticationRepository;
-    private readonly IJwtService _jwtService;
+    private readonly ITokenService _tokenService;
     private readonly LoginRequestDto _userRequestDto;
     private readonly User _newUser;
     private readonly CreateUserDto _newUserDto;
@@ -23,7 +23,7 @@ public class AuthenticationServiceTest
 
     public AuthenticationServiceTest()
     {
-        _jwtService = new JwtService();
+        _tokenService = new TokenService();
         _passwordHashingService = new Mock<IPasswordHashingService>();
         _authenticationRepository = new Mock<IUserRepository>();
         _authenticationService =
@@ -81,8 +81,8 @@ public class AuthenticationServiceTest
     [Test]
     public void TestRefreshTokenGeneration()
     {
-        var token = _jwtService.GenerateRefreshToken();
-        var token2 = _jwtService.GenerateRefreshToken();
+        var token = _tokenService.GenerateRefreshToken();
+        var token2 = _tokenService.GenerateRefreshToken();
         Assert.IsNotNull(token);
         Assert.IsNotNull(token2);
         Assert.That(token2, Is.Not.EqualTo(token));

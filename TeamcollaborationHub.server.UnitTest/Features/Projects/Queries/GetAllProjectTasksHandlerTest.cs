@@ -1,5 +1,4 @@
-﻿using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
+﻿using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 

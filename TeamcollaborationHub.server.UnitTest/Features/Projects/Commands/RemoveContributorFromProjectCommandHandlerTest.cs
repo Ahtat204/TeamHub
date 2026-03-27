@@ -1,6 +1,6 @@
 ﻿global using Microsoft.EntityFrameworkCore;
 global using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Entities;
+global using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 

@@ -13,7 +13,7 @@ namespace TeamcollaborationHub.server.UnitTest.Controllers;
 public class AuthenticationControllerTest
 {
     private readonly Mock<IAuthenticationService> _authenticationService;
-    private readonly Mock<IJwtService> _jwtService;
+    private readonly Mock<ITokenService> _jwtService;
     private readonly AuthenticationController _controller;
     private readonly User _newUser;
     private const string Secret = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ikpv";
@@ -21,7 +21,7 @@ public class AuthenticationControllerTest
     public AuthenticationControllerTest()
     {
         _authenticationService = new Mock<IAuthenticationService>();
-        _jwtService = new Mock<IJwtService>();
+        _jwtService = new Mock<ITokenService>();
         _controller = new AuthenticationController(_authenticationService.Object, _jwtService.Object);
         _newUser = new User
         {

@@ -23,7 +23,7 @@ namespace TeamcollborationHub.server.Controllers;
 [ApiController]
 public class AuthenticationController(
     IAuthenticationService authenticationService,
-    IJwtService jwtService) : ControllerBase
+    ITokenService tokenService) : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService =
         authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
@@ -61,8 +61,8 @@ public class AuthenticationController(
         if (userCridentials is null) return BadRequest("Invalid user data");
         var result = await _authenticationService.AuthenticateUser(userCridentials);
         if (result is null) return NotFound("Invalid user data");
-        var token = jwtService.GenerateTokenResponse(result, out var date);
-        var generateRefreshToken = jwtService.GenerateRefreshToken();
+        var token = tokenService.GenerateTokenResponse(result, out var date);
+        var generateRefreshToken = tokenService.GenerateRefreshToken();
         var refreshToken = new RefreshToken
         {
             Token = generateRefreshToken,
@@ -71,7 +71,7 @@ public class AuthenticationController(
             Id = Guid.NewGuid(),
         };
         // refreshTokenCachingService.SetProjectInCache(refreshToken.Id.ToString(), refreshToken);
-        await jwtService.SaveRefreshToken(refreshToken);
+        await tokenService.SaveRefreshToken(refreshToken);
         return Ok(new LoginResponseDto(result.Email, token, date, new RefreshTokenDto(generateRefreshToken, refreshToken.Id.ToString())));
     }
 
@@ -137,21 +137,21 @@ public class AuthenticationController(
     public async Task<ActionResult<RefreshAccessDto>> Refresh([FromBody] RefreshTokenDto? refreshToken)
     {
         if (refreshToken?.Token is null) return BadRequest("no refresh token found");
-        var found = await jwtService.ValidateRefreshToken(refreshToken.Token);
+        var found = await tokenService.ValidateRefreshToken(refreshToken.Token);
         if (found is null)
         {
             return NotFound("Invalid refresh token");
         }
         RefreshToken newRefreshToken = new()
         {
-            Token = jwtService.GenerateRefreshToken(),
+            Token = tokenService.GenerateRefreshToken(),
             Expires = DateTime.UtcNow.AddDays(10),
             UserId = found.UserId,
             Id = Guid.NewGuid(),
         };
-        var user = await jwtService.GetUserByRefreshToken(found.Id);
-        var accessToken = jwtService.GenerateTokenResponse(user, out var date);
-        var result = await jwtService.SaveRefreshToken(newRefreshToken);
+        var user = await tokenService.GetUserByRefreshToken(found.Id);
+        var accessToken = tokenService.GenerateTokenResponse(user, out var date);
+        var result = await tokenService.SaveRefreshToken(newRefreshToken);
         return Ok(new RefreshAccessDto(accessToken, newRefreshToken.Token));
     }
 }

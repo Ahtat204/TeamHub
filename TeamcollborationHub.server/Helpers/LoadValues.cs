@@ -4,7 +4,7 @@ using dotenv.net.Utilities;
 
 namespace TeamcollborationHub.server.Helpers;
 
-public static class LoadValues
+public static class LoadValues //thinking about a better name for this class
 {
     public static string? LoadEnv(string key) => EnvReader.HasValue(key) ? EnvReader.GetStringValue(key) : Environment.GetEnvironmentVariable(key);
     public static string? LoadValue(string key, IConfiguration configuration)

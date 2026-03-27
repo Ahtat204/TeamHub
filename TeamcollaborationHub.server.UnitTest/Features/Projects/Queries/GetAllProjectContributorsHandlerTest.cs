@@ -1,11 +1,8 @@
-﻿using TeamcollborationHub.server.Entities;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
-
+﻿using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Queries;
 
 [TestFixture]
-
 public class GetAllProjectContributorsHandlerTest
 {
     private DbContextOptions<TdbContext>? _options;
@@ -16,6 +13,7 @@ public class GetAllProjectContributorsHandlerTest
         _options = new DbContextOptionsBuilder<TdbContext>().UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
     }
+
     [Test]
     public void GetAllProjectContributors_ShouldReturnListOfContributors()
     {

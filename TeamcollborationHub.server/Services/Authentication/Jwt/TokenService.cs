@@ -20,7 +20,7 @@ namespace TeamcollborationHub.server.Services.Authentication.Jwt;
 /// - Persisting and validating refresh tokens
 /// - Resolving users associated with refresh tokens
 /// </remarks>
-public class JwtService : IJwtService
+public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
     private readonly string? _issuer;
@@ -30,7 +30,7 @@ public class JwtService : IJwtService
     private readonly TdbContext _context;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JwtService"/> class
+    /// Initializes a new instance of the <see cref="TokenService"/> class
     /// using application configuration and database context.
     /// </summary>
     /// <param name="configuration">
@@ -40,7 +40,7 @@ public class JwtService : IJwtService
     /// <param name="context">
     /// Database context used for refresh token persistence and validation.
     /// </param>
-    public JwtService(IConfiguration configuration, TdbContext context)
+    public TokenService(IConfiguration configuration, TdbContext context)
     {
         _configuration = configuration;
         _context = context;
@@ -51,14 +51,14 @@ public class JwtService : IJwtService
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JwtService"/> class
+    /// Initializes a new instance of the <see cref="TokenService"/> class
     /// without dependencies.
     /// </summary>
     /// <remarks>
     /// This constructor is primarily intended for testing scenarios
     /// where token generation does not rely on persistence.
     /// </remarks>
-    public JwtService()
+    public TokenService()
     {
       
     }

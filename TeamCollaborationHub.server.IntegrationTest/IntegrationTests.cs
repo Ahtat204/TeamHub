@@ -99,8 +99,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response);
         Assert.Equal(createuserTest.Email, response.Email);
     }
-
-
     [Fact]
     public async Task DeleteUserTest()
     {
@@ -367,6 +365,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.Null(refreshResponse?.RefreshToken);
         Assert.Null(refreshResponse?.AccessToken);
     }
+
     /// <summary>
     /// Registers and logs in a user, verifying access token issuance.
     /// </summary>
@@ -397,10 +396,10 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(refreshResponse);
         Assert.NotNull(refreshResponse.AccessToken);
     }
+
     /// <summary>
     /// Validates refresh token exchange for new access tokens.
     /// </summary>
-
     [Fact, TestPriority(4)]
     public async Task RefreshTokenTest()
     {
@@ -476,6 +475,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response.Content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
     /// <summary>
     /// Retrieves a project by ID and expects a successful response.
     /// </summary>
@@ -492,6 +492,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
     /// <summary>
     /// Retrieves contributors for a project and ensures non-empty results.
     /// </summary>
@@ -524,6 +525,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result);
         Assert.NotEmpty(result);
     }
+
     /// <summary>
     /// Retrieves tasks for a project and ensures non-empty results.
     /// </summary>
@@ -555,6 +557,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result);
         Assert.NotEmpty(result);
     }
+
     /// <summary>
     /// Retrieves a project task by ID and validates correctness.
     /// </summary>
@@ -653,6 +656,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var result = JsonSerializer.Deserialize<Project>(jsonString, options);
         Assert.NotNull(result);
     }
+
     /// <summary>
     /// Adds a task to a project via API and validates persistence.
     /// </summary>
@@ -715,6 +719,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         await context.SaveChangesAsync();
         Assert.Null(taskFound);
     }
+
     /// <summary>
     /// Deletes a contributor from a project by ID and ensures removal.
     /// </summary>

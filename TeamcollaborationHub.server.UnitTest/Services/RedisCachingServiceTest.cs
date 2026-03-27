@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Services.Caching;
 

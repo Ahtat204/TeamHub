@@ -12,7 +12,7 @@ public class Comment
     public int Id { get; init; }
     [StringLength(3000)]
     public string Content { get; set; } = string.Empty;
-    public Project Project { get; init; }
-    public int projectId { get; init; }
+    public Project Project { get; set; }
+    public int projectId { get; set; }
 
 }

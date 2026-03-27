@@ -7,4 +7,4 @@ namespace TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 /// </summary>
 /// <param name="ProjectId">the Project identifier</param>
 /// <param name="task">the task object , of type "ProjectTask"</param>
-public record AddProjectTaskCommand(int ProjectId, ProjectTask task) : IRequest<Project>;
+public record AddProjectTaskCommand(int ProjectId, ProjectTask? task) : IRequest<Project>;

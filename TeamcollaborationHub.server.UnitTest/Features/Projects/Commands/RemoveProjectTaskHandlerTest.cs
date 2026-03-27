@@ -44,7 +44,7 @@ public class RemoveProjectTaskHandlerTest
         context.Tasks.Add(projectTask);
         context.SaveChanges();
         var handler = new RemoveProjectTaskHandler(context);
-        var result = handler.Handle(new RemoveProjectTaskCommand(projectTask.Id), CancellationToken.None);
+        var result =handler.Handle(new RemoveProjectTaskCommand(pro.Id,projectTask.Id), CancellationToken.None).Result;
         var task = context.Tasks.SingleOrDefault(t => t.Id == projectTask.Id);
         Assert.That(task, Is.Null);
         context.Database.EnsureDeleted();

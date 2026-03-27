@@ -14,8 +14,6 @@ using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
-
-
 namespace TeamCollaborationHub.server.IntegrationTest;
 
 [TestCaseOrderer("TeamCollaborationHub.server.IntegrationTest.TestDependencies.PriorityOrderer",
@@ -25,28 +23,24 @@ public class IntegrationTest : BaseIntegrationTestFixture
     private readonly TeamHubApplicationFactory<Program, TdbContext> _applicationFactory;
     private readonly IUserRepository? _userRepository;
     private readonly IJwtService? _jwtService;
-
     private readonly User _user = new()
     {
         Name = "John Doe",
         Email = "test@test.com",
         Password = "password123",
     };
-
     private readonly User _userTest = new()
     {
         Name = "Lahcen ahtat",
         Email = "lahce28ahtat@gmail.com",
         Password = "HiHI235417162",
     };
-
     public IntegrationTest(TeamHubApplicationFactory<Program, TdbContext> appFactory) : base(appFactory)
     {
         _applicationFactory = appFactory;
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<IJwtService>();
     }
-
     #region UserTableTests
 
     [Fact]
@@ -120,7 +114,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
-
     #region ProjectTableTests
 
     [Fact]
@@ -250,7 +243,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
-
     #region AuthenticationEndpointsTests
 
     [Fact, TestPriority(0)]
@@ -386,7 +378,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         #endregion
     }
 
-    [Fact, TestPriority(8)]
+    [Fact, TestPriority(10)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");
@@ -400,9 +392,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
-
     #region ProjectEndpointsTests
-
     #region GetRequests
 
     [Fact, TestPriority(4)]
@@ -497,13 +487,12 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
-
     #region PostRequests
 
     [Fact, TestPriority(3)]
     public async Task CreateProjects()
     {
-        CreateProjectCommand request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
+        var request = new CreateProjectCommand(Name: "Pro22", Contributors: new Collection<User>()
             {
                 new User
                 {
@@ -593,9 +582,48 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var task = tasks.FirstOrDefault(t => t.Title == newTask.Title);
         Assert.NotNull(task);
     }
-    
 
     #endregion
+    #region DeleteRequests
 
+    [Fact,TestPriority(8)]
+    public async Task DeleteProjectTaskByIdTest()
+    {
+        var prorandom = context.Projects.Include(u=>u.Tasks).FirstOrDefault();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        Assert.NotNull(prorandom.Tasks);
+        var task = prorandom.Tasks.FirstOrDefault(t=>t.projectId == prorandom.Id);
+        await context.SaveChangesAsync();
+        Assert.NotNull(task);
+        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/tasks/{task.Id}");
+        var response = await Client.SendAsync(deleteRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        var taskFound=context.Tasks.FirstOrDefault(t=>t.Id == task.Id);
+        await context.SaveChangesAsync();
+        Assert.Null(taskFound);
+    }
+
+    [Fact, TestPriority(9)]
+    public async Task DeleteContributorTaskByIdTest()
+    {
+        var prorandom = await context.Projects.Include(u=>u.Contributors).FirstOrDefaultAsync();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        Assert.NotNull(prorandom.Contributors);
+        var user = prorandom.Contributors.FirstOrDefault(t=>t.ProjectId == prorandom.Id);
+        Assert.NotNull( user);
+        await context.SaveChangesAsync();
+        var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/projects/{prorandom.Id}/contributors/{user.Id}");
+        var response = await Client.SendAsync(deleteRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        var result = context.Users.FirstOrDefault(p => p.ProjectId == prorandom.Id && p.Id == user.Id);
+        await context.SaveChangesAsync();
+        Assert.Null(result);
+        
+    }
+    #endregion
     #endregion
 }

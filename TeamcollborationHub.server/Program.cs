@@ -39,7 +39,7 @@ builder.Services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCa
 builder.Services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.AddDbContext<TdbContext>(options =>
     options.UseSqlServer(sqlserver));
 builder.Services.AddStackExchangeRedisCache(options =>

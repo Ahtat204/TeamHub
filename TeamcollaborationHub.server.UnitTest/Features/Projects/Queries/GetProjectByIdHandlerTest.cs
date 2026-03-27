@@ -1,5 +1,4 @@
-﻿using TeamcollborationHub.server.Configuration;
-using TeamcollborationHub.server.Entities;
+﻿using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
 

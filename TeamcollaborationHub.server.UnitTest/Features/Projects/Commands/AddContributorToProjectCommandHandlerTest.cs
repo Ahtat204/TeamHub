@@ -1,5 +1,5 @@
 ﻿using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
-using TeamcollborationHub.server.Configuration;
+
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Exceptions;

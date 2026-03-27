@@ -63,7 +63,8 @@ public class AuthenticationServiceTest
     {
         User? nullUser = null;
         _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(nullUser);
-        Assert.That(()=> _authenticationService.AuthenticateUser(_userRequestDto),Throws.Exception.TypeOf<NotFoundException<User>>());
+        Assert.That(() => _authenticationService.AuthenticateUser(_userRequestDto),
+            Throws.Exception.TypeOf<NotFoundException<User>>());
     }
 
     [Test]
@@ -77,8 +78,10 @@ public class AuthenticationServiceTest
         _authenticationRepository.Setup(repo => repo.GetUserByEmail("lahcen28ahtat@gmail")).ReturnsAsync(wrongUser);
         _passwordHashingService.Setup(ph => ph.VerifyPassword(_userRequestDto.Password, wrongUser.Password))
             .Returns(false);
-        Assert.That(()=> _authenticationService.AuthenticateUser(_userRequestDto),Throws.Exception.TypeOf<NotFoundException<User>>());
+        Assert.That(() => _authenticationService.AuthenticateUser(_userRequestDto),
+            Throws.Exception.TypeOf<NotFoundException<User>>());
     }
+
     [Test]
     public async Task CreateUserTest_shouldReturnNewUser()
     {
@@ -86,7 +89,7 @@ public class AuthenticationServiceTest
         _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(nullUser);
         _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns(_newUser.Password);
         _authenticationRepository.Setup(repo => repo.CreateUser(_newUser)).ReturnsAsync(_newUser);
-        var result =await _authenticationService.CreateUser(_newUserDto);
+        var result = await _authenticationService.CreateUser(_newUserDto);
         Assert.IsNotNull(result);
     }
 
@@ -110,11 +113,23 @@ public class AuthenticationServiceTest
     }
 
     [Test]
-    public void UpdateUserTest()
+    public async Task UpdateUserTest()
     {
+        var updatedUser = _newUser;
+        updatedUser.Password = "pas9826bsya&ndh2245mlnuo";
         _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(_newUser);
         _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns("pas9826bsya&ndh2245mlnuo");
-        
-        
+        _authenticationRepository.Setup(repo => repo.UpdateUser(_newUser)).ReturnsAsync(updatedUser);
+        var result =
+            await _authenticationService.UpdatePassword(new UpdatePasswordDto(_newUser.Email, updatedUser.Password));
+        Assert.IsNotNull(result);
+        Assert.That(result.Email, Is.EqualTo(_newUser.Email));
+    }
+
+    [Test]
+    public void UpdatePasswordTest_ShouldThrowNotFoundException()
+    {
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync((User)null);
+        Assert.That(()=>_authenticationService.UpdatePassword(new UpdatePasswordDto(_newUser.Email,"pas9826bsya")),Throws.Exception.TypeOf<NotFoundException<User>>());
     }
 }

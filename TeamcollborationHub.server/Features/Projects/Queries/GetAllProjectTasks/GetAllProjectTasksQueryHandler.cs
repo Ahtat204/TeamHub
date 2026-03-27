@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
@@ -10,7 +11,7 @@ public class GetAllProjectTasksQueryHandler(TdbContext db) : IRequestHandler<Get
     public Task<IEnumerable<ProjectTask>?> Handle(GetAllProjectTasksQuery request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var result = db.Tasks.Where(t => t.projectId == request.ProjectId).AsEnumerable() ?? [];
+        var result = db.Tasks.AsNoTracking().Where(t => t.projectId == request.ProjectId).AsEnumerable() ?? [];
         return Task.FromResult(result)!;
     }
 }

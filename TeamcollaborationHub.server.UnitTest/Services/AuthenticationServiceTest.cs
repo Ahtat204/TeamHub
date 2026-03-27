@@ -113,6 +113,8 @@ public class AuthenticationServiceTest
     public void UpdateUserTest()
     {
         _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(_newUser);
+        _passwordHashingService.Setup(ph => ph.Hash(_newUser.Password)).Returns("pas9826bsya&ndh2245mlnuo");
+        
         
     }
 }

@@ -110,8 +110,7 @@ public class AuthenticationService(
     public async Task<User?> UpdatePassword(UpdatePasswordDto updatePasswordrequest)
     {
         ArgumentNullException.ThrowIfNull(updatePasswordrequest);
-        var checkUser = await authenticationRepository.GetUserByEmail(updatePasswordrequest.Email.Trim().ToLower());
-        if (checkUser is null) throw new NotFoundException<User>("because email does not exist");
+        var checkUser = await authenticationRepository.GetUserByEmail(updatePasswordrequest.Email.Trim().ToLower())??throw new NotFoundException<User>("because email does not exist");
         checkUser.Password = passwordHashingService.Hash(updatePasswordrequest.NewPassword);
         //checkUser.Password = checkUser.Password == user.Password ? user.Password : passwordHashingService.Hash(user.Password);
       //  checkUser.Name = user.Name.Trim();

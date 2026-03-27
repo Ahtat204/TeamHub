@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 
@@ -9,7 +10,7 @@ public class GetProjectContributorsByIdQueryHandler(TdbContext db) : IRequestHan
     public Task<IEnumerable<User>> Handle(GetProjectContributorsByIdQuery request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request, nameof(request));
-        var result = db.Users.Where(pr => pr.ProjectId == request.ProjectId).AsEnumerable();
+        var result = db.Users.AsNoTracking().Where(pr => pr.ProjectId == request.ProjectId).AsEnumerable();
         return Task.FromResult(result);
     }
 }

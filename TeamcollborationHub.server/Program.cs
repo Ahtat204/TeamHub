@@ -3,8 +3,7 @@ using dotenv.net;
 using TeamcollborationHub.server.Middlewares;
 DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration
-    .AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
+var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
 builder.Services.RegisterServices(configuration);
 var app = builder.Build();
 app.RegisterMiddlewares();

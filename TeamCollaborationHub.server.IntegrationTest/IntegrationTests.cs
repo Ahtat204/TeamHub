@@ -386,7 +386,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
     }
 
     #endregion
-
     #region ProjectEndpointsTests
 
     #region GetRequests
@@ -651,7 +650,6 @@ public class IntegrationTest : BaseIntegrationTestFixture
     #endregion
 
     #endregion
-
     [Fact, TestPriority(15)]
     public async Task RateLimitTest()
     {

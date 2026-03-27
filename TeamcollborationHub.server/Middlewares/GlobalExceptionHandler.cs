@@ -52,6 +52,16 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 httpContext.Response.ContentType = "application/problem+json";
                 await httpContext.Response.WriteAsJsonAsync(probl, cancellationToken);
                 return true;
+            case InvalidDateException:
+                var dateIssue = new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Date is invalid",
+                };
+                httpContext.Response.StatusCode = dateIssue.Status.Value;
+                httpContext.Response.ContentType = "application/problem+json";
+                await httpContext.Response.WriteAsJsonAsync(dateIssue, cancellationToken);
+                return true;
 
         }
 

@@ -9,8 +9,8 @@ public class SetProjectDeadlineCommandHandler(TdbContext db):IRequestHandler<Set
 {
     public async Task<Project> Handle(SetProjectDeadlineCommand request, CancellationToken cancellationToken)
     {
-        var project = db.Projects.SingleOrDefault(p => p.Id == request.ProjectId) ??
-                      throw new NotFoundException<Project>();
+        if(request.Deadline < DateTime.Today) throw new InvalidDateException("Don't you know what a Deadline is?");
+        var project = db.Projects.SingleOrDefault(p => p.Id == request.ProjectId) ?? throw new NotFoundException<Project>();
         project.Deadline = request.Deadline;    
         await db.SaveChangesAsync(cancellationToken);
         return project;

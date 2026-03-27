@@ -75,18 +75,19 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<User> deleteUser(int id)
+    public async Task<User?> DeleteUser(int id)
     {
         var user = await _context.FindAsync<User>(id);
-        if (user == null) return user!;
+        if (user is null) return null;
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
         return user;
     }
 
-    public async Task<User> deleteUser(string email)
+    public async Task<User?> DeleteUser(string email)
     {
-        var result = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        var result = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ;
+        if (result is null) return null;
         _context.Users.Remove(result);
         await _context.SaveChangesAsync();
         return result;

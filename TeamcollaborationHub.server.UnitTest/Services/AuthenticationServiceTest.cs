@@ -108,4 +108,11 @@ public class AuthenticationServiceTest
         Assert.IsNotNull(token2);
         Assert.That(token2, Is.Not.EqualTo(token));
     }
+
+    [Test]
+    public void UpdateUserTest()
+    {
+        _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync(_newUser);
+        
+    }
 }

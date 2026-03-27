@@ -1,6 +1,5 @@
 ﻿using TeamcollborationHub.server.Features.Projects.Commands.SetProjectDeadline;
 using TeamcollborationHub.server.Enums;
-
 using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollaborationHub.server.UnitTest.Features.Projects.Commands;
@@ -61,7 +60,8 @@ public class SetProjectDeadlineCommandHandlerTest
         context.Projects.Add(project);
         await context.SaveChangesAsync();
         var handler = new SetProjectDeadlineCommandHandler(context);
-        Assert.That(()=>handler.Handle(new SetProjectDeadlineCommand(project.Id, DateTime.Parse("2026-03-26 14:30")),
-            CancellationToken.None),Throws.Exception.TypeOf<InvalidDateException>());
+        Assert.That(() => handler.Handle(new SetProjectDeadlineCommand(project.Id, DateTime.Parse("2026-03-26 14:30")),
+            CancellationToken.None), Throws.Exception.TypeOf<InvalidDateException>());
+        await context.Database.EnsureDeletedAsync();
     }
 }

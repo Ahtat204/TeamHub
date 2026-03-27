@@ -27,7 +27,7 @@ public class SetProjectStartDateCommandHandlerTest
         Project project = new()
         {
             Deadline = DateTime.Parse("2027-10-16"),
-            Id = 1,
+            Id = 2,
             Name = "Project 1",
             Description = "do I know you",
             Status = ProjectStatus.NotStarted
@@ -52,7 +52,7 @@ public class SetProjectStartDateCommandHandlerTest
         Project project = new()
         {
             Deadline = DateTime.Parse("2027-10-16"),
-            Id = 1,
+            Id = 4,
             Name = "Project 1",
             Description = "do I know you",
             Status = ProjectStatus.InProgress
@@ -76,7 +76,7 @@ public class SetProjectStartDateCommandHandlerTest
         Project project = new()
         {
             Deadline = DateTime.Parse("2027-10-16"),
-            Id = 1,
+            Id = 5,
             Name = "Project 1",
             Description = "do I know you",
             Status = ProjectStatus.InProgress

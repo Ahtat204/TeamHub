@@ -10,10 +10,10 @@ public class SetProjectStartDateCommandHandler(TdbContext db):IRequestHandler<Se
 {
     public async Task<Project> Handle(SetProjectStartDateCommand request, CancellationToken cancellationToken)
     {
-        if (request.StartDate < DateTime.Now) throw new InvalidDateException("looks like you're a fan of Einstein");
+        if (request.StartDate < DateTime.Today) throw new InvalidDateException("looks like you're a fan of Einstein");
         var project = await db.Projects.SingleOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken: cancellationToken) ?? throw new NotFoundException<Project>();
         if(project.Deadline is not null && request.StartDate>=project.Deadline) throw new InvalidDateException("try again");
-        project.Deadline = request.StartDate;
+        project.CreatedDateTime = request.StartDate;
         await db.SaveChangesAsync(cancellationToken);
         return project;
     }

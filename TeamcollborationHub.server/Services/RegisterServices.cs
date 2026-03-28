@@ -31,7 +31,7 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 services.AddSwaggerGen();
-services.AddScoped<ICachingService<Project, string>, RedisCachingService>();
+services.AddSingleton<ICachingService<Project, string>, RedisCachingService>();
 services.AddSingleton<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 services.AddScoped<IAuthenticationService, AuthenticationService>();

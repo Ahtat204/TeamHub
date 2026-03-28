@@ -12,10 +12,10 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         logger.LogError(exception, "Error:{Message}", exception.Message);
         switch (exception)
         {
-            case ValueNotFoundException:
+            case ConfigurationValueMissingException:
                 var issue = new ProblemDetails
                 {
-                    Status = StatusCodes.Status404NotFound,
+                    Status = StatusCodes.Status500InternalServerError,
                     Title = "value was not found",
                 };
                 await Console.Error.WriteLineAsync(issue.Status + issue.Title + issue.Detail);

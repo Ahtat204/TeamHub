@@ -2,9 +2,9 @@
 using TeamcollborationHub.server.Configuration;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
-
-namespace TeamcollborationHub.server.Features.Projects.Commands.AddProjectComment;
 using MediatR;
+namespace TeamcollborationHub.server.Features.Projects.Commands.AddProjectComment;
+
 
 public class AddProjectCommentCommandHandler(TdbContext db):IRequestHandler<AddProjectCommentCommand, Project>
 {

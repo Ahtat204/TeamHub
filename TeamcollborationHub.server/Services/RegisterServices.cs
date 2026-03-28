@@ -73,21 +73,21 @@ services.AddAuthentication(opt =>
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = LoadValues.LoadValue("ISSUER", configuration) ?? configuration["JwtConfig:Issuer"] ??
-                throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidateIssuer)),
+                throw new ConfigurationValueMissingException(nameof(TokenValidationParameters.ValidateIssuer)),
             ValidAudience = LoadValues.LoadValue("AUDIENCE", configuration) ?? configuration["JwtConfig:Audience"] ??
-                throw new ValueNotFoundException(nameof(TokenValidationParameters.ValidAudience)),
+                throw new ConfigurationValueMissingException(nameof(TokenValidationParameters.ValidAudience)),
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 LoadValues.LoadValue("KEY", configuration) ?? configuration["JwtConfig:KEY"] ??
-                throw new ValueNotFoundException(nameof(TokenValidationParameters.IssuerSigningKey)))),
+                throw new ConfigurationValueMissingException(nameof(TokenValidationParameters.IssuerSigningKey)))),
         };
         options.SaveToken = true;
     }).AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = LoadValues.LoadEnv("CLIENT_ID") ?? configuration["OAuth:Google:ClientId"] ??
-            throw new ValueNotFoundException(nameof(googleOptions.ClientId));
+            throw new ConfigurationValueMissingException(nameof(googleOptions.ClientId));
         googleOptions.ClientSecret = LoadValues.LoadValue("CLIENT_SECRET", configuration) ??
                                      configuration["OAuth:Google:ClientSecret"] ??
-                                     throw new ValueNotFoundException(nameof(googleOptions.ClientSecret));
+                                     throw new ConfigurationValueMissingException(nameof(googleOptions.ClientSecret));
     });
 ;
 services.AddAuthorization();

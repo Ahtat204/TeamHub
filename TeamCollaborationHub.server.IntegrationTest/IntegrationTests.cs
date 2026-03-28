@@ -11,8 +11,10 @@ using TeamcollborationHub.server.Dto;
 using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Enums;
 using TeamcollborationHub.server.Features.Projects.Commands.AddContributorToProject;
+using TeamcollborationHub.server.Features.Projects.Commands.AddProjectComment;
 using TeamcollborationHub.server.Features.Projects.Commands.AddProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
+using TeamcollborationHub.server.Features.Projects.Commands.SetProjectDeadline;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
 
@@ -690,7 +692,36 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var task = tasks.FirstOrDefault(t => t.Title == newTask.Title);
         Assert.NotNull(task);
     }
-
+[Fact, TestPriority(13)]
+    public async Task AddCommentToProjectTest()
+    {
+        var prorandom = await context.Projects.FirstOrDefaultAsync();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        Comment comment = new Comment()
+        {
+            Content = "a test comment",
+        };
+        var command = new AddProjectCommentCommand(prorandom.Id, comment);
+        var postRequest = new HttpRequestMessage(HttpMethod.Post, $"api/projects/{prorandom.Id}/comments")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<Project>(jsonString, options);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Comments);
+        Assert.NotEmpty(result.Comments);
+        var tasks = result.Comments.ToList();
+        var firscomment= tasks.FirstOrDefault(t => t.Content == comment.Content);
+        Assert.NotNull(firscomment);
+        Assert.Equal(comment.Content, firscomment.Content);
+    }
     #endregion
 
     #region DeleteRequests
@@ -698,7 +729,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     /// <summary>
     /// Deletes a project task by ID and ensures removal.
     /// </summary>
-    [Fact, TestPriority(13)]
+    [Fact, TestPriority(14)]
     public async Task DeleteProjectTaskByIdTest()
     {
         var prorandom = context.Projects.Include(u => u.Tasks).FirstOrDefault();
@@ -723,7 +754,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     /// <summary>
     /// Deletes a contributor from a project by ID and ensures removal.
     /// </summary>
-    [Fact, TestPriority(14)]
+    [Fact, TestPriority(15)]
     public async Task DeleteContributorTaskByIdTest()
     {
         var prorandom = await context.Projects.Include(u => u.Contributors).FirstOrDefaultAsync();
@@ -748,6 +779,32 @@ public class IntegrationTest : BaseIntegrationTestFixture
 
     #endregion
 
+    #region UpdateRequests
+
+    [Fact, TestPriority(16)]
+    public async Task SetProjectDeadlineTest()
+    {
+        var prorandom = await context.Projects.FirstOrDefaultAsync();
+        await context.SaveChangesAsync();
+        Assert.NotNull(prorandom);
+        var updateDeadlinecommand = new SetProjectDeadlineCommand(prorandom.Id,DateTime.Parse("2027-10-10"));
+        var postRequest = new HttpRequestMessage(HttpMethod.Put, $"api/projects/{prorandom.Id}")
+        {
+            Content = new StringContent(JsonSerializer.Serialize(updateDeadlinecommand), Encoding.UTF8,
+                "application/json"),
+            Headers = { Authorization = new AuthenticationHeaderValue("Bearer", token) }
+        };
+        var response = await Client.SendAsync(postRequest);
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<Project>(jsonString, options);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Deadline);
+        Assert.Equal(DateTime.Parse("2027-10-10"), result.Deadline);
+    }
+    #endregion
     #endregion
 
     /// <summary>
@@ -757,7 +814,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     /// This test verifies that the <see cref="TeamcollborationHub.server.Middlewares.IpBasedRateLimiter"/> middleware 
     /// correctly returns a <c>429 Too Many Requests</c> status when thresholds are exceeded.
     /// </remarks>
-    [Fact, TestPriority(15)]
+    [Fact, TestPriority(17)]
     public async Task RateLimitTest()
     {
         LoginRequestDto request = new("lahcen30@gmail.com", "password123");

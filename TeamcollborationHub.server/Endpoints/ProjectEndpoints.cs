@@ -121,9 +121,9 @@ public static class ProjectEndpoints
 
         #region UpdateRequests
 
-        app.MapPut("api/projects/{id:int}", async (int id, IMediator mediator, DateTime deadline) =>
+        app.MapPut("api/projects/{id:int}", async ( SetProjectDeadlineCommand updateDeadline,IMediator mediator) =>
         {
-            var result = await mediator.Send(new SetProjectDeadlineCommand(id,deadline));
+            var result = await mediator.Send(updateDeadline);
             return Results.Ok(result);
         }).RequireAuthorization();
         

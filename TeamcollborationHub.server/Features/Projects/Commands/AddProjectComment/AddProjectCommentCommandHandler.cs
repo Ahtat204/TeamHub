@@ -10,7 +10,7 @@ public class AddProjectCommentCommandHandler(TdbContext db):IRequestHandler<AddP
 {
     public async Task<Project> Handle(AddProjectCommentCommand request, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request?.Comment);
+        ArgumentNullException.ThrowIfNull(request.Comment);
        var project=await db.Projects.FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken: cancellationToken)??throw new NotFoundException<Project>("Project not found");
        request.Comment.projectId = project.Id;
        request.Comment.Project = project;

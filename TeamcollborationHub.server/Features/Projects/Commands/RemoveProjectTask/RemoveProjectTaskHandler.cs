@@ -5,9 +5,9 @@ using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 
-public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemoveProjectTaskCommand,Project?>
+public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemoveProjectTaskCommand,Project>
 {
-    public async Task<Project?> Handle(RemoveProjectTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Project> Handle(RemoveProjectTaskCommand request, CancellationToken cancellationToken)
     {
         var target = db.Tasks.FirstOrDefault(t => t.Id == request.TaskId);
         if (target is null) throw new NotFoundException<ProjectTask>();

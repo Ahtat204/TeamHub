@@ -33,35 +33,28 @@ public static class ProjectEndpoints
         app.MapGet("api/projects/{id:int}",
             async (int id, IMediator mediator, ICachingService<Project, string> cachingService) =>
             {
-                var result = cachingService.GetProjectFromCache(id.ToString()) ??
-                                 await mediator.Send(new GetProjectByIdQuery(id));
+                var result = cachingService.GetProjectFromCache(id.ToString()) ?? await mediator.Send(new GetProjectByIdQuery(id));
                 return Results.Ok(result);
             }).RequireAuthorization();
         //tested
-        app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}/contributors", async (int id, ICachingService<Project, string> cachingService, IMediator mediator) =>
         {
-            var result = await mediator.Send(new GetProjectContributorsByIdQuery(id));
+            var result = cachingService.GetProjectFromCache(id.ToString())?.Contributors?? await mediator.Send(new GetProjectContributorsByIdQuery(id));
             return Results.Ok(result);
         }).RequireAuthorization();
-        app.MapGet("api/projects/{id:int}/tasks", async (int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}/tasks", async (int id,  ICachingService<Project, string> cachingService,IMediator mediator) =>
         {
-            var result = await mediator.Send(new GetAllProjectTasksQuery(id));
+            var result = cachingService.GetProjectFromCache(id.ToString())?.Tasks??await mediator.Send(new GetAllProjectTasksQuery(id));
             return Results.Ok(result);
         }).RequireAuthorization(); //tested
-        app.MapGet("api/project/tasks/{id:int}", async (int id, IMediator mediator) =>
+        app.MapGet("api/project/tasks/{id:int}", async (int id,  IMediator mediator) =>
         {
             var result = await mediator.Send(new GetProjectTaskByIdQuery(id));
             return Results.Ok(result);
         }).RequireAuthorization(); //tested
-        app.MapGet("api/projects/contributors/{id:int}", async (int id, IMediator mediator) =>
+        app.MapGet("api/projects/{id:int}/comments",async (int id,  ICachingService<Project, string> cachingService, IMediator mediator) =>
         {
-           // var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
-          //  return Results.Ok(result);
-        }).RequireAuthorization(); //tested
-
-        app.MapGet("api/projects/{id:int}/comments",async (int id, IMediator mediator) =>
-        {
-            var result =  await mediator.Send(new GetAllProjectCommentsQuery(id));
+            var result = cachingService.GetProjectFromCache(id.ToString())?.Comments?? await mediator.Send(new GetAllProjectCommentsQuery(id));
             return Results.Ok(result);
         }).RequireAuthorization();
         #endregion
@@ -74,7 +67,7 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(projectCommand);
             cachingService.SetProjectInCache(result.Id.ToString(), result);
-            return Results.Created($"api/projects/{result}", result);
+            return Results.Created($"api/projects/{result.Id}", result);
         }).RequireAuthorization();
         //I'm aware that this shouldn't a Post request  
         app.MapPost("api/projects/contributors",
@@ -83,7 +76,7 @@ public static class ProjectEndpoints
             {
                 var result = await mediator.Send(addContributor);
                 cachingService.SetProjectInCache(result.Id.ToString(), result);
-                return Results.Created($"api/projects/contributors{result}", result);
+                return Results.Created($"api/projects/contributors{result.Id}", result);
             }).RequireAuthorization();
         // but this is a post request of course
         app.MapPost("api/projects/tasks", async (AddProjectTaskCommand addProject, IMediator mediator,
@@ -91,29 +84,32 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(addProject);
             cachingService.SetProjectInCache(result.Id.ToString(), result);
-            return Results.Created($"api/projects/tasks/{result}", result);
+            return Results.Created($"api/projects/tasks/{result.Id}", result);
         }).RequireAuthorization();
 
         app.MapPost("api/projects/{id:int}/comments",
-            async (IMediator mediator, AddProjectCommentCommand commentCommand) =>
+            async (IMediator mediator,  ICachingService<Project, string> cachingService,AddProjectCommentCommand commentCommand) =>
             {
                 var result = await mediator.Send(commentCommand);
-                return Results.Created($"api/projects/comments/{result}", result);
-            });
+                cachingService.SetProjectInCache(result.Id.ToString(), result);
+                return Results.Created($"api/projects/comments/{result.Id}", result);
+            }).RequireAuthorization();
         #endregion
 
         #region DeleteRequests
 
         app.MapDelete("api/projects/{projectid:int}/contributors/{id:int}",
-            async (IMediator mediator, int projectid, int id) =>
+            async (IMediator mediator, int projectid, int id,  ICachingService<Project, string> cachingService) =>
             {
-                await mediator.Send(new RemoveContributorFromProjectCommand(projectid, id));
+               var result= await mediator.Send(new RemoveContributorFromProjectCommand(projectid, id));
+               cachingService.SetProjectInCache(id.ToString(),result);
                 return Results.NoContent();
             }).RequireAuthorization();
         app.MapDelete("api/projects/{projectId:int}/tasks/{id:int}",
-            async (IMediator mediator, int projectId, int id) =>
+            async (IMediator mediator, int projectId, int id,  ICachingService<Project, string> cachingService) =>
             {
-                await mediator.Send(new RemoveProjectTaskCommand(projectId, id));
+               Project result = await mediator.Send(new RemoveProjectTaskCommand(projectId, id));
+               cachingService.SetProjectInCache(result.Id.ToString(), result);
                 return Results.NoContent();
             }).RequireAuthorization();
 
@@ -121,9 +117,10 @@ public static class ProjectEndpoints
 
         #region UpdateRequests
 
-        app.MapPut("api/projects/{id:int}", async ( SetProjectDeadlineCommand updateDeadline,IMediator mediator) =>
+        app.MapPut("api/projects/{id:int}", async ( SetProjectDeadlineCommand updateDeadline,IMediator mediator, ICachingService<Project, string> cachingService) =>
         {
             var result = await mediator.Send(updateDeadline);
+            cachingService.SetProjectInCache(result.Id.ToString(), result);
             return Results.Ok(result);
         }).RequireAuthorization();
         

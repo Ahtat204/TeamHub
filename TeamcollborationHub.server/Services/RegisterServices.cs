@@ -32,7 +32,7 @@ services.AddEndpointsApiExplorer();
 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 services.AddSwaggerGen();
 services.AddScoped<ICachingService<Project, string>, RedisCachingService>();
-services.AddScoped<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
+services.AddSingleton<ICachingService<RefreshToken, string>, RefreshTokenCachingService>();
 services.AddSingleton<IPasswordHashingService, PasswordHashing>();
 services.AddScoped<IAuthenticationService, AuthenticationService>();
 services.AddScoped<IUserRepository, UserRepository>();

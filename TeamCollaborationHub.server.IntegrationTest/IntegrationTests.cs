@@ -17,6 +17,7 @@ using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Features.Projects.Commands.SetProjectDeadline;
 using TeamcollborationHub.server.Repositories.UserRepository;
 using TeamcollborationHub.server.Services.Authentication.Jwt;
+using TeamcollborationHub.server.Services.Caching;
 
 namespace TeamCollaborationHub.server.IntegrationTest;
 
@@ -47,6 +48,8 @@ public class IntegrationTest : BaseIntegrationTestFixture
     /// Service used to simulate valid JWT generation for authorized endpoint testing.
     /// </summary>
     private readonly ITokenService? _jwtService;
+    
+    private readonly ICachingService<Project, string>? _cachingService;
 
     /// <summary>
     /// Stores a persistent Bearer Token used across authorized request test cases.
@@ -77,6 +80,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         _userRepository = scope.ServiceProvider.GetService<IUserRepository>();
         _jwtService = scope.ServiceProvider.GetService<ITokenService>();
         token = _jwtService?.GenerateTokenResponse(_user, out var date);
+        _cachingService = scope.ServiceProvider.GetService<ICachingService<Project, string>>();
     }
 
     #region UserTableTests
@@ -622,6 +626,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+       
     }
 
     /// <summary>

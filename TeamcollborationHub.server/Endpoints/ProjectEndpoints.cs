@@ -102,7 +102,7 @@ public static class ProjectEndpoints
             async (IMediator mediator, int projectid, int id,  ICachingService<Project, string> cachingService) =>
             {
                var result= await mediator.Send(new RemoveContributorFromProjectCommand(projectid, id));
-               cachingService.SetProjectInCache(id.ToString(),result);
+               cachingService.SetProjectInCache(result.Id.ToString(),result);
                 return Results.NoContent();
             }).RequireAuthorization();
         app.MapDelete("api/projects/{projectId:int}/tasks/{id:int}",

@@ -24,7 +24,7 @@
       - AUDIENCE=${AUDIENCE}
       - DURATIONINMINUTES=${DURATIONINMINUTES}
       - sqlserverconnectionstring=Server =sql_server;Initial Catalog=TeamCollaborationHubDB;User ID=sa;Password=Password1;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
-      - RedisConnectionString=redis=6379
+      - RedisConnectionString=redis:6379
       - KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
     ports:
       - "8080:8080"

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Configuration;
-
+/// <inheritdoc />
 public sealed class TdbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
@@ -15,32 +15,22 @@ public sealed class TdbContext : DbContext
 
     public TdbContext(DbContextOptions<TdbContext> options) : base(options)
     {
-        try
-        {
-            if (Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databasecreator)
-            {
-                if(!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
-                if(!databasecreator.HasTables()) databasecreator.CreateTables(); 
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine(ex.Message);
-        }
+        if (Database.GetService<IDatabaseCreator>() is not RelationalDatabaseCreator databasecreator) return;
+        if (!databasecreator.Exists() || !databasecreator.CanConnect()) databasecreator.Create();
+        if (!databasecreator.HasTables()) databasecreator.CreateTables();
     }
 
     public TdbContext()
     {
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Project>().HasMany(p => p.contributor).WithOne(u => u.project)
+        modelBuilder.Entity<Project>().HasMany(p => p.Contributors).WithOne(u => u.project)
             .HasForeignKey(u => u.ProjectId);
         modelBuilder.Entity<Project>().HasMany(p => p.Tasks).WithOne(t => t.project).HasForeignKey(t => t.projectId);
-        modelBuilder.Entity<Project>().HasMany(p => p.comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
-        modelBuilder.Entity<Project>().Property(o => o.status).HasConversion<string>();
+        modelBuilder.Entity<Project>().HasMany(p => p.Comments).WithOne(c => c.Project).HasForeignKey(c => c.projectId);
+        modelBuilder.Entity<Project>().Property(o => o.Status).HasConversion<string>();
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
     }
 }

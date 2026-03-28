@@ -7,7 +7,7 @@ namespace TeamcollborationHub.server.Dto;
 /// </summary>
 /// <param name="Email"></param>
 /// <param name="Password"></param>
-public record LoginRequestDto(
-    [EmailAddress] [Required] string Email,
+public sealed record LoginRequestDto(
+    [EmailAddress][Required] string Email,
     string Password
 );

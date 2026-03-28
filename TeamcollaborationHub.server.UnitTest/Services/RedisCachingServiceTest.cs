@@ -1,0 +1,52 @@
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using TeamcollborationHub.server.Enums;
+using TeamcollborationHub.server.Services.Caching;
+
+namespace TeamcollaborationHub.server.UnitTest.Services;
+
+[TestFixture]
+[TestOf(typeof(RedisCachingService))]
+public class RedisCachingServiceTest
+{
+    private Project _project;
+    private IDistributedCache _cache;
+    RedisCachingService _redisCachingService;
+    [SetUp]
+    public void Setup()
+    {
+        _cache = new MemoryDistributedCache(
+            new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
+        _redisCachingService = new RedisCachingService(_cache);
+        _project = new Project
+        {
+            Id = 1,
+            Name = "Test Project",
+            Description = "This is a test project",
+            Status = ProjectStatus.Completed
+        };
+    }
+    [Test]
+    public void GetProjectFromCacheTest()
+    {
+        var id = "1";
+        _redisCachingService.SetProjectInCache(id, _project);
+        var result = _redisCachingService.GetProjectFromCache(id);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Id, Is.EqualTo(_project.Id));
+        Assert.That(result.Name, Is.EqualTo(_project.Name));
+    }
+
+    [Test]
+    public void DeleteProjectFromCacheTest()
+    {
+        var id = "1";
+        _redisCachingService.SetProjectInCache(id, _project);
+        var result = _redisCachingService.GetProjectFromCache(id);
+        Assert.That(result, Is.Not.Null);
+        _redisCachingService.EvictProjectFromCache(id);
+        result = _redisCachingService.GetProjectFromCache(id);
+        Assert.That(result, Is.Null);
+    }
+}

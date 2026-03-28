@@ -41,7 +41,7 @@ namespace TeamcollborationHub.server.Migrations
 
                     b.HasIndex("projectId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.Project", b =>
@@ -52,30 +52,31 @@ namespace TeamcollborationHub.server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDateTime")
+                    b.Property<DateTime?>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDateTime")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime?>("LastModifiedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("status")
-                        .IsRequired()
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.ProjectTask", b =>
@@ -87,18 +88,19 @@ namespace TeamcollborationHub.server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartedDate")
+                    b.Property<DateTime>("StartedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("title");
 
                     b.Property<int>("projectId")
                         .HasColumnType("int");
@@ -143,19 +145,23 @@ namespace TeamcollborationHub.server.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("ProjectId");
 
                     b.HasKey("Id");
 
@@ -164,13 +170,13 @@ namespace TeamcollborationHub.server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Users");
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.Comment", b =>
                 {
                     b.HasOne("TeamcollborationHub.server.Entities.Project", "Project")
-                        .WithMany("comments")
+                        .WithMany("Comments")
                         .HasForeignKey("projectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -203,7 +209,7 @@ namespace TeamcollborationHub.server.Migrations
             modelBuilder.Entity("TeamcollborationHub.server.Entities.User", b =>
                 {
                     b.HasOne("TeamcollborationHub.server.Entities.Project", "project")
-                        .WithMany("contributor")
+                        .WithMany("Contributors")
                         .HasForeignKey("ProjectId");
 
                     b.Navigation("project");
@@ -211,11 +217,11 @@ namespace TeamcollborationHub.server.Migrations
 
             modelBuilder.Entity("TeamcollborationHub.server.Entities.Project", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Contributors");
+
                     b.Navigation("Tasks");
-
-                    b.Navigation("comments");
-
-                    b.Navigation("contributor");
                 });
 #pragma warning restore 612, 618
         }

@@ -20,9 +20,8 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 /// are delegated to specialized services.
 /// </remarks>
 public class AuthenticationService(
-    IPasswordHashingService passwordHashingService,
-    IUserRepository authenticationRepository
-   ) : IAuthenticationService
+    IPasswordHashingService passwordHashingService, IUserRepository authenticationRepository) 
+    : IAuthenticationService
 {
     /// <summary>
     /// Authenticates a user using login credentials.
@@ -40,9 +39,10 @@ public class AuthenticationService(
     /// The email is normalized before lookup.
     /// Password verification is performed using the password hashing service.
     /// </remarks>
-    public async Task<User?> AuthenticateUser(LoginRequestDto userRequest)
+    public async Task<User?> AuthenticateUser(LoginRequestDto? userRequest)
     {
-        var email=userRequest.Email.Trim().ToLower();
+        ArgumentNullException.ThrowIfNull(userRequest);
+        var email = userRequest.Email.Trim().ToLower();
         var user = await authenticationRepository.GetUserByEmail(email);
         if (user is null) throw new NotFoundException<User>();
         var verified = passwordHashingService.VerifyPassword(userRequest.Password, user.Password);
@@ -69,11 +69,11 @@ public class AuthenticationService(
     /// The password is hashed before persistence.
     /// The email and username are normalized before storage.
     /// </remarks>
-    public async Task<User> CreateUser(CreateUserDto user)
+    public async Task<User?> CreateUser(CreateUserDto user)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
-        var emailexist = await authenticationRepository.GetUserByEmail(user.Email);
-        if (emailexist is not null) throw new AlreadyExistsException<string>(user.Email);
+        var found = await authenticationRepository.GetUserByEmail(user.Email.Trim().ToLower());
+        if (found is not null) throw new AlreadyExistsException<string>(user.Email);
         var hashedPassword = passwordHashingService.Hash(user.Password);
         var savedUser = new User
         {
@@ -81,19 +81,18 @@ public class AuthenticationService(
             Password = hashedPassword,
             Name = user.UserName.Trim()
         };
-        var result= await authenticationRepository.CreateUser(savedUser);
+        var result = await authenticationRepository.CreateUser(savedUser);
         return result ?? new User
         {
             Name = user.UserName,
             Email = user.Email,
         };
     }
+
     /// <summary>
     /// Updates an existing user account.
     /// </summary>
-    /// <param name="user">
-    /// The user entity containing updated values.
-    /// </param>
+    /// <param name="updatePasswordrequest"></param>
     /// <returns>
     /// The updated <see cref="User"/> if the update succeeds;
     /// otherwise, <c>null</c>.
@@ -108,14 +107,13 @@ public class AuthenticationService(
     /// If the password has changed, it is re-hashed before persistence.
     /// Email and name values are normalized prior to update.
     /// </remarks>
-    public async Task<User?> UpdateUser(User user)
+    public async Task<User?> UpdatePassword(UpdatePasswordDto updatePasswordrequest)
     {
-        if (user is null) throw new ArgumentNullException(nameof(user));
-        var checkUser = await authenticationRepository.GetUserByEmail(user.Email);
-        if (checkUser is null) throw new NotFoundException<User>("because email does not exist");
-        checkUser.Email = user.Email.Trim().ToLower();
-        checkUser.Password =checkUser.Password==user.Password?user.Password:passwordHashingService.Hash(user.Password);
-        checkUser.Name = user.Name.Trim();
+        ArgumentNullException.ThrowIfNull(updatePasswordrequest);
+        var checkUser = await authenticationRepository.GetUserByEmail(updatePasswordrequest.Email.Trim().ToLower())??throw new NotFoundException<User>("because email does not exist");
+        checkUser.Password = passwordHashingService.Hash(updatePasswordrequest.NewPassword);
+        //checkUser.Password = checkUser.Password == user.Password ? user.Password : passwordHashingService.Hash(user.Password);
+      //  checkUser.Name = user.Name.Trim();
         return await authenticationRepository.UpdateUser(checkUser);
     }
 
@@ -134,6 +132,6 @@ public class AuthenticationService(
     /// </remarks>
     public async Task<User?> DeleteUser(int id)
     {
-        return await authenticationRepository.deleteUser(id);
+        return await authenticationRepository.DeleteUser(id);
     }
 }

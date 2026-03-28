@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using TeamcollborationHub.server.Entities;
 
 namespace TeamcollborationHub.server.Configuration;
-
+/// <inheritdoc />
 public sealed class TdbContext : DbContext
 {
     public DbSet<User> Users { get; set; }

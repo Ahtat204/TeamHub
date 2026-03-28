@@ -4,7 +4,7 @@ using TeamcollborationHub.server.Entities;
 using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Middlewares;
-
+/// <inheritdoc />
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)

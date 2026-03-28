@@ -7,10 +7,11 @@ using TeamcollborationHub.server.Features.Projects.Commands.CreateProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveContributorFromProject;
 using TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 using TeamcollborationHub.server.Features.Projects.Commands.SetProjectDeadline;
-using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectContributors;
+using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectComments;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects;
 using TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectById;
+using TeamcollborationHub.server.Features.Projects.Queries.GetProjectContributorsById;
 using TeamcollborationHub.server.Features.Projects.Queries.GetProjectTaskById;
 using TeamcollborationHub.server.Services.Caching;
 
@@ -32,14 +33,14 @@ public static class ProjectEndpoints
         app.MapGet("api/projects/{id:int}",
             async (int id, IMediator mediator, ICachingService<Project, string> cachingService) =>
             {
-                Project result = cachingService.GetProjectFromCache(id.ToString()) ??
+                var result = cachingService.GetProjectFromCache(id.ToString()) ??
                                  await mediator.Send(new GetProjectByIdQuery(id));
                 return Results.Ok(result);
             }).RequireAuthorization();
         //tested
         app.MapGet("api/projects/{id:int}/contributors", async (int id, IMediator mediator) =>
         {
-            var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
+            var result = await mediator.Send(new GetProjectContributorsByIdQuery(id));
             return Results.Ok(result);
         }).RequireAuthorization();
         app.MapGet("api/projects/{id:int}/tasks", async (int id, IMediator mediator) =>
@@ -54,10 +55,15 @@ public static class ProjectEndpoints
         }).RequireAuthorization(); //tested
         app.MapGet("api/projects/contributors/{id:int}", async (int id, IMediator mediator) =>
         {
-            var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
-            return Results.Ok(result);
+           // var result = await mediator.Send(new GetAllProjectContributorsQuery(id));
+          //  return Results.Ok(result);
         }).RequireAuthorization(); //tested
 
+        app.MapGet("api/projects/{id:int}/comments",async (int id, IMediator mediator) =>
+        {
+            var result =  await mediator.Send(new GetAllProjectCommentsQuery(id));
+            return Results.Ok(result);
+        }).RequireAuthorization();
         #endregion
 
         #region PostRequests
@@ -119,7 +125,7 @@ public static class ProjectEndpoints
         {
             var result = await mediator.Send(new SetProjectDeadlineCommand(id,deadline));
             return Results.Ok(result);
-        });
+        }).RequireAuthorization();
         
         #endregion
         return app;

@@ -1,19 +1,19 @@
-import {Component, Injectable, Input} from '@angular/core';
+import {Component, Inject, Injectable, Input} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {User} from '../user-signup/user-signup';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class Project{
-  public Id:Number;
-  public Name:string;
-  public Description:string;
-  public Contributors?:User[];
-  public Status:string;
-  public EndDate:Date;
-  public StartDate:Date;
-  constructor(Id:Number,Status:string,Name:string,EndDate:Date,StartDate:Date,Description:string,Contributors?:User[]) {
+
+export class Project {
+  public Id: Number;
+  public Name: string;
+  public Description: string;
+  public Contributors?: User[];
+   public Status: string;
+  public EndDate: Date;
+  public StartDate: Date;
+
+
+  constructor(Id: Number,Status: string, Name: string, EndDate: Date, StartDate: Date, Description: string, Contributors?: User[]) {
     this.Id = Id;
     this.Name = Name;
     this.Description = Description;
@@ -23,6 +23,7 @@ export class Project{
     this.StartDate = StartDate;
   }
 }
+
 @Component({
   selector: 'app-project-grid',
   standalone: true,
@@ -31,6 +32,6 @@ export class Project{
   styleUrl: './project-element.component.css',
 })
 export class ProjectElement {
-  @Input() public project!:Project;
+  @Input() public project!: Project;
 
 }

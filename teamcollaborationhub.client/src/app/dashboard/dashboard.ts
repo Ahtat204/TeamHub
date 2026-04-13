@@ -62,6 +62,38 @@ export class Dashboard {
       new Date("2026-08-01"),
       new Date("2026-03-01"),
       "Experimental rigid-body physics engine optimized for multiplayer environments."
+    ),
+    new Project(
+      5,
+      "On Hold",
+      "Game Physics Engine Prototype",
+      new Date("2026-08-01"),
+      new Date("2026-03-01"),
+      "Experimental rigid-body physics engine optimized for multiplayer environments."
+    ),
+    new Project(
+      5,
+      "On Hold",
+      "Game Physics Engine Prototype",
+      new Date("2026-08-01"),
+      new Date("2026-03-01"),
+      "Experimental rigid-body physics engine optimized for multiplayer environments."
+    ),
+    new Project(
+      5,
+      "On Hold",
+      "Game Physics Engine Prototype",
+      new Date("2026-08-01"),
+      new Date("2026-03-01"),
+      "Experimental rigid-body physics engine optimized for multiplayer environments."
+    ),
+    new Project(
+      5,
+      "On Hold",
+      "Game Physics Engine Prototype",
+      new Date("2026-08-01"),
+      new Date("2026-03-01"),
+      "Experimental rigid-body physics engine optimized for multiplayer environments."
     )
   ];
 }

@@ -46,19 +46,25 @@
   flex-direction: row;
   justify-content: space-between;
   gap: 0;
+
 }
 
 .project-grid {
-  position: absolute;
-  display: flex;
-  flex-direction: row;
+
 
 }
 
 .project-list {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  justify-content: space-between/* Space between the project cards */
 
-  grid-template-columns: 300px 0 0 110px;
-  grid-template-rows:520px 420px 420px 40px ;
-  z-index: 0;
-}
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+
+  word-break: break-all;
+}.project-list:hover {
+  cursor: pointer;
+ }

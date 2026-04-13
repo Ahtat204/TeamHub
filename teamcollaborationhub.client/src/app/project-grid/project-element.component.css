@@ -1,5 +1,6 @@
 .example-card {
   max-width: 2200px;
+  padding: 10px;
 }
 
 .example-header-image {
@@ -7,6 +8,9 @@
   background-size: cover;
 }
 .project-container{
-  width: 100%;
-  height: 100%;
+  min-height: 200px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+
 }

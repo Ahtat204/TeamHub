@@ -2,7 +2,6 @@ import {Component, Injectable} from '@angular/core';
 import {ProjectsStats} from '../projects-stats/projects-stats';
 import {Project, ProjectElement} from '../project-grid/project-element.component';
 import {NgForOf} from '@angular/common';
-import {User} from '../user-signup/user-signup';
 
 
 

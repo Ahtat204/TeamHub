@@ -1,25 +1,27 @@
-.dash-body{
+.dash-body {
 
 }
 
-.nav-bar{
+.nav-bar {
   background: #d1caca !important;
   position: fixed !important;
-  top: 1px;
+  top: 0px;
   display: flex;
-  width:100%;
-
+  width: 100%;
+  z-index: 10;
   left: 5px !important;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap:200px;
+  gap: 200px;
 }
-.logo{
+
+.logo {
   color: #000000 !important;
-  margin-left:14px;
+  margin-left: 14px;
 }
-.searchbar{
+
+.searchbar {
   display: flex;
   padding-bottom: 10px !important;
   align-items: center;
@@ -28,7 +30,8 @@
   background-color: #ffffff !important;
 
 }
-.search-input{
+
+.search-input {
   margin-top: 10px;
   width: 700px !important;
   height: 40px !important;
@@ -37,14 +40,25 @@
   padding-right: 3px !important;
   left: 40px !important;
 }
-.project-section{
+
+.project-section {
   display: flex;
   flex-direction: row;
-  justify-content:space-around;
+  justify-content: space-between;
   gap: 0;
 }
-.project-grid{
+
+.project-grid {
+  position: absolute;
   display: flex;
-  flex-direction: column;
-  padding: 20px;
+  flex-direction: row;
+
+}
+
+.project-list {
+  display: grid;
+
+  grid-template-columns: 300px 0 0 110px;
+  grid-template-rows:520px 420px 420px 40px ;
+  z-index: 0;
 }

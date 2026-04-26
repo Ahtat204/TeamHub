@@ -1,25 +1,13 @@
+using TeamcollborationHub.server.Services;
+using dotenv.net;
+using TeamcollborationHub.server.Middlewares;
+DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+var configuration = builder.Configuration.AddEnvironmentVariables(configureSource: source => { source.Prefix = ".env"; }).AddUserSecrets<Program>().Build();
+builder.Services.RegisterServices(configuration);
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
+app.RegisterMiddlewares();
 app.Run();
+public partial class Program
+{
+} // added to solve Can't find <'TeamcollaborationHub\TeamCollaborationHub.server.IntegrationTest\bin\Debug\net8.0\testhost.deps.json'> problem 

@@ -1,0 +1,17 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using TeamcollborationHub.server.Configuration;
+using TeamcollborationHub.server.Entities;
+
+namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjectTasks;
+
+// TODO:Add ArgumentNullException in the GlobalExceptionHandler 
+public class GetAllProjectTasksQueryHandler(TdbContext db) : IRequestHandler<GetAllProjectTasksQuery, IEnumerable<ProjectTask>?>//done
+{
+    public Task<IEnumerable<ProjectTask>?> Handle(GetAllProjectTasksQuery request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var result = db.Tasks.AsNoTracking().Where(t => t.projectId == request.ProjectId).AsEnumerable() ?? [];
+        return Task.FromResult(result)!;
+    }
+}

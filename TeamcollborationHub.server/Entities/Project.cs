@@ -1,6 +1,26 @@
-﻿namespace TeamcollborationHub.server.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using TeamcollborationHub.server.Enums;
 
-    public class Project
-    {
-    }
+namespace TeamcollborationHub.server.Entities;
 
+/// <summary>
+/// 
+/// </summary>
+[Table("Project")]
+public class Project
+{
+    [Key] public int Id { get; set; }
+    [Required]
+    [StringLength(50)]
+    public required string Name { get; init; }
+    [StringLength(300)]
+    public string Description { get; init; } = string.Empty;
+    public ICollection<User>? Contributors { get; set; }
+    public ProjectStatus? Status { get; init; } = ProjectStatus.NotStarted;
+    public ICollection<Comment>? Comments { get; init; }
+    public ICollection<ProjectTask>? Tasks { get; init; }
+    [DataType(DataType.Date)] public DateTime? CreatedDateTime { get; init; }=DateTime.Today;
+    [DataType(DataType.Date)] public DateTime? LastModifiedDateTime { get; set; }
+    [DataType(DataType.Date)] public DateTime? Deadline { get; set; }
+}

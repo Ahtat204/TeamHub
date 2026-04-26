@@ -1,0 +1,44 @@
+﻿services:
+
+  db:
+    container_name: sql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    hostname: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=sa
+      - MSSQL_SA_PASSWORD=Password1
+    volumes:
+      - sqlserver_data:/var/lib/mssql/data
+  api:
+    container_name: api
+    image: ahtat204/teamhub
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - DB_HOST=db
+      - DB_NAME=TeamCollaborationHubDB
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - ISSUER=${ISSUER}
+      - AUDIENCE=${AUDIENCE}
+      - DURATIONINMINUTES=${DURATIONINMINUTES}
+      - sqlserverconnectionstring=Server =sql_server;Initial Catalog=TeamCollaborationHubDB;User ID=sa;Password=Password1;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+      - RedisConnectionString=redis:6379
+      - KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - cache
+    volumes:
+      - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
+  cache:
+   image: redis:6.2-alpine
+   container_name: redis
+   volumes:
+   - redis-data:/data
+volumes:
+  redis-data:
+  sqlserver_data:
+    

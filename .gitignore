@@ -15,7 +15,7 @@
 *.webp
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
+**.http
 # Mono auto generated files
 mono_crash.*
 
@@ -35,6 +35,8 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+*.env
+*.txt
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -103,7 +105,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-
+*.bat
 # Chutzpah Test files
 _Chutzpah*
 
@@ -126,7 +128,7 @@ ipch/
 
 # Visual Studio Trace Files
 *.e2e
-
+.secrets
 # TFS 2012 Local Workspace
 $tf/
 
@@ -181,6 +183,7 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
+
 
 # Click-Once directory
 publish/
@@ -453,7 +456,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
+TeamcollborationHub.server/appsettings.json
+TeamcollborationHub.server/appsettings.Development.json
 # content below from: https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
 # Windows thumbnail cache files
 Thumbs.db

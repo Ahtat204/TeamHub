@@ -1,0 +1,18 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using TeamcollborationHub.server.Configuration;
+using TeamcollborationHub.server.Entities;
+
+namespace TeamcollborationHub.server.Features.Projects.Queries.GetAllProjects
+{
+    //cannot use AsToTracking Here , still trying to find why
+    public class GetAllProjectsQueryHandler(TdbContext dBContext) : IRequestHandler<GetAllProjectsQuery, IEnumerable<Project>>
+    {
+        public async Task<IEnumerable<Project>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+        {
+            return await (dBContext.Projects.AsEnumerable().ToList().AsReadOnly() is IEnumerable<Project> projects
+                ? Task.FromResult(projects)
+                : Task.FromResult(Enumerable.Empty<Project>()));
+        }
+    }
+}

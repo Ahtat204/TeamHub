@@ -12,6 +12,8 @@ import {MatInput} from '@angular/material/input';
 import { Dashboard } from './dashboard/dashboard';
 import { ProjectsStats } from './projects-stats/projects-stats';
 import { ProjectElement } from './project-grid/project-element.component';
+import {HttpClientModule} from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { ProjectElement } from './project-grid/project-element.component';
     MatSuffix,
     Dashboard,
     ProjectsStats,
-    ProjectElement
+    ProjectElement,
+    HttpClientModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

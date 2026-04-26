@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {CommonModule} from "@angular/common";
-import {MatCardModule} from "@angular/material/card";
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon"
-import {MatFormFieldModule} from "@angular/material/form-field"
+import {Component, Input} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
 
 
 export class User{
-
+public name: string;
+public email: string;
+public password: string;
+constructor(name: string, email: string, password: string) {
+  this.name = name;
+  this.email = email;
+  this.password = password;
+}
 }
 
 @Component({
@@ -22,5 +24,19 @@ export class User{
 
 
 export class UserSignup {
+   email=""
+   password=""
+   username=""
 
+
+constructor(private http: HttpClient) {
+
+}
+public Url:string = 'http://localhost:8080';
+
+public signup() {
+  const request={"username":this.username,"email":this.email,password:this.password}
+ const result=this.http.post(this.Url+'/signup',request);
+  console.log(result);
+}
 }

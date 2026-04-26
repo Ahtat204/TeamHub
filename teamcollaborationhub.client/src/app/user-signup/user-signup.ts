@@ -7,6 +7,11 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon"
 import {MatFormFieldModule} from "@angular/material/form-field"
 
+
+export class User{
+
+}
+
 @Component({
   selector: 'app-user-signup',
   standalone: false,
@@ -14,6 +19,8 @@ import {MatFormFieldModule} from "@angular/material/form-field"
   styleUrl: './user-signup.css',
 
 })
+
+
 export class UserSignup {
 
 }

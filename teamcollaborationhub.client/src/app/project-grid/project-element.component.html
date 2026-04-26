@@ -1,0 +1,17 @@
+<ng-container onClick={} class="project-container" >
+  <mat-card class="example-card" appearance="outlined" >
+    <mat-card-header>
+      <mat-card-title>{{project.Name}}</mat-card-title>
+      <mat-card-subtitle>{{project.Status}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+       {{project.Description}}
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <p >{{project.StartDate}}</p>
+      <p >{{project.EndDate}}</p>
+    </mat-card-actions>
+  </mat-card>
+</ng-container>

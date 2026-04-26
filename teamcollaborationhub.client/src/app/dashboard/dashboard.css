@@ -1,0 +1,70 @@
+.dash-body {
+
+}
+
+.nav-bar {
+  background: #d1caca !important;
+  position: fixed !important;
+  top: 0px;
+  display: flex;
+  width: 100%;
+  z-index: 10;
+  left: 5px !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 200px;
+}
+
+.logo {
+  color: #000000 !important;
+  margin-left: 14px;
+}
+
+.searchbar {
+  display: flex;
+  padding-bottom: 10px !important;
+  align-items: center;
+  position: fixed !important;
+  left: 30rem !important;
+  background-color: #ffffff !important;
+
+}
+
+.search-input {
+  margin-top: 10px;
+  width: 700px !important;
+  height: 40px !important;
+  position: absolute;
+  border-radius: 14px;
+  padding-right: 3px !important;
+  left: 40px !important;
+}
+
+.project-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0;
+
+}
+
+.project-grid {
+
+
+}
+
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  justify-content: space-between/* Space between the project cards */
+
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+
+  word-break: break-all;
+}.project-list:hover {
+  cursor: pointer;
+ }

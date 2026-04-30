@@ -1,6 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
+import {ApiClient} from '../api-client';
 
 
 export class User{
@@ -23,20 +23,16 @@ constructor(name: string, email: string, password: string) {
 })
 
 
-export class UserSignup {
+export class UserSignup  {
    email=""
    password=""
    username=""
 
 
-constructor(private http: HttpClient) {
+  constructor(private apiClient: ApiClient) {}
 
-}
-public Url:string = 'http://localhost:8080';
-
-public signup() {
-  const request={"username":this.username,"email":this.email,password:this.password}
- const result=this.http.post(this.Url+'/signup',request);
-  console.log(result);
-}
+  signupButton() {
+    const result=this.apiClient.signUp(this.username,this.email,this.password);
+    result.subscribe()
+  }
 }

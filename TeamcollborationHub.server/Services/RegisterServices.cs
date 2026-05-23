@@ -24,7 +24,7 @@ public static class Register
         //this should be a URL ex: localhost:5000
         string frontend = LoadValues.LoadValue("frontend", configuration) ??
                              configuration.GetConnectionString("frontend") ??
-                             throw new InvalidOperationException("SQL Server Connection string wasn't not found.");
+                             throw new InvalidOperationException("Frontend domain wasn't provided");
         string sqlserver = LoadValues.LoadValue("sqlserverconnectionstring", configuration) ??
                            configuration.GetConnectionString("sqlserverconnectionstring") ??
                            throw new InvalidOperationException("SQL Server Connection string wasn't not found.");

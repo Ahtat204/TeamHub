@@ -1,5 +1,4 @@
 ﻿services:
-
   db:
     container_name: sql_server
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -34,11 +33,10 @@
     volumes:
       - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
   cache:
-   image: redis:6.2-alpine
-   container_name: redis
-   volumes:
-   - redis-data:/data
+    image: redis:6.2-alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
 volumes:
   redis-data:
   sqlserver_data:
-    

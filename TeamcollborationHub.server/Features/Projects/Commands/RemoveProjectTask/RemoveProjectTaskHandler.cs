@@ -5,7 +5,7 @@ using TeamcollborationHub.server.Exceptions;
 
 namespace TeamcollborationHub.server.Features.Projects.Commands.RemoveProjectTask;
 
-public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemoveProjectTaskCommand,Project>
+public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemoveProjectTaskCommand, Project>
 {
     public async Task<Project> Handle(RemoveProjectTaskCommand request, CancellationToken cancellationToken)
     {
@@ -13,7 +13,7 @@ public class RemoveProjectTaskHandler(TdbContext db) : IRequestHandler<RemovePro
         if (target is null) throw new NotFoundException<ProjectTask>();
         db.Tasks.Remove(target);
         await db.SaveChangesAsync(cancellationToken);
-        var result=db.Projects.FirstOrDefault(p => p.Id == request.ProjectId);
+        var result = db.Projects.FirstOrDefault(p => p.Id == request.ProjectId);
         return result ?? throw new NotFoundException<Project>();
     }
 }

@@ -26,7 +26,7 @@ public class TokenService : ITokenService
     private readonly string? _issuer;
     private readonly string? _audience;
     private readonly string? _key;
-    private readonly string? _tokenValidityInMinutes; 
+    private readonly string? _tokenValidityInMinutes;
     private readonly TdbContext _context;
 
     /// <summary>
@@ -47,7 +47,7 @@ public class TokenService : ITokenService
         _key = _configuration["JwtConfig:Key"];
         _issuer = _configuration["JwtConfig:Issuer"];
         _audience = _configuration["JwtConfig:Audience"];
-        _tokenValidityInMinutes=_configuration["JwtConfig:DurationInMinutes"];
+        _tokenValidityInMinutes = _configuration["JwtConfig:DurationInMinutes"];
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class TokenService : ITokenService
     /// </remarks>
     public TokenService()
     {
-      
+
     }
 
     /// <summary>

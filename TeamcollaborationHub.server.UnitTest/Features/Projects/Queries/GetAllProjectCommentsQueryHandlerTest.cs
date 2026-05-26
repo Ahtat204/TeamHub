@@ -26,7 +26,9 @@ public class GetAllProjectCommentsQueryHandlerTest
         await context.SaveChangesAsync();
         Comment com = new Comment()
         {
-            Id = 1, Content = "this is content", projectId = project.Id
+            Id = 1,
+            Content = "this is content",
+            projectId = project.Id
         };
         context.Comments.Add(com);
         await context.SaveChangesAsync();
@@ -34,7 +36,7 @@ public class GetAllProjectCommentsQueryHandlerTest
         var result = await handler.Handle(new GetAllProjectCommentsQuery(project.Id), CancellationToken.None);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.FirstOrDefault().Content, Is.Not.Null);
-        Assert.That("this is content", Is.EqualTo(result.FirstOrDefault()?.Content));
+        Assert.That(result.FirstOrDefault()?.Content, Is.EqualTo("this is content"));
         await context.Database.EnsureDeletedAsync();
     }
 

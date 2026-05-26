@@ -20,7 +20,7 @@ namespace TeamcollborationHub.server.Services.Authentication.UserAuthentication;
 /// are delegated to specialized services.
 /// </remarks>
 public class AuthenticationService(
-    IPasswordHashingService passwordHashingService, IUserRepository authenticationRepository) 
+    IPasswordHashingService passwordHashingService, IUserRepository authenticationRepository)
     : IAuthenticationService
 {
     /// <summary>
@@ -110,10 +110,10 @@ public class AuthenticationService(
     public async Task<User?> UpdatePassword(UpdatePasswordDto updatePasswordrequest)
     {
         ArgumentNullException.ThrowIfNull(updatePasswordrequest);
-        var checkUser = await authenticationRepository.GetUserByEmail(updatePasswordrequest.Email.Trim().ToLower())??throw new NotFoundException<User>("because email does not exist");
+        var checkUser = await authenticationRepository.GetUserByEmail(updatePasswordrequest.Email.Trim().ToLower()) ?? throw new NotFoundException<User>("because email does not exist");
         checkUser.Password = passwordHashingService.Hash(updatePasswordrequest.NewPassword);
         //checkUser.Password = checkUser.Password == user.Password ? user.Password : passwordHashingService.Hash(user.Password);
-      //  checkUser.Name = user.Name.Trim();
+        //  checkUser.Name = user.Name.Trim();
         return await authenticationRepository.UpdateUser(checkUser);
     }
 

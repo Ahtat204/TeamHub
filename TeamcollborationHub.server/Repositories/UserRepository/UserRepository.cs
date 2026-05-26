@@ -86,7 +86,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> DeleteUser(string email)
     {
-        var result = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ;
+        var result = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         if (result is null) return null;
         _context.Users.Remove(result);
         await _context.SaveChangesAsync();

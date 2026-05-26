@@ -12,7 +12,9 @@
       - sqlserver_data:/var/lib/mssql/data
   api:
     container_name: api
-    image: ahtat204/teamhub
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - DB_HOST=db

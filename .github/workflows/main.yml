@@ -45,7 +45,7 @@ jobs:
           dotnet build --configuration Release 
 
       - name: Run Tests 🧪
-        run: dotnet test  --verbosity normal
+        run: dotnet test  --verbosity minimal
         env:
           ConnectionStrings__Redis: localhost:6379
 

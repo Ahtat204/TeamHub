@@ -129,6 +129,6 @@ public class AuthenticationServiceTest
     public void UpdatePasswordTest_ShouldThrowNotFoundException()
     {
         _authenticationRepository.Setup(repo => repo.GetUserByEmail(_newUser.Email)).ReturnsAsync((User)null);
-        Assert.That(()=>_authenticationService.UpdatePassword(new UpdatePasswordDto(_newUser.Email,"pas9826bsya")),Throws.Exception.TypeOf<NotFoundException<User>>());
+        Assert.That(() => _authenticationService.UpdatePassword(new UpdatePasswordDto(_newUser.Email, "pas9826bsya")), Throws.Exception.TypeOf<NotFoundException<User>>());
     }
 }

@@ -36,8 +36,8 @@ public class AuthenticationControllerTest
         _authenticationService.Setup(service =>
             service.AuthenticateUser(new LoginRequestDto(_newUser.Email, _newUser.Password))).ReturnsAsync(_newUser);
         int tokenExpiryDate;
-        _jwtService.Setup(jwts => jwts.GenerateTokenResponse(_newUser,out tokenExpiryDate)).Returns(Secret);
-        var result =await _controller.Login(new LoginRequestDto(_newUser.Email, _newUser.Password));
+        _jwtService.Setup(jwts => jwts.GenerateTokenResponse(_newUser, out tokenExpiryDate)).Returns(Secret);
+        var result = await _controller.Login(new LoginRequestDto(_newUser.Email, _newUser.Password));
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<ActionResult<LoginResponseDto>>());
     }
@@ -49,7 +49,7 @@ public class AuthenticationControllerTest
         _authenticationService.Setup(service =>
             service.AuthenticateUser(new LoginRequestDto(_newUser.Email, _newUser.Password))).ReturnsAsync(nullUser);
         int tokenExpiryDate;
-        _jwtService.Setup(jwts => jwts.GenerateTokenResponse(_newUser,out tokenExpiryDate)).Returns(Secret);
+        _jwtService.Setup(jwts => jwts.GenerateTokenResponse(_newUser, out tokenExpiryDate)).Returns(Secret);
         var result = await _controller.Login(new LoginRequestDto(_newUser.Email, _newUser.Password));
         Assert.NotNull(result.Result);
         var response = result.Result;
@@ -64,7 +64,7 @@ public class AuthenticationControllerTest
         _authenticationService.Setup(service =>
             service.AuthenticateUser(nullInput)).ReturnsAsync(nullUser);
         int tokenExpiryDate;
-        _jwtService.Setup(jwt => jwt.GenerateTokenResponse(_newUser,out tokenExpiryDate)).Returns(Secret);
+        _jwtService.Setup(jwt => jwt.GenerateTokenResponse(_newUser, out tokenExpiryDate)).Returns(Secret);
         var result = await _controller.Login(nullInput);
         Assert.NotNull(result.Result);
         var response = result.Result;
@@ -74,7 +74,7 @@ public class AuthenticationControllerTest
     [Test]
     public async Task SignUpTestShouldreturnOk()
     {
-        CreateUserDto userRegistrationRequest = new ("lahcen25@gmail.com", "123assword", "lahcen22");
+        CreateUserDto userRegistrationRequest = new("lahcen25@gmail.com", "123assword", "lahcen22");
         User? result = new()
         {
             Email = "lahcen25@gmail.com",
@@ -90,6 +90,6 @@ public class AuthenticationControllerTest
         {
             Assert.That(type, Is.InstanceOf<OkObjectResult>());
         });
-        
+
     }
 }

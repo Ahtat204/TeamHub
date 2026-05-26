@@ -22,7 +22,7 @@ public class AddContributorToProjectCommandHandlerTest
     [Test]
     public void AddContributorToProjectTest()
     {
-        
+
         Assert.That(_options, Is.Not.Null);
         var context = new TdbContext(_options);
         Project project = new()
@@ -61,7 +61,7 @@ public class AddContributorToProjectCommandHandlerTest
         Assert.That(_options, Is.Not.Null);
         var context = new TdbContext(_options);
         var handler = new AddContributorToProjectCommandHandler(context);
-        Assert.That(() => handler.Handle(new(1,1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<User>>());
+        Assert.That(() => handler.Handle(new(1, 1), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<User>>());
         context.Database.EnsureDeleted();
     }
 
@@ -79,8 +79,8 @@ public class AddContributorToProjectCommandHandlerTest
         };
         context.Users.Add(contributor);
         var handler = new AddContributorToProjectCommandHandler(context);
-        var result = handler.Handle(new(4,contributor.Id), CancellationToken.None);
-        Assert.That(() => handler.Handle(new(4,contributor.Id), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
+        var result = handler.Handle(new(4, contributor.Id), CancellationToken.None);
+        Assert.That(() => handler.Handle(new(4, contributor.Id), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
         context.Database.EnsureDeleted();
     }
 }

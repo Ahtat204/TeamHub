@@ -24,7 +24,7 @@ public class GetProjectTaskByIdHandlerTest
         var handler = new GetProjectTaskByIdQueryHandler(context);
         var result = handler.Handle(new GetProjectTaskByIdQuery(1), CancellationToken.None).Result;
         Assert.IsNotNull(result);
-        Assert.That(1, Is.EqualTo(result.Id));
+        Assert.That(result.Id, Is.EqualTo(1));
         Assert.That(result.Title, Is.EqualTo("Task 1"));
         context.Database.EnsureDeleted();
     }

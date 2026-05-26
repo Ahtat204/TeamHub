@@ -1,5 +1,4 @@
 ﻿services:
-
   db:
     container_name: sql_server
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -13,7 +12,9 @@
       - sqlserver_data:/var/lib/mssql/data
   api:
     container_name: api
-    image: ahtat204/teamhub
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - DB_HOST=db
@@ -34,11 +35,10 @@
     volumes:
       - ./certs/KestrelSSLCertficate.pfx:/app/KestrelSSLCertficate.pfx:ro
   cache:
-   image: redis:6.2-alpine
-   container_name: redis
-   volumes:
-   - redis-data:/data
+    image: redis:6.2-alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
 volumes:
   redis-data:
   sqlserver_data:
-    

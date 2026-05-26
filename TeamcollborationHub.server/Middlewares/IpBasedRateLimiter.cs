@@ -13,7 +13,7 @@ namespace TeamcollborationHub.server.Middlewares;
 /// </remarks>
 public class IpBasedRateLimiter
 {
-  /// <summary>
+    /// <summary>
     /// Logger used to record rate limiting events and warnings.
     /// </summary>
     private readonly ILogger<IpBasedRateLimiter> _logger;

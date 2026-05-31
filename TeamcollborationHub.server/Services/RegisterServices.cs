@@ -40,7 +40,7 @@ public static class Register
         services.AddSingleton<IPasswordHashingService, PasswordHashing>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddSingleton<ITokenService, TokenService>();
+        services.AddScoped<ITokenService, TokenService>();
         services.AddDbContext<TdbContext>(options =>
             options.UseSqlServer(sqlserver));
         services.AddStackExchangeRedisCache(options =>

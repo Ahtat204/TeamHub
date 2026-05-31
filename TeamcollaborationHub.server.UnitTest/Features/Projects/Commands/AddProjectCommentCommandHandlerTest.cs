@@ -55,7 +55,7 @@ public class AddProjectCommentCommandHandlerTest
         var context = new TdbContext(_options);
         Comment? comment = null;
         var handler = new AddProjectCommentCommandHandler(context);
-        Assert.That(async () =>await handler.Handle(new AddProjectCommentCommand(1, comment), CancellationToken.None),
+        Assert.That(async () => await handler.Handle(new AddProjectCommentCommand(1, comment), CancellationToken.None),
             Throws.ArgumentNullException);
     }
 
@@ -70,6 +70,6 @@ public class AddProjectCommentCommandHandlerTest
             Content = "a test comment",
         };
         var handler = new AddProjectCommentCommandHandler(context);
-        Assert.That(async()=> await handler.Handle(new AddProjectCommentCommand(1, comment), CancellationToken.None),Throws.Exception.TypeOf<NotFoundException<Project>>());
+        Assert.That(async () => await handler.Handle(new AddProjectCommentCommand(1, comment), CancellationToken.None), Throws.Exception.TypeOf<NotFoundException<Project>>());
     }
 }

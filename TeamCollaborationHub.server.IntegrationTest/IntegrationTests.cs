@@ -48,7 +48,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
     /// Service used to simulate valid JWT generation for authorized endpoint testing.
     /// </summary>
     private readonly ITokenService? _jwtService;
-    
+
     private readonly ICachingService<Project, string>? _cachingService;
 
     /// <summary>
@@ -626,7 +626,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var response = await Client.SendAsync(postRequest);
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-       
+
     }
 
     /// <summary>
@@ -697,7 +697,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var task = tasks.FirstOrDefault(t => t.Title == newTask.Title);
         Assert.NotNull(task);
     }
-[Fact, TestPriority(13)]
+    [Fact, TestPriority(13)]
     public async Task AddCommentToProjectTest()
     {
         var prorandom = await context.Projects.FirstOrDefaultAsync();
@@ -723,7 +723,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         Assert.NotNull(result.Comments);
         Assert.NotEmpty(result.Comments);
         var tasks = result.Comments.ToList();
-        var firscomment= tasks.FirstOrDefault(t => t.Content == comment.Content);
+        var firscomment = tasks.FirstOrDefault(t => t.Content == comment.Content);
         Assert.NotNull(firscomment);
         Assert.Equal(comment.Content, firscomment.Content);
     }
@@ -792,7 +792,7 @@ public class IntegrationTest : BaseIntegrationTestFixture
         var prorandom = await context.Projects.FirstOrDefaultAsync();
         await context.SaveChangesAsync();
         Assert.NotNull(prorandom);
-        var updateDeadlinecommand = new SetProjectDeadlineCommand(prorandom.Id,DateTime.Parse("2027-10-10"));
+        var updateDeadlinecommand = new SetProjectDeadlineCommand(prorandom.Id, DateTime.Parse("2027-10-10"));
         var postRequest = new HttpRequestMessage(HttpMethod.Put, $"api/projects/{prorandom.Id}")
         {
             Content = new StringContent(JsonSerializer.Serialize(updateDeadlinecommand), Encoding.UTF8,

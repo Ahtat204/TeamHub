@@ -51,8 +51,8 @@ public class AddProjectTaskCommandHandlerTest
         var context = new TdbContext(_options);
         ProjectTask? nullProjectTask = null;
         var handler = new AddProjectTaskCommandHandler(context);
-        Assert.That(()=>handler.Handle(new AddProjectTaskCommand(1, nullProjectTask), CancellationToken.None), Throws.InstanceOf<ArgumentNullException>());
+        Assert.That(() => handler.Handle(new AddProjectTaskCommand(1, nullProjectTask), CancellationToken.None), Throws.InstanceOf<ArgumentNullException>());
         await context.Database.EnsureDeletedAsync();
-        
+
     }
 }

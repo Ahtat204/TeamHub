@@ -26,6 +26,7 @@ public static class Register
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseCors("AngularFrontend");
         app.MapControllers();
         return app;
     }

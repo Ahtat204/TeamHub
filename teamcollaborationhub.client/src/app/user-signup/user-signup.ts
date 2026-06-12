@@ -32,11 +32,13 @@ export class UserSignup {
 constructor(private http: HttpClient) {
 
 }
-public Url:string = 'http://localhost:8080';
+public Url:string = ' http://localhost:8080/signup';
 
 public signup() {
   const request={"username":this.username,"email":this.email,password:this.password}
- const result=this.http.post(this.Url+'/signup',request);
+ const result=this.http.post(this.Url,request).subscribe(response => {
+   console.log('Response:', response);
+ });
   console.log(result);
 }
 }

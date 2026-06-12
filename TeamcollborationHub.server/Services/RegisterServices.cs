@@ -21,6 +21,10 @@ public static class Register
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services, IConfiguration configuration)
     {
+        //this should be a URL ex: localhost:5000
+        string frontend = LoadValues.LoadValue("frontend", configuration) ??
+                             configuration.GetValue<string>("frontend") ??
+                             throw new InvalidOperationException("Frontend domain wasn't provided");
         string sqlserver = LoadValues.LoadValue("sqlserverconnectionstring", configuration) ??
                            configuration.GetConnectionString("sqlserverconnectionstring") ??
                            throw new InvalidOperationException("SQL Server Connection string wasn't not found.");
@@ -59,6 +63,12 @@ public static class Register
             LuaScript.Prepare(
                 "local requests = redis.call('INCR', KEYS[1])\n\nif requests == 1 then\n    redis.call('EXPIRE', KEYS[1], ARGV[2])\nend\n\nif requests > tonumber(ARGV[1]) then\n    return 1\nelse\n    return 0\nend")
         );
+        services.AddCors(
+            options =>
+            {
+                options.AddPolicy(name: "AngularFrontend", policy => policy.WithOrigins(frontend).AllowAnyMethod().AllowAnyHeader());
+            }
+            );
         services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

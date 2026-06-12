@@ -34,7 +34,7 @@ jobs:
 
       - name: Restore dependencies
         if: steps.cache-nuget.outputs.cache-hit != 'true'
-        run: dotnet restore
+        run: dotnet restore --verbosity minimal
 
       - name: Build Project
         run: |
@@ -42,7 +42,7 @@ jobs:
           export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
           export KEY=$${{ secrets.KEY }}
           export ASPNETCORE_ENVIRONMENT=Production
-          dotnet build --configuration Release 
+          dotnet build --configuration Release --verbosity minimal
 
       - name: Run Tests 🧪
         run: dotnet test  --verbosity minimal

@@ -6,7 +6,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon"
 import {MatFormFieldModule} from "@angular/material/form-field"
-
+import {HttpClient} from '@angular/common/http';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -15,8 +15,18 @@ import {MatFormFieldModule} from "@angular/material/form-field"
   styleUrl: './user-login.css'
 })
 export class LoginComponent {
-user={
-  email:"",
-  password:""
-}
+  email=""
+  password=""
+
+  constructor(private http: HttpClient) {
+
+  }
+  public Url:string = 'http://localhost:8080/login';
+  public login() {
+    const request={"email":this.email,password:this.password}
+    const result=this.http.post(this.Url,request).subscribe(response => {
+      console.log('Response:', response);
+    });
+    console.log(result);
+  }
 }
